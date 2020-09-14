@@ -1,5 +1,8 @@
 *.pyc 
 .idea/workspace.xml
 venv/
+venv_prod/
 *.sql
 *.zip
+
+setup/
