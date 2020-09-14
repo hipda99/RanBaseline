@@ -6,3 +6,5 @@ venv_prod/
 *.zip
 
 setup/
+
+.vscode/
