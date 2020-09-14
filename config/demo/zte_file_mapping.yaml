@@ -1,0 +1,27 @@
+zte:
+    network:
+        850:
+            r3:
+                mapping: zte_850_r3_mapping.xlsx
+            r4:
+                mapping: zte_850_r4_mapping.xlsx
+            type: 3G
+        900:
+            r3:
+                mapping: zte_900_r3_mapping.xlsx
+            r4:
+                mapping: zte_900_r4_mapping.xlsx
+            type: 2G
+        2100:
+            r3:
+                mapping: zte_2100_r3_mapping.xlsx
+            r4:
+                mapping: zte_2100_r4_mapping.xlsx
+            type: 3G
+
+        900/1800/2100:
+            default:
+                mapping: zte_90018002100_default_mapping.xlsx
+            type: 4G
+            
+            

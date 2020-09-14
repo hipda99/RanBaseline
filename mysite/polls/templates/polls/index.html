@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{message}</title>
+  <script type="text/javascript">
+     $('#login_form').submit(function() {
+       $('#gif').removeAttr( "display" )
+       return true;
+     });
+     $('#login_form').submit(function() {
+    $('#gif').show();
+    $.post('/somepage.htm', function() {
+        $('#wait').hide();
+    });
+    return false;
+});
+ </script>
+
+    <style>
+        form span {
+    display: block;
+    margin: 10px;
+}
+input[type="text"] {
+    border: 1px soild #ccc;
+    width: 200px;
+    padding: 5px;
+}
+input[type="submit"] {
+    padding: 5px 15px;
+}
+span#result {
+    padding: 5px;
+    background: cyan;
+}
+img#loader {
+    display: none;
+}
+    </style>
+
+</head>
+<body>
+{{ message }}
+<form method="post" enctype="multipart/form-data" id="login_form">
+    {% csrf_token %}
+    <input type="file" name="myfile">
+    <button type="submit">Upload</button>
+    <label><img id="gif" src="https://media.giphy.com/media/xTk9ZvMnbIiIew7IpW/giphy.gif" style="display: none;"/></label>
+</form>
+
+{% if status %}
+<p>File uploaded at:{{ status }}</a></p>
+{% endif %}
+
+</body>
+</html>

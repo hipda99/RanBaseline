@@ -1,0 +1,18 @@
+ZTE:
+    network:
+        2G:
+            mapping: zte_2g_mapping.xlsx
+        3G:
+            mapping: zte_3g_mapping.xlsx
+        4G:
+            mapping: zte_4g_mapping.xlsx
+HW:
+    network:
+        2G:
+            mapping: hw_2g_mapping.xlsx   
+        3G:
+            mapping: hw_3g_mapping.xlsx
+        4G:
+            mapping: hw_4g_mapping.xlsx
+            
+            
