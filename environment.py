@@ -19,7 +19,7 @@ from environment import environment
 
 COUNT_FILE = 0
 
-ZTE_MAPPING_NAME = 'zte_file_mapping.yaml'
+MAPPING_NAME = 'file_mapping.yaml'
 
 HUAWEI_TABLE_PREFIX = 'HW'
 ZTE_TABLE_PREFIX = 'ZTE'
@@ -64,10 +64,10 @@ if environment == 'dev':
     JSON_RESULT_PATH = '/app/ngoss/zte_result/{0}/{1}/'
 
     # config: zte mapping file
-    ZTE_MAPPING_FILE_PATH = "/home/app/ngoss/RanBaselineApp/source/config/prod/" + ZTE_MAPPING_NAME
+    MAPPING_FILE_PATH = "/home/app/ngoss/RanBaselineApp/source/config/dev/" + MAPPING_NAME
 
     # config: data source file
-    RAW_FILE_PATH_COLLECTION = "/home/app/ngoss/RanBaselineApp/source/config/prod/RawFilePathCollection.xlsx"
+    RAW_FILE_PATH_COLLECTION = "/home/app/ngoss/RanBaselineApp/source/config/dev/RawFilePathCollection.xlsx"
 
     # file separator [window = '\\'], [linux = '/']
     PATH_SEPARATOR = '/'
@@ -93,7 +93,7 @@ if environment == 'prod':
     JSON_RESULT_PATH = '/app/ngoss/zte_result/{0}/{1}/'
 
     # config: zte mapping file
-    ZTE_MAPPING_FILE_PATH = "/home/app/ngoss/RanBaselineApp/source/config/prod/" + ZTE_MAPPING_NAME
+    MAPPING_FILE_PATH = "/home/app/ngoss/RanBaselineApp/source/config/prod/" + MAPPING_NAME
 
     # config: data source file
     RAW_FILE_PATH_COLLECTION = "/home/app/ngoss/RanBaselineApp/source/config/prod/RawFilePathCollection.xlsx"
@@ -122,7 +122,7 @@ if environment == 'north':
     JSON_RESULT_PATH = '/app/ngoss/zte_result/{0}/{1}/'
 
     # config: zte mapping file
-    ZTE_MAPPING_FILE_PATH = CONFIGURATION_PATH + ZTE_MAPPING_NAME
+    MAPPING_FILE_PATH = CONFIGURATION_PATH + MAPPING_NAME
 
     # config: data source file
     RAW_FILE_PATH_COLLECTION = CONFIGURATION_PATH + 'RawFilePathCollection.xlsx'

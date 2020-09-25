@@ -39,6 +39,8 @@ CNA = 'CNA'
 
 REGEX_UTRANCELL = r",UtranCell=(.*?),"
 REGEX_MECONTEXT = r",MeContext=(.*?),"
+REGEX_NRCELLCU = r",NRCellCU=([^,]*)"
+REGEX_NRCELLDU = r",NRCellDU=([^,]*)"
 REGEX_EUTRANCELLFDD = r",EUtranCellFDD=(.*?),"
 REGEX_SW_NAME_3G_OR_4G = '^MO.*,MeContext=(.*),SwManagement=1,ConfigurationVersion=1$'
 REGEX_SW_NAME_4G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,BrM=1,BrmBackupManager=1,BrmBackup=(.*)'
@@ -273,8 +275,9 @@ def run(source, field_mapping_dic, param_cell_level_dic, param_mo_dic):
         if source.FrequencyType == '2G':
             pool.apply_async(parse_2g, args=(raw_file, source.FrequencyType, field_mapping_dic,))
         else:
-            pool.apply_async(parse_3g_4g, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic, param_mo_dic,))
-            # parse_3g_4g(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic, param_mo_dic)
+            # This include 5G as well
+            pool.apply_async(parse, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic, param_mo_dic,))
+            # parse(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic, param_mo_dic)
 
     pool.close()
     pool.join()
@@ -1362,7 +1365,7 @@ def parse_sw_3g_4g(raw_file, frequency_type):
     close_connection(oracle_con, oracle_cur)
 
 
-def parse_3g_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, param_mo_dic):
+def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, param_mo_dic):
     log.i(PARSING_FILE_STATEMENT.format(raw_file))
     log.i("----- Start Parser : " + str(datetime.datetime.now()), ERICSSON_VENDOR, frequency_type)
     oracle_con, oracle_cur = open_connection()
@@ -1486,6 +1489,12 @@ def parse_3g_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_di
 
                                 if frequency_type == "4G":
                                     matches = re.search(REGEX_EUTRANCELLFDD, mo)
+                                elif frequency_type == "5G":
+                                    if 'NRCELLDU'.upper() in group_param or 'NRCellDU' in mo:
+                                        matches = re.search(REGEX_NRCELLDU, mo)
+                                    elif 'NRCELLCU'.upper() in group_param or 'NRCellCU' in mo:
+                                        matches = re.search(REGEX_NRCELLCU, mo)
+
                                 else:
                                     matches = re.search(REGEX_UTRANCELL, mo)
 
