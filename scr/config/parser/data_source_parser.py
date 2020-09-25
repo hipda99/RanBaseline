@@ -90,6 +90,8 @@ def collect_ericsson_file(raw_file):
         collect_ericsson_file_by_extension(raw_file, 'log')
     elif raw_file.FrequencyType == '4G':
         collect_ericsson_file_by_extension(raw_file, 'log')
+    elif raw_file.FrequencyType == '5G':
+        collect_ericsson_file_by_extension(raw_file, 'log')
 
 
 def collect_zte_file(raw_file):
