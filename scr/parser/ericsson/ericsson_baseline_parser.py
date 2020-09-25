@@ -39,8 +39,8 @@ CNA = 'CNA'
 
 REGEX_UTRANCELL = r",UtranCell=(.*?),"
 REGEX_MECONTEXT = r",MeContext=(.*?),"
-REGEX_NRCELLCU = r",NRCellCU=(.*?),"
-REGEX_NRCELLDU = r",NRCellDU==(.*?),"
+REGEX_NRCELLCU = r",NRCellCU=([^,]*)"
+REGEX_NRCELLDU = r",NRCellDU=([^,]*)"
 REGEX_EUTRANCELLFDD = r",EUtranCellFDD=(.*?),"
 REGEX_SW_NAME_3G_OR_4G = '^MO.*,MeContext=(.*),SwManagement=1,ConfigurationVersion=1$'
 REGEX_SW_NAME_4G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,BrM=1,BrmBackupManager=1,BrmBackup=(.*)'
