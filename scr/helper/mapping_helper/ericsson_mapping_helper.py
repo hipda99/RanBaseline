@@ -54,9 +54,9 @@ def read_ericsson_mapping(file_mapping_path_name, file_mapping_feature_path_name
         elif frequency_type == "3G":
             return read_3g(file_mapping_path_name)
         elif frequency_type == '4G':
-            return read_4g(file_mapping_path_name)
+            return read_4g(file_mapping_path_name)        
         else:
-            return read_4g(file_mapping_path_name)
+            return read_5g(file_mapping_path_name)
 
 
 def read_feature(file_mapping_path_name):
