@@ -273,8 +273,9 @@ def run(source, field_mapping_dic, param_cell_level_dic, param_mo_dic):
         if source.FrequencyType == '2G':
             pool.apply_async(parse_2g, args=(raw_file, source.FrequencyType, field_mapping_dic,))
         else:
-            pool.apply_async(parse_3g_4g, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic, param_mo_dic,))
-            # parse_3g_4g(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic, param_mo_dic)
+            # This include 5G as well
+            pool.apply_async(parse, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic, param_mo_dic,))
+            # parse(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic, param_mo_dic)
 
     pool.close()
     pool.join()
@@ -1362,7 +1363,7 @@ def parse_sw_3g_4g(raw_file, frequency_type):
     close_connection(oracle_con, oracle_cur)
 
 
-def parse_3g_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, param_mo_dic):
+def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, param_mo_dic):
     log.i(PARSING_FILE_STATEMENT.format(raw_file))
     log.i("----- Start Parser : " + str(datetime.datetime.now()), ERICSSON_VENDOR, frequency_type)
     oracle_con, oracle_cur = open_connection()
