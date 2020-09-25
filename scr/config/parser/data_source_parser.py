@@ -13,7 +13,7 @@ DEFAULT_MAPPING_SHEET_NAME = 0
 
 
 def read_mapping_yaml():
-    with open(ZTE_MAPPING_FILE_PATH, 'r') as f:
+    with open(MAPPING_FILE_PATH, 'r') as f:
         doc = yaml.load(f)
 
     return doc

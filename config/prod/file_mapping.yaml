@@ -23,6 +23,8 @@ Ericsson:
       mapping: erc_3g_mapping.xlsx
     4G:
       mapping: erc_4g_mapping.xlsx
+    5G:
+      mapping: erc_5g_mapping.xlsx
 
   feature:
     2G:
@@ -31,3 +33,5 @@ Ericsson:
       mapping: erc_3g_mapping_feature.xlsx
     4G:
       mapping: erc_4g_mapping_feature.xlsx
+    5G:
+      mapping: erc_5g_mapping_feature.xlsx
