@@ -9,6 +9,7 @@ EXPECTED_VALUE_COLUMN_NAME = 'Expected Value'
 EXPECTED_900_VALUE_COLUMN_NAME = 'Expected Value(900)'
 EXPECTED_1800_VALUE_COLUMN_NAME = 'Expected Value(1800)'
 EXPECTED_2100_VALUE_COLUMN_NAME = 'Expected Value(2100)'
+EXPECTED_2600_VALUE_COLUMN_NAME = 'Expected Value(2600)'
 
 FEATURE_PARAMETER_GROUP_COLUMN_NAME = 'TYPE'
 FEATURE_PARAMETER_COLUMN_NAME = 'KeyID'
@@ -24,6 +25,7 @@ BASELINE_TYPE = 'BASELINE_TYPE'
 BASELINE_900_TYPE = 'baseline_900'
 BASELINE_1800_TYPE = 'baseline_1800'
 BASELINE_2100_TYPE = 'baseline_2100'
+BASELINE_2600_TYPE = 'baseline_2600'
 BASELINE_LABEL_TYPE = 'label'
 BASELINE_NORMAL_TYPE = 'baseline'
 BASELINE_DESC_TYPE = 'baseline_desc'
@@ -49,10 +51,10 @@ def read_ericsson_mapping(file_mapping_path_name, file_mapping_feature_path_name
 
         if frequency_type == "2G":
             return read_2g(file_mapping_path_name)
-
         elif frequency_type == "3G":
             return read_3g(file_mapping_path_name)
-
+        elif frequency_type == '4G':
+            return read_4g(file_mapping_path_name)
         else:
             return read_4g(file_mapping_path_name)
 
@@ -103,6 +105,71 @@ def read_feature(file_mapping_path_name):
 
     return param_dic, baseline_dic, key_dic
 
+def read_5g(file_mapping_path_name):
+    df = read_excel_mapping(file_mapping_path_name, 0)
+
+    param_dic = {}
+    baseline_label_dic = {}
+    baseline_2600_dic = {}
+
+    tmp_check_key_dic = {}
+
+    param_cell_level = {}
+    param_cell_mo = {}
+
+    for index, row in df.iterrows():
+        param_group = str(row[PARAMETER_GROUP_COLUMN_NAME])
+        param_group = naming_helper.rule_column_name(param_group)
+
+        baseline_label_value = str(row[PARAMETER_COLUMN_NAME])
+        param_name = naming_helper.rule_column_name(baseline_label_value)
+
+        baseline_2600_value = str(row[EXPECTED_2600_VALUE_COLUMN_NAME])
+        
+
+        if baseline_2600_value == "nan":
+            baseline_2600_value = ""
+
+        if baseline_label_value == "nan":
+            baseline_label_value = ""
+
+        cell_level = str(row[LEVEL_COLUMN_NAME])
+
+        param_cell_level[param_group] = cell_level
+
+        if param_group.upper() in tmp_check_key_dic:
+            if param_name.upper() not in tmp_check_key_dic[param_group.upper()]:
+                param_dic[param_group].append(param_name)
+
+                baseline_2600_dic[param_group][0][param_name] = baseline_2600_value
+                baseline_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_2600_TYPE
+                baseline_2600_dic[param_group][0][LV_COLUMN] = cell_level
+
+                baseline_label_dic[param_group][0][param_name] = baseline_label_value
+                baseline_label_dic[param_group][0][REFERENCE_FIELD_COLUMN_NAME] = BASELINE_LABEL_TYPE
+                baseline_label_dic[param_group][0][LV_COLUMN] = cell_level
+
+                tmp_check_key_dic[param_group.upper()].append(param_name.upper())
+
+        else:
+
+            param_dic[param_group] = [param_name]
+
+            param_dic[param_group].append("FILENAME")
+            param_dic[param_group].append("REFERENCE_FIELD")
+            param_dic[param_group].append(BASELINE_TYPE)
+            
+            baseline_2600_dic[param_group] = [{param_name: baseline_2600_value}]
+            baseline_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_2600_TYPE
+            baseline_2600_dic[param_group][0][LV_COLUMN] = cell_level
+
+            baseline_label_dic[param_group] = [{param_name: baseline_label_value}]
+            baseline_label_dic[param_group][0][REFERENCE_FIELD_COLUMN_NAME] = BASELINE_LABEL_TYPE
+            baseline_label_dic[param_group][0][LV_COLUMN] = cell_level
+
+            tmp_check_key_dic[param_group.upper()] = [param_name.upper()]
+
+    return param_dic, baseline_2600_dic, param_cell_level, param_cell_mo, baseline_label_dic
 
 def read_4g(file_mapping_path_name):
     df = read_excel_mapping(file_mapping_path_name, 0)
