@@ -58,6 +58,8 @@ REGEX_PRODUCTNAME = 'productName = (.*?)$'
 REGEX_PRODUCTREVISION = 'productRevision = (.*?)$'
 REGEX_STATUS = 'status = (.*?)$'
 
+REGEX_FEATURE_5G_BASEBAND = '^MO.*,MeContext=(.*),SystemFunctions=1,Lm=1,FeatureState=[^,]*$'
+
 REGEX_FEATURE_4G_BASEBAND = '^MO.*,MeContext=(.*),SystemFunctions=1,Lm=1,FeatureState=[^,]*$'
 REGEX_FEATURE_4G_DU = '^MO.*,MeContext=(.*),SystemFunctions=1,Licensing=1,OptionalFeatureLicense=[^,]*$'
 
@@ -184,6 +186,45 @@ def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mappin
 
     return
 
+def prepare_oracle_table_5g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_2600_dic, drop_param=True, base_mapping_label_dic={}):
+    log.i(PREPARING_TABLE_STATEMENT + " : " + frequency_type)
+
+    for group_param in field_mapping_dic:
+        table_name = naming_helper.get_table_name(BASELINE_TABLE_PREFIX.format(ERICSSON_TABLE_PREFIX), frequency_type, group_param)
+        column_collection = field_mapping_dic[group_param]
+
+        if (ERICSSON_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+            ran_baseline_oracle.drop(oracle_cur, table_name)
+            ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
+
+            try:
+                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
+
+                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_label_dic[group_param])
+
+            except:
+                traceback.print_exc()
+                pass
+
+    if drop_param:
+        if (ERICSSON_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+            ran_baseline_oracle.drop(oracle_cur, "SW_" + ERICSSON_TABLE_PREFIX + "_" + frequency_type)
+            ran_baseline_oracle.create_table(oracle_cur, "SW_" + ERICSSON_TABLE_PREFIX + "_" + frequency_type, sw_column)
+
+        for group_param in field_mapping_dic:
+            table_name = naming_helper.get_table_name(ERICSSON_TABLE_PREFIX, frequency_type, group_param)
+            column_collection = field_mapping_dic[group_param]
+
+            if (ERICSSON_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+                ran_baseline_oracle.drop(oracle_cur, table_name)
+                ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
+
+    CREATED_TABLE[ERICSSON_TABLE_PREFIX + "_" + frequency_type] = []
+
+    oracle_con.commit()
+
+    return    
+
 
 def prepare_oracle_table_feature(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_dic):
     log.i(PREPARING_TABLE_STATEMENT + " : " + frequency_type)
@@ -247,7 +288,7 @@ def run_sw(source):
     pool = mp.Pool(processes=MAX_RUNNING_PROCESS)
 
     for raw_file in source.RawFileList:
-        if source.FrequencyType == '3G' or source.FrequencyType == '4G':
+        if source.FrequencyType == '3G' or source.FrequencyType == '4G' or source.FrequenceType == '5G':
             pool.apply_async(parse_sw_3g_4g, args=(raw_file, source.FrequencyType,))
             # parse_sw_3g_4g(raw_file, source.FrequencyType)
             # continue;
@@ -473,7 +514,7 @@ def run_feature(source, field_mapping_dic, key_dic):
     pool = mp.Pool(processes=MAX_RUNNING_PROCESS)
 
     for raw_file in source.RawFileList:
-        if source.FrequencyType == '3G' or source.FrequencyType == '4G':
+        if source.FrequencyType == '3G' or source.FrequencyType == '4G' or source.FrequencyType == '5G':
             pool.apply_async(parse_feature_3g_4g, args=(raw_file, source.FrequencyType, key_dic,))
             # parse_feature_3g_4g(raw_file, source.FrequencyType, key_dic)
         #
@@ -869,6 +910,32 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                 log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
                 return
 
+            if '/nr/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                return
+
+            #TODO: Mixmode 5G , still Unknown
+
+        if frequency_type == "5G":
+            firstLine = lines[0]
+            if 'wcdma' in firstLine:
+                log.i("----- STOP FOUND wcdma : " + firstLine)
+                return
+
+            if 'mixedmode//WG' in firstLine:
+                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                return
+
+            if 'mixedmode//LWG/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//LWG : " + firstLine)
+                return
+            if 'mixedmode//LG/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//LG : " + firstLine)
+                return
+            if 'mixedmode//LW/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//LW : " + firstLine)
+                return
+
         mo_dics = find_mo_to_mem(lines)
 
         for line in mo_dics.keys():
@@ -1035,6 +1102,36 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                             key_id = ''
                             featurestate = ''
                             description = ''
+            
+            elif frequency_type == "5G":                
+
+                matches = re.search(REGEX_FEATURE_5G_BASEBAND, line)
+
+                if matches:
+                    ne_name = matches.group(1)
+                    ne_name = ne_name.split(",")[0]
+
+                    key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
+
+                    if key_id != '' and featurestate != '':
+
+                        if key_id in key_dic:
+                            dic = dict.fromkeys(feature_column, '')
+                            dic["NAME"] = ne_name
+                            dic["REFERENCE_FIELD"] = ne_name
+                            dic["FILENAME"] = filename
+
+                            dic["DESCRIPTION"] = description
+                            dic["FEATURESTATE"] = featurestate
+
+                            dic["KEY_ID"] = key_id
+                            dic["LV"] = "BASEBAND"
+
+                            sw_result[sw_key].append(dic)
+
+                            key_id = ''
+                            featurestate = ''
+                            description = ''
 
     # log.i("----- Start mongo.push : " + str(datetime.datetime.now()), ERICSSON_VENDOR, frequency_type)
     # for group_param in mongo_result:
@@ -1081,6 +1178,32 @@ def parse_sw_3g_4g(raw_file, frequency_type):
 
             if 'mixedmode//WG' in firstLine:
                 log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                return
+
+            if '/nr/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                return
+
+            #TODO: Mixmode 5G , still Unknown
+
+        if frequency_type == "5G":
+            firstLine = lines[0]
+            if 'wcdma' in firstLine:
+                log.i("----- STOP FOUND wcdma : " + firstLine)
+                return
+
+            if 'mixedmode//WG' in firstLine:
+                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                return
+
+            if 'mixedmode//LWG/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//LWG : " + firstLine)
+                return
+            if 'mixedmode//LG/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//LG : " + firstLine)
+                return
+            if 'mixedmode//LW/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//LW : " + firstLine)
                 return
 
         mo_dics = find_mo_to_mem(lines)
@@ -1143,6 +1266,31 @@ def parse_sw_3g_4g(raw_file, frequency_type):
                     sw_familytype = "DU"
                     continue
 
+                matches = re.search(REGEX_SW_NAME_4G_2, line)
+
+                if matches and sw_version == '':
+                    sw_name = matches.group(1)
+                    sw_name = sw_name.split(",")[0]
+
+                    sw_version = find_swversion_4g(lines, index)
+
+                    sw_version_tmp = find_swversion_4g_tmp(lines, index)
+
+                    sw_familytype = "Baseband"
+                    continue
+
+                matches = re.search(REGEX_SW_NETYPENAME_BASEBAND, line)
+                if matches and sw_netypename == '':
+                    sw_netypename = find_netypename_baseband(lines, index)
+                    continue
+
+                matches = re.search(REGEX_SW_NETYPENAME, line)
+                if matches and sw_netypename == '':
+                    sw_netypename = find_netypename(lines, index)
+                    continue
+
+            elif frequency_type == "5G" and (sw_version == "" or sw_netypename == ""):
+                
                 matches = re.search(REGEX_SW_NAME_4G_2, line)
 
                 if matches and sw_version == '':
@@ -1246,6 +1394,32 @@ def parse_3g_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_di
 
             if 'mixedmode//WG' in firstLine:
                 log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                return
+            
+            if '/nr/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                return
+
+            #TODO: Mixmode 5G , still Unknown
+
+        if frequency_type == "5G":
+            firstLine = lines[0]
+            if 'wcdma' in firstLine:
+                log.i("----- STOP FOUND wcdma : " + firstLine)
+                return
+
+            if 'mixedmode//WG' in firstLine:
+                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                return
+
+            if 'mixedmode//LWG/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//LWG : " + firstLine)
+                return
+            if 'mixedmode//LG/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//LG : " + firstLine)
+                return
+            if 'mixedmode//LW/' in firstLine:
+                log.i("----- STOP FOUND mixedmode//LW : " + firstLine)
                 return
 
         mo_dics = find_mo_to_mem(lines)
