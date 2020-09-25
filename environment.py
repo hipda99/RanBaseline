@@ -64,7 +64,7 @@ if environment == 'dev':
     JSON_RESULT_PATH = '/app/ngoss/zte_result/{0}/{1}/'
 
     # config: zte mapping file
-    ING_FILE_PATH = "/home/app/ngoss/RanBaselineApp/source/config/dev/" + MAPPING_NAME
+    MAPPING_FILE_PATH = "/home/app/ngoss/RanBaselineApp/source/config/dev/" + MAPPING_NAME
 
     # config: data source file
     RAW_FILE_PATH_COLLECTION = "/home/app/ngoss/RanBaselineApp/source/config/dev/RawFilePathCollection.xlsx"
@@ -93,7 +93,7 @@ if environment == 'prod':
     JSON_RESULT_PATH = '/app/ngoss/zte_result/{0}/{1}/'
 
     # config: zte mapping file
-    ING_FILE_PATH = "/home/app/ngoss/RanBaselineApp/source/config/prod/" + MAPPING_NAME
+    MAPPING_FILE_PATH = "/home/app/ngoss/RanBaselineApp/source/config/prod/" + MAPPING_NAME
 
     # config: data source file
     RAW_FILE_PATH_COLLECTION = "/home/app/ngoss/RanBaselineApp/source/config/prod/RawFilePathCollection.xlsx"
@@ -122,7 +122,7 @@ if environment == 'north':
     JSON_RESULT_PATH = '/app/ngoss/zte_result/{0}/{1}/'
 
     # config: zte mapping file
-    ING_FILE_PATH = CONFIGURATION_PATH + MAPPING_NAME
+    MAPPING_FILE_PATH = CONFIGURATION_PATH + MAPPING_NAME
 
     # config: data source file
     RAW_FILE_PATH_COLLECTION = CONFIGURATION_PATH + 'RawFilePathCollection.xlsx'

@@ -34,6 +34,8 @@ class RawFile:
             self.FrequencyType = '3G'
         elif str(self.Technology) == 'LTE':
             self.FrequencyType = '4G'
+        elif str(self.Technology) == 'NR':
+            self.FrequencyType = '5G'
         else:
             self.FrequencyType = '-'
 
