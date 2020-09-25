@@ -39,6 +39,8 @@ CNA = 'CNA'
 
 REGEX_UTRANCELL = r",UtranCell=(.*?),"
 REGEX_MECONTEXT = r",MeContext=(.*?),"
+REGEX_NRCELLCU = r",NRCellCU=(.*?),"
+REGEX_NRCELLDU = r",NRCellDU==(.*?),"
 REGEX_EUTRANCELLFDD = r",EUtranCellFDD=(.*?),"
 REGEX_SW_NAME_3G_OR_4G = '^MO.*,MeContext=(.*),SwManagement=1,ConfigurationVersion=1$'
 REGEX_SW_NAME_4G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,BrM=1,BrmBackupManager=1,BrmBackup=(.*)'
@@ -1487,6 +1489,12 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
                                 if frequency_type == "4G":
                                     matches = re.search(REGEX_EUTRANCELLFDD, mo)
+                                elif frequency_type == "5G":
+                                    if 'NRCELLDU'.upper() in group_param or 'NRCellDU' in mo:
+                                        matches = re.search(REGEX_NRCELLDU, mo)
+                                    elif 'NRCELLCU'.upper() in group_param or 'NRCellCU' in mo:
+                                        matches = re.search(REGEX_NRCELLCU, mo)
+
                                 else:
                                     matches = re.search(REGEX_UTRANCELL, mo)
 
