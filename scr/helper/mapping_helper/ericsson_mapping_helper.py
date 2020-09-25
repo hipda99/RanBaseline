@@ -158,6 +158,9 @@ def read_5g(file_mapping_path_name):
             param_dic[param_group].append("FILENAME")
             param_dic[param_group].append("REFERENCE_FIELD")
             param_dic[param_group].append(BASELINE_TYPE)
+
+            if param_name == "MO":
+                param_cell_mo[param_group] = baseline_2600_value
             
             baseline_2600_dic[param_group] = [{param_name: baseline_2600_value}]
             baseline_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_2600_TYPE
