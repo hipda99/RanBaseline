@@ -1600,6 +1600,23 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                     mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
                                                     oracle_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
 
+                                    # How about group NRSectorCarrier
+                                    elif group_param == 'NRSECTORCARRIER':
+                                        if "NRCellDU" in value:
+                                            tmp_full_dic = value.split(",")
+                                            for tmp_dic in tmp_full_dic:
+                                                if "NRCellDU" in tmp_dic:
+                                                    tmp_dic = tmp_dic.split("=")
+                                                    mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
+                                                    oracle_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
+
+                                        elif "NRCellCU" in value:
+                                            tmp_full_dic = value.split(",")
+                                            for tmp_dic in tmp_full_dic:
+                                                if "NRCellCU" in tmp_dic:
+                                                    tmp_dic = tmp_dic.split("=")
+                                                    mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
+                                                    oracle_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
                                 continue
 
                             mongo_value_pair_dic[dictData[0].upper()] = " ".join(dictData[1:])
