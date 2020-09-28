@@ -1601,7 +1601,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                     oracle_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
 
                                     # How about group NRSectorCarrier
-                                    elif group_param == 'NRSECTORCARRIER':
+                                    elif group_param == 'NRSECTORCARRIER' or group_param == 'COMMONBEAMFORMING' or group_param == 'NRFREQUENCY':
                                         if "NRCellDU" in value:
                                             tmp_full_dic = value.split(",")
                                             for tmp_dic in tmp_full_dic:
