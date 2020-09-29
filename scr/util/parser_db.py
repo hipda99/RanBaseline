@@ -31,7 +31,7 @@ def update_status(vendor, parser, state):
 		cursor.execute(query)
 		connection.commit()
 		elapsed_time = time.time() - execute_time		
-		log.i(f'parser.update_status.done: elapsed time = {elapsed_time:.2f} sec')
+		# log.i(f'parser.update_status.done: elapsed time = {elapsed_time:.2f} sec')
 
 	except Exception as e:		
 		log.e(f'parser.update_status.err: {str(e)}')
