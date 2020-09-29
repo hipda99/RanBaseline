@@ -4,12 +4,15 @@ import datetime
 import log
 from environment import ERICSSON_FEATURE_VENDOR
 from scr.parser import main_baseline_parser
+from scr.util import parser_db
 
 TIME_START_SCRIPT = datetime.datetime.now()
 log.i(" ", ERICSSON_FEATURE_VENDOR, "3G")
 log.i(" ", ERICSSON_FEATURE_VENDOR, "3G")
 log.i("           ", ERICSSON_FEATURE_VENDOR)
 log.i("Start Script : " + ERICSSON_FEATURE_VENDOR, ERICSSON_FEATURE_VENDOR, "3G")
+
+parser_db.update_status(ERICSSON_FEATURE_VENDOR, '3G', parser_db.STATUS_OPEN)
 
 main_baseline_parser.run(ERICSSON_FEATURE_VENDOR, "3G")
 
@@ -21,8 +24,9 @@ log.i("--------------------------------", ERICSSON_FEATURE_VENDOR, "3G")
 log.count()
 log.i("--------------------------------", ERICSSON_FEATURE_VENDOR, "3G")
 log.i("--------------------------------", ERICSSON_FEATURE_VENDOR, "3G")
-
 log.i("Done all : " + ERICSSON_FEATURE_VENDOR + " 3G", ERICSSON_FEATURE_VENDOR, "3G")
+
+parser_db.update_status(ERICSSON_FEATURE_VENDOR, '3G', parser_db.STATUS_CLOSE)
 
 log.i("           ", ERICSSON_FEATURE_VENDOR)
 log.i("           ", ERICSSON_FEATURE_VENDOR)

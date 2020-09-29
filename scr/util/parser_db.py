@@ -7,8 +7,8 @@ import log
 
 from environment import *
 
-STATUS_OPEN = "processing"
-STATUS_CLOSE = "done"
+STATUS_OPEN = "PROCESSING"
+STATUS_CLOSE = "DONE"
 
 def update_status(vendor, parser, state):
 	dsn_tns = cx_Oracle.makedsn(ORACLE_HOST, ORACLE_PORT, ORACLE_SID)
