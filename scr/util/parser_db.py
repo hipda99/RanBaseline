@@ -27,6 +27,7 @@ def update_status(vendor, parser, state):
 		cursor = connection.cursor()
 		execute_time = time.time()	
 		cursor.prepare(query)	
+		print(query)
 		cursor.setinputsizes(t_val=cx_Oracle.TIMESTAMP)
 		cursor.execute(None, {'t_val': ts})
 		connection.commit()
@@ -35,6 +36,7 @@ def update_status(vendor, parser, state):
 
 	except Exception as e:		
 		logger.exception(f'parser.update_status.err: {str(e)}')
+		print(e)
 	finally:
 		if cursor is not None:
 			cursor.close()
