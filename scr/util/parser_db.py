@@ -16,11 +16,11 @@ def update_status(vendor, parser, state):
 	cursor = None
 	try:	
 		# ts = datetime.datetime.now()	
-		query = f"""MERGE INTO PARSER_STATUS d
-		USING (SELECT * from PARSER_STATUS WHERE VENDOR = '{vendor}' AND PARSER = '{parser}' AND trunc(DT,'DD') = trunc(sysdate, 'DD')) s
-		ON (d.vendor = s.vendor AND d.parser = s.parser AND d.dt = s.dt)
-		WHEN MATCHED THEN UPDATE SET d.status = '{state}'
-		WHEN NOT MATCHED THEN INSERT (vendor, parser, status, dt) VALUES ('{vendor}', '{parser}', '{state}', sysdate);
+		query = f"""MERGE INTO PARSER_STATUS d 
+		USING (SELECT * from PARSER_STATUS WHERE VENDOR = '{vendor}' AND PARSER = '{parser}' AND trunc(DT,'DD') = trunc(sysdate, 'DD')) s 
+		ON (d.vendor = s.vendor AND d.parser = s.parser AND d.dt = s.dt) 
+		WHEN MATCHED THEN UPDATE SET d.status = '{state}' 
+		WHEN NOT MATCHED THEN INSERT (vendor, parser, status, dt) VALUES ('{vendor}', '{parser}', '{state}', sysdate)
 		"""
 		# query = f"INSERT INTO PARSER_STATUS VALUES ('{vendor}','{parser}','{state}', {today}"
 		cursor = connection.cursor()
