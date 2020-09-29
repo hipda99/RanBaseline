@@ -16,12 +16,11 @@ def update_status(vendor, parser, state):
 	connection = cx_Oracle.connect(ORACLE_USERNAME, ORACLE_PASSWORD, dsn_tns, encoding="UTF-8",nencoding="UTF-8")
 	cursor = None
 	try:		
-		today = datetime.date.today()
 		query = f"""MERGE INTO PARSER_STATUS d
 		USING (SELECT * from PARSER_STATUS WHERE VENDOR = '{vendor}' AND PARSER = '{parser}' AND trunc(DT,'DD') = trunc(sysdate, 'DD')) s
 		ON (d.vendor = s.vendor AND d.parser = s.parser AND d.dt = s.dt)
 		WHEN MATCHED THEN UPDATE SET d.status = '{state}'
-		WHEN NOT MATCHED THEN INSERT (vendor, parser, status, dt) VALUES ('{vendor}', '{parser}', '{state}', {today});
+		WHEN NOT MATCHED THEN INSERT (vendor, parser, status, dt) VALUES ('{vendor}', '{parser}', '{state}', {datetime.datetime.now()});
 		"""
 		# query = f"INSERT INTO PARSER_STATUS VALUES ('{vendor}','{parser}','{state}', {today}"
 		cursor = connection.cursor()
