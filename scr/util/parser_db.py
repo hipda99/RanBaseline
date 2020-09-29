@@ -17,8 +17,8 @@ def update_status(vendor, parser, state):
 	try:	
 		# ts = datetime.datetime.now()	
 		cursor = connection.cursor()
-		cursor = f"SELECT COUNT(1) FROM PARSER_STATUS WHERE VENDOR = '{vendor}' AND PARSER = '{parser}' AND trunc(DT,'DD') = trunc(sysdate, 'DD')"
-		cursor.execute(cursor)
+		query = f"SELECT COUNT(1) FROM PARSER_STATUS WHERE VENDOR = '{vendor}' AND PARSER = '{parser}' AND trunc(DT,'DD') = trunc(sysdate, 'DD')"
+		cursor.execute(query)
 		if cursor.fetchone()[0]:
 			# Existing
 			query = f"""UPDATE PARSER_STATUS SET status = '{state}'
