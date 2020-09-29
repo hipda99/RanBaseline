@@ -6,5 +6,6 @@ venv_prod/
 *.zip
 
 setup/
+logs/
 
 .vscode/
