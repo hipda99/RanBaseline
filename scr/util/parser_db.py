@@ -16,22 +16,28 @@ def update_status(vendor, parser, state):
 	cursor = None
 	try:	
 		# ts = datetime.datetime.now()	
-		query = f"""MERGE INTO PARSER_STATUS d 
-		USING (SELECT * from PARSER_STATUS WHERE VENDOR = '{vendor}' AND PARSER = '{parser}' AND trunc(DT,'DD') = trunc(sysdate, 'DD')) s 
-		ON (d.vendor = s.vendor AND d.parser = s.parser AND d.dt = s.dt) 
-		WHEN MATCHED THEN UPDATE SET d.status = '{state}' 
-		WHEN NOT MATCHED THEN INSERT (vendor, parser, status, dt) VALUES ('{vendor}', '{parser}', '{state}', sysdate)
-		"""
-		# query = f"INSERT INTO PARSER_STATUS VALUES ('{vendor}','{parser}','{state}', {today}"
 		cursor = connection.cursor()
-		execute_time = time.time()	
-		# cursor.prepare(query)	
-		# print(query)
-		# cursor.setinputsizes(t_val=cx_Oracle.TIMESTAMP)
-		cursor.execute(query)
-		connection.commit()
-		elapsed_time = time.time() - execute_time		
-		# log.i(f'parser.update_status.done: elapsed time = {elapsed_time:.2f} sec')
+		cursor = f"SELECT COUNT(1) FROM PARSER_STATUS WHERE VENDOR = '{vendor}' AND PARSER = '{parser}' AND trunc(DT,'DD') = trunc(sysdate, 'DD')"
+		cursor.execute(cursor)
+		if cursor.fetchone()[0]:
+			# Existing
+			query = f"""UPDATE PARSER_STATUS SET status = '{state}'
+			WHERE vendor = '{vendor}' and parser = '{parser}' AND TRUNC(dt, 'DD') = TRUNC(sysdate, 'DD')
+			"""						
+			# execute_time = time.time()	
+			cursor.execute(query)
+			connection.commit()
+			# elapsed_time = time.time() - execute_time		
+			# log.i(f'parser.update_status.done: elapsed time = {elapsed_time:.2f} sec')
+		else:
+			query = f"""INSERT INTO PARSER_STATUS (vendor, parser, status, dt) VALUES ('{vendor}', '{parser}', '{state}', sysdate)"""			
+			cursor = connection.cursor()
+			# execute_time = time.time()	
+			cursor.execute(query)
+			connection.commit()
+			# elapsed_time = time.time() - execute_time		
+			# log.i(f'parser.update_status.done: elapsed time = {elapsed_time:.2f} sec')
+
 
 	except Exception as e:		
 		log.e(f'parser.update_status.err: {str(e)}')
