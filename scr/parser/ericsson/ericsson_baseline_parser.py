@@ -1520,8 +1520,6 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                         row = 2
 
                         while True:
-                            if group_param == 'COMMONBEAMFORMING':
-                                tttt = True
                             dictData = lines[index + row].split()
 
                             if group_param == 'RNCFEATURE':
