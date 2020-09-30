@@ -10,7 +10,7 @@ from scr.helper.naming_helper import START_PARSER, FINISH_PARSER
 from scr.parser.ericsson import ericsson_baseline_parser
 from scr.parser.huewei import huewei_baseline_parser
 from scr.parser.zte import zte_baseline_parser
-from scr.dao import ran_baseline_oracle
+# from scr.dao import ran_baseline_oracle
 
 code_key_for_secure_access = "1c39b674-35cb-4eb5-b66e-7eae69d90604"
 
@@ -99,6 +99,10 @@ def run(vendor, frequency_type=""):
         if source.FrequencyType == frequency_type:
 
             try:
+                # Add initial to prevent error unbound
+                field_mapping_dic = {}
+                param_cell_level_dic = {}
+                param_mo_dic = {}
 
                 if vendor == ZTE_VENDOR:
 

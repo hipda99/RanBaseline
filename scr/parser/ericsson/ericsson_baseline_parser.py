@@ -1486,7 +1486,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                 reference_field = tmp_dic[len(tmp_dic) - 1]
 
                             else:
-
+                                matches = False
                                 if frequency_type == "4G":
                                     matches = re.search(REGEX_EUTRANCELLFDD, mo)
                                 elif frequency_type == "5G":
