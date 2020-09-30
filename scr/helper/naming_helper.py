@@ -87,6 +87,9 @@ def rule_column_name(columm_name, frequency_type=None):
 
 
 def cut_limit_character(text):
+    # Add exceptional Case help
+    if "BL_ERC_5G_QCIPROFILEENDCCONFIGEXT" == text:
+        text = "BL_ERC_5G_QCIPRFENDCCNFGEXT"
     if text.__len__() > 30:
         decrease_value = 30 - text.__len__()
         text = text[:decrease_value]
