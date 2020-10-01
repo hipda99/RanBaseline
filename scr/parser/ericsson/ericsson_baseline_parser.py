@@ -1403,7 +1403,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                 log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
                 return
 
-            #TODO: Mixmode 5G , still Unknown
+        #TODO: Mixmode 5G , still Unknown
 
         if frequency_type == "5G":
             firstLine = lines[0]
@@ -1462,6 +1462,55 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
                             if matches:
                                 qciProfilePredefinedId = matches.group(1)
+
+                        if group_param == 'COMMONBEAMFORMING' and frequency_type == '5G':
+                            sectorIndex = re.search(r".*,NRSectorCarrier=([^,]*),.*", mo)
+                            sector = None
+                            if (sectorIndex):
+                                sector = sectorIndex.group(1).strip()
+                            regex = f'^MO.*,MeContext=(.*),GNBDUFunction=1,NRSectorCarrier={sector}$'
+                            for l_ in mo_dics.keys():                            
+                                matches = re.search(regex, l_)
+                                if matches:
+                                    idx_ = mo_dics[l_]
+                                    row = 2
+                                    while True:
+                                        dictData = lines[index + row].split()
+                                        # End of MO
+                                        if dictData[0][0] == "=":                                
+                                            break
+
+                                        if dictData[0][:11] == "reservedBy[":
+                                            size_number = dictData[0].split('[')
+                                            size_number = size_number[1].split(']')
+                                            size_number = int(size_number[0])
+
+                                            list_ = []
+                                            row = row + 1
+
+                                            for i in range(size_number):
+                                                reserved_dict = lines[index + row].split()
+
+                                                value = reserved_dict[3]
+                                                list_.append(value)
+                                                row = row + 1                                                
+                                                if "NRCellDU" in value:
+                                                    tmp_full_dic = value.split(",")
+                                                    for tmp_dic in tmp_full_dic:
+                                                        if "NRCellDU" in tmp_dic:
+                                                            tmp_dic = tmp_dic.split("=")
+                                                            reference_field = tmp_dic[1]                                                            
+                                                            break
+
+                                                elif "NRCellCU" in value:
+                                                    tmp_full_dic = value.split(",")
+                                                    for tmp_dic in tmp_full_dic:
+                                                        if "NRCellCU" in tmp_dic:
+                                                            tmp_dic = tmp_dic.split("=")
+                                                            reference_field = tmp_dic[1]                                                        
+                                                            break
+                                if not reference_field:
+                                    reference_field = ne_name
 
                         if group_level == "NE-RNC" or group_level == "NE-NodeB" or group_level == "NE":
 
