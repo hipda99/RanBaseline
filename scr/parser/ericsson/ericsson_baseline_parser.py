@@ -1509,6 +1509,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                             tmp_dic = tmp_dic.split("=")
                                                             reference_field = tmp_dic[1]                                                        
                                                             break
+                                        row += 1
                                     break
                                 else:
                                     continue
