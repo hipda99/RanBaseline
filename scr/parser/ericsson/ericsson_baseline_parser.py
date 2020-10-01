@@ -1523,7 +1523,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                             if not reference_field:
                                 reference_field = ne_name
 
-                        if group_level == "NE-RNC" or group_level == "NE-NodeB" or group_level == "NE":
+                        elif group_level == "NE-RNC" or group_level == "NE-NodeB" or group_level == "NE":
 
                             if group_param == "IubLink".upper():
                                 tmp_dic = mo.split("=")
