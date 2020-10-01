@@ -1475,7 +1475,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                     idx_ = mo_dics[l_]
                                     row = 2
                                     while True:
-                                        dictData = lines[index + row].split()
+                                        dictData = lines[idx_ + row].split()
                                         # End of MO
                                         if dictData[0][0] == "=":                                
                                             break
@@ -1489,7 +1489,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                             row = row + 1
 
                                             for i in range(size_number):
-                                                reserved_dict = lines[index + row].split()
+                                                reserved_dict = lines[idx_ + row].split()
 
                                                 value = reserved_dict[3]
                                                 list_.append(value)
