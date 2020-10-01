@@ -1509,8 +1509,11 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                             tmp_dic = tmp_dic.split("=")
                                                             reference_field = tmp_dic[1]                                                        
                                                             break
-                                if not reference_field:
-                                    reference_field = ne_name
+                                    break
+                                else:
+                                    continue
+                            if not reference_field:
+                                reference_field = ne_name
 
                         if group_level == "NE-RNC" or group_level == "NE-NodeB" or group_level == "NE":
 
