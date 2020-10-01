@@ -225,7 +225,7 @@ def prepare_oracle_table_5g(oracle_con, oracle_cur, frequency_type, field_mappin
 
     oracle_con.commit()
 
-    return    
+    return
 
 
 def prepare_oracle_table_feature(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_dic):
@@ -1105,8 +1105,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                             key_id = ''
                             featurestate = ''
                             description = ''
-            
-            elif frequency_type == "5G":                
+
+            elif frequency_type == "5G":
 
                 matches = re.search(REGEX_FEATURE_5G_BASEBAND, line)
 
@@ -1293,7 +1293,7 @@ def parse_sw_3g_4g(raw_file, frequency_type):
                     continue
 
             elif frequency_type == "5G" and (sw_version == "" or sw_netypename == ""):
-                
+
                 matches = re.search(REGEX_SW_NAME_4G_2, line)
 
                 if matches and sw_version == '':
@@ -1398,7 +1398,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
             if 'mixedmode//WG' in firstLine:
                 log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
                 return
-            
+
             if '/nr/' in firstLine:
                 log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
                 return
@@ -1469,15 +1469,19 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                             if (sectorIndex):
                                 sector = sectorIndex.group(1).strip()
                             regex = f'^MO.*,MeContext=(.*),GNBDUFunction=1,NRSectorCarrier={sector}$'
-                            for l_ in mo_dics.keys():                            
+                            break_loop = False
+                            for l_ in mo_dics.keys():
                                 matches = re.search(regex, l_)
                                 if matches:
                                     idx_ = mo_dics[l_]
                                     row = 2
+                                    
                                     while True:
                                         dictData = lines[idx_ + row].split()
+                                        if break_loop:
+                                            break
                                         # End of MO
-                                        if dictData[0][0] == "=":                                
+                                        if dictData[0][0] == "=":
                                             break
 
                                         if dictData[0][:11] == "reservedBy[":
@@ -1493,13 +1497,14 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
                                                 value = reserved_dict[3]
                                                 list_.append(value)
-                                                row = row + 1                                                
+                                                row = row + 1
                                                 if "NRCellDU" in value:
                                                     tmp_full_dic = value.split(",")
                                                     for tmp_dic in tmp_full_dic:
                                                         if "NRCellDU" in tmp_dic:
                                                             tmp_dic = tmp_dic.split("=")
-                                                            reference_field = tmp_dic[1]                                                            
+                                                            reference_field = tmp_dic[1]
+                                                            break_loop = True
                                                             break
 
                                                 elif "NRCellCU" in value:
@@ -1507,8 +1512,10 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                     for tmp_dic in tmp_full_dic:
                                                         if "NRCellCU" in tmp_dic:
                                                             tmp_dic = tmp_dic.split("=")
-                                                            reference_field = tmp_dic[1]                                                        
+                                                            reference_field = tmp_dic[1]
+                                                            break_loop = True
                                                             break
+
                                         row += 1
                                     break
                                 else:
