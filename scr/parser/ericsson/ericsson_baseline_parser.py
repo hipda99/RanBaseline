@@ -147,7 +147,7 @@ def prepare_oracle_table(oracle_con, oracle_cur, frequency_type, field_mapping_d
     return
 
 
-def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, drop_param=True, base_mapping_label_dic={}):
+def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, drop_param=True, base_mapping_label_dic={}):
     log.i(PREPARING_TABLE_STATEMENT + " : " + frequency_type)
 
     for group_param in field_mapping_dic:
@@ -162,6 +162,7 @@ def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mappin
                 ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_900_dic[group_param])
                 ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_1800_dic[group_param])
                 ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2100_dic[group_param])
+                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
 
                 ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_label_dic[group_param])
 

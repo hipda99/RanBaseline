@@ -136,7 +136,7 @@ def run(vendor, frequency_type=""):
                     if source.FrequencyType == "4G":
 
                         field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, param_cell_level_dic, param_mo_dic, base_mapping_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
-                        ericsson_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, True, base_mapping_label_dic)
+                        ericsson_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, True, base_mapping_label_dic)
 
                         # ran_baseline_oracle.create_trigger(oracle_cur)
                     elif source.FrequencyType == "3G":
