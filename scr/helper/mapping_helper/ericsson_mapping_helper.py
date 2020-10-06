@@ -182,6 +182,7 @@ def read_4g(file_mapping_path_name):
     baseline_900_dic = {}
     baseline_1800_dic = {}
     baseline_2100_dic = {}
+    baseline_2600_dic = {}
 
     tmp_check_key_dic = {}
 
@@ -198,6 +199,7 @@ def read_4g(file_mapping_path_name):
         baseline_900_value = str(row[EXPECTED_900_VALUE_COLUMN_NAME])
         baseline_1800_value = str(row[EXPECTED_1800_VALUE_COLUMN_NAME])
         baseline_2100_value = str(row[EXPECTED_2100_VALUE_COLUMN_NAME])
+        baseline_2600_value = str(row[EXPECTED_2600_VALUE_COLUMN_NAME])
 
         if baseline_900_value == "nan":
             baseline_900_value = ""
@@ -207,6 +209,9 @@ def read_4g(file_mapping_path_name):
 
         if baseline_2100_value == "nan":
             baseline_2100_value = ""
+
+        if baseline_2600_value == "nan":
+            baseline_2600_value = ""
 
         if baseline_label_value == "nan":
             baseline_label_value = ""
@@ -230,6 +235,10 @@ def read_4g(file_mapping_path_name):
                 baseline_2100_dic[param_group][0][param_name] = baseline_2100_value
                 baseline_2100_dic[param_group][0][BASELINE_TYPE] = BASELINE_2100_TYPE
                 baseline_2100_dic[param_group][0][LV_COLUMN] = cell_level
+
+                baseline_2600_dic[param_group][0][param_name] = baseline_2600_value
+                baseline_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_2600_TYPE
+                baseline_2600_dic[param_group][0][LV_COLUMN] = cell_level
 
                 baseline_label_dic[param_group][0][param_name] = baseline_label_value
                 baseline_label_dic[param_group][0][REFERENCE_FIELD_COLUMN_NAME] = BASELINE_LABEL_TYPE
@@ -260,13 +269,17 @@ def read_4g(file_mapping_path_name):
             baseline_2100_dic[param_group][0][BASELINE_TYPE] = BASELINE_2100_TYPE
             baseline_2100_dic[param_group][0][LV_COLUMN] = cell_level
 
+            baseline_2600_dic[param_group] = [{param_name: baseline_2600_value}]
+            baseline_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_2600_TYPE
+            baseline_2600_dic[param_group][0][LV_COLUMN] = cell_level
+
             baseline_label_dic[param_group] = [{param_name: baseline_label_value}]
             baseline_label_dic[param_group][0][REFERENCE_FIELD_COLUMN_NAME] = BASELINE_LABEL_TYPE
             baseline_label_dic[param_group][0][LV_COLUMN] = cell_level
 
             tmp_check_key_dic[param_group.upper()] = [param_name.upper()]
 
-    return param_dic, baseline_900_dic, baseline_1800_dic, baseline_2100_dic, param_cell_level, param_cell_mo, baseline_label_dic
+    return param_dic, baseline_900_dic, baseline_1800_dic, baseline_2100_dic, baseline_2600_dic, param_cell_level, param_cell_mo, baseline_label_dic
 
 
 def read_3g(file_mapping_path_name):

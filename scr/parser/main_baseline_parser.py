@@ -118,7 +118,7 @@ def run(vendor, frequency_type=""):
                 elif vendor == HUAWEI_VENDOR:
 
                     if source.FrequencyType == "4G":
-                        field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
+                        field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         huewei_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, True, baseline_label_dic)
                     elif source.FrequencyType == "3G":
 
