@@ -42,6 +42,7 @@ REGEX_MECONTEXT = r",MeContext=(.*?),"
 REGEX_NRCELLCU = r",NRCellCU=([^,]*)"
 REGEX_NRCELLDU = r",NRCellDU=([^,]*)"
 REGEX_EUTRANCELLFDD = r",EUtranCellFDD=(.*?),"
+REGEX_EUTRANCELLTDD = r",EUtranCellTDD=(.*?),"
 REGEX_SW_NAME_3G_OR_4G = '^MO.*,MeContext=(.*),SwManagement=1,ConfigurationVersion=1$'
 REGEX_SW_NAME_4G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,BrM=1,BrmBackupManager=1,BrmBackup=(.*)'
 REGEX_SW_NAME_3G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,SwInventory=1,SwVersion=(.*)'
@@ -1542,14 +1543,17 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
                         elif group_level == "CELL":
 
-                            if group_param == "ExternalGsmCell".upper() or group_param == "ExternalUtranCell".upper() or group_param == "UtranCell".upper() or group_param == "EUtranCellFDD".upper():
+                            if group_param == "ExternalGsmCell".upper() or group_param == "ExternalUtranCell".upper() or group_param == "UtranCell".upper() or group_param == "EUtranCellFDD".upper() or group_param == "EUtranCellTDD".upper():
                                 tmp_dic = mo.split("=")
                                 reference_field = tmp_dic[len(tmp_dic) - 1]
 
                             else:
                                 matches = False
                                 if frequency_type == "4G":
-                                    matches = re.search(REGEX_EUTRANCELLFDD, mo)
+                                    if 'EUtranCellFDD' in mo:
+                                        matches = re.search(REGEX_EUTRANCELLFDD, mo)
+                                    elif 'EUtranCellTDD' in mo:
+                                        matches = re.search(REGEX_EUTRANCELLTDD, mo)
                                 elif frequency_type == "5G":
                                     if 'NRCELLDU'.upper() in group_param or 'NRCellDU' in mo:
                                         matches = re.search(REGEX_NRCELLDU, mo)
@@ -1647,7 +1651,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                     reserved_list.append(value)
                                     row = row + 1
 
-                                    if group_param == 'SECTORCARRIER' or group_param == "UTRANFREQUENCY":
+                                    if group_param == 'SECTORCARRIER' or group_param == "UTRANFREQUENCY" or group_param == 'EUTRANFREQUENCY':
                                         if "EUtranCellFDD" in value:
 
                                             tmp_full_dic = value.split(",")
@@ -1658,6 +1662,13 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                     # mongo_value_pair_dic[naming_helper.rule_column_name("reservedBy_" + "EUtranCellFDD")] = tmp_dic[1]
                                                     # oracle_value_pair_dic[naming_helper.rule_column_name("reservedBy_" + "EUtranCellFDD")] = tmp_dic[1]
 
+                                                    mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
+                                                    oracle_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
+                                        elif 'EUtranCellTDD' in value:
+                                            tmp_full_dic = value.split(",")
+                                            for tmp_dic in tmp_full_dic:
+                                                if "EUtranCellTDD" in tmp_dic:
+                                                    tmp_dic = tmp_dic.split("=")
                                                     mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
                                                     oracle_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
 
