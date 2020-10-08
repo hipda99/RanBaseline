@@ -43,12 +43,16 @@ def read_data_source(vendor):
         if row[VENDOR].upper() != vendor.upper():
             continue
 
+        # For test only 
+        if 'STH-ENM' not in row['Path']:
+            continue
+
         raw_file = RawFile(row)
         # Read file mapping path from yaml
         
-
         try:
             if raw_file.FrequencyType in yaml_value[vendor]['network']:
+                
                 raw_file.FileMappingPath = CONFIGURATION_PATH + yaml_value[vendor]['network'][raw_file.FrequencyType]['mapping']
             if 'feature' in yaml_value[vendor] and raw_file.FrequencyType in yaml_value[vendor]['feature']:
                 raw_file.FileMappingFeaturePath = CONFIGURATION_PATH + yaml_value[vendor]['feature'][raw_file.FrequencyType]['mapping']
