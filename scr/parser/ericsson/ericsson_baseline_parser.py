@@ -1431,15 +1431,12 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
         for group_param in param_mo_dic:
             group_param = group_param.upper()
-            if 'UtranCellRelation'.upper() in group_param or 'SignalingRadioBearer'.upper() in group_param or 'QciProfilePredefined'.upper() in group_param or 'EUtranCellTDD'.upper() in group_param or 'EUtranCellFDD'.upper() in group_param:
-                ttt = True
-
             reg_mo_str = param_mo_dic[group_param]
 
             if not reg_mo_str or 'NO AUDIT' in reg_mo_str.upper(): # Group is not audit
                 log.i(f"----- Skip group {group_param} reg_mo = {reg_mo_str}")
                 continue
-            
+
             reg_mo_dic = reg_mo_str.split("\n")
 
             for reg_mo in reg_mo_dic:
