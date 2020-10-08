@@ -194,8 +194,6 @@ def prepare_oracle_table_5g(oracle_con, oracle_cur, frequency_type, field_mappin
     log.i(PREPARING_TABLE_STATEMENT + " : " + frequency_type)
 
     for group_param in field_mapping_dic:
-        if group_param.upper() in 'ReportConfigB2Cdma2000'.upper():
-            ttt = True
         table_name = naming_helper.get_table_name(BASELINE_TABLE_PREFIX.format(ERICSSON_TABLE_PREFIX), frequency_type, group_param)
         column_collection = field_mapping_dic[group_param]
 
