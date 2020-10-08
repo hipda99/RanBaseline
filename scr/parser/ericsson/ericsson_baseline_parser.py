@@ -194,6 +194,8 @@ def prepare_oracle_table_5g(oracle_con, oracle_cur, frequency_type, field_mappin
     log.i(PREPARING_TABLE_STATEMENT + " : " + frequency_type)
 
     for group_param in field_mapping_dic:
+        if group_param.upper() in 'ReportConfigB2Cdma2000'.upper():
+            ttt = True
         table_name = naming_helper.get_table_name(BASELINE_TABLE_PREFIX.format(ERICSSON_TABLE_PREFIX), frequency_type, group_param)
         column_collection = field_mapping_dic[group_param]
 
@@ -1371,9 +1373,6 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
     log.i(PARSING_FILE_STATEMENT.format(raw_file))
     log.i("----- Start Parser : " + str(datetime.datetime.now()), ERICSSON_VENDOR, frequency_type)
     oracle_con, oracle_cur = open_connection()
-
-    if 'CPN6783I_6NB03' in raw_file:
-        ttt = True
 
     mongo_result = {}
     oracle_result = {}
