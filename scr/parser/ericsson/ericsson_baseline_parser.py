@@ -1436,6 +1436,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
             reg_mo_str = param_mo_dic[group_param]
             reg_mo_dic = reg_mo_str.split("\n")
+            log.i(f"----- Process {group_param} reg_mo = {reg_mo_str}")
 
             for reg_mo in reg_mo_dic:
 
