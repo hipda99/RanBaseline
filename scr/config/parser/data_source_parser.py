@@ -45,10 +45,12 @@ def read_data_source(vendor):
 
         raw_file = RawFile(row)
         # Read file mapping path from yaml
-        raw_file.FileMappingPath = CONFIGURATION_PATH + yaml_value[vendor]['network'][raw_file.FrequencyType]['mapping']
+        
 
         try:
-            if 'feature' in yaml_value[vendor]:
+            if raw_file.FrequencyType in yaml_value[vendor]['network']:
+                raw_file.FileMappingPath = CONFIGURATION_PATH + yaml_value[vendor]['network'][raw_file.FrequencyType]['mapping']
+            if 'feature' in yaml_value[vendor] and raw_file.FrequencyType in yaml_value[vendor]['feature']:
                 raw_file.FileMappingFeaturePath = CONFIGURATION_PATH + yaml_value[vendor]['feature'][raw_file.FrequencyType]['mapping']
         except:
             pass

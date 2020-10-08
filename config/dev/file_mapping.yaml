@@ -6,6 +6,7 @@ ZTE:
             mapping: zte_3g_mapping.xlsx
         4G:
             mapping: zte_4g_mapping.xlsx
+        
 Huawei:
     network:
         2G:
@@ -23,3 +24,5 @@ Ericsson:
             mapping: erc_3g_mapping.xlsx
         4G:
             mapping: erc_4g_mapping.xlsx
+        5G:
+            mapping: erc_5g_mapping.xlsx
