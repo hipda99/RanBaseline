@@ -43,6 +43,10 @@ def read_data_source(vendor):
         if row[VENDOR].upper() != vendor.upper():
             continue
 
+        # For test only 
+        if 'STH-ENM' not in row['Path']:
+            continue
+
         raw_file = RawFile(row)
         # Read file mapping path from yaml
         
