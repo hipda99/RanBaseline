@@ -12,6 +12,7 @@ log.i(" ", ERICSSON_FEATURE_VENDOR, "4G")
 log.i("           ", ERICSSON_FEATURE_VENDOR)
 log.i("Start Script : " + ERICSSON_FEATURE_VENDOR, ERICSSON_FEATURE_VENDOR, "4G")
 
+
 parser_db.update_status(ERICSSON_FEATURE_VENDOR, '4G', parser_db.STATUS_OPEN)
 
 main_baseline_parser.run(ERICSSON_FEATURE_VENDOR, "4G")
