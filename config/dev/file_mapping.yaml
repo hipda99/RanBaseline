@@ -1,28 +1,37 @@
 ZTE:
-    network:
-        2G:
-            mapping: zte_2g_mapping.xlsx
-        3G:
-            mapping: zte_3g_mapping.xlsx
-        4G:
-            mapping: zte_4g_mapping.xlsx
-        
+  network:
+    2G:
+      mapping: zte_2g_mapping.xlsx
+    3G:
+      mapping: zte_3g_mapping.xlsx
+    4G:
+      mapping: zte_4g_mapping.xlsx
 Huawei:
-    network:
-        2G:
-            mapping: hw_2g_mapping.xlsx
-        3G:
-            mapping: hw_3g_mapping.xlsx
-        4G:
-            mapping: hw_4g_mapping.xlsx
-            
+  network:
+    2G:
+      mapping: hw_2g_mapping.xlsx
+    3G:
+      mapping: hw_3g_mapping.xlsx
+    4G:
+      mapping: hw_4g_mapping.xlsx
+
 Ericsson:
-    network:
-        2G:
-            mapping: erc_2g_mapping.xlsx
-        3G:
-            mapping: erc_3g_mapping.xlsx
-        4G:
-            mapping: erc_4g_mapping.xlsx
-        5G:
-            mapping: erc_5g_mapping.xlsx
+  network:
+    2G:
+      mapping: erc_2g_mapping.xlsx
+    3G:
+      mapping: erc_3g_mapping.xlsx
+    4G:
+      mapping: erc_4g_mapping.xlsx
+    5G:
+      mapping: erc_5g_mapping.xlsx
+
+  feature:
+    2G:
+      mapping: erc_2g_mapping_feature.xlsx
+    3G:
+      mapping: erc_3g_mapping_feature.xlsx
+    4G:
+      mapping: erc_4g_mapping_feature.xlsx
+    5G:
+      mapping: erc_5g_mapping_feature.xlsx
