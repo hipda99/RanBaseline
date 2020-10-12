@@ -103,6 +103,7 @@ def run(vendor, frequency_type=""):
                 field_mapping_dic = {}
                 param_cell_level_dic = {}
                 param_mo_dic = {}
+                print(vendor)
 
                 if vendor == ZTE_VENDOR:
 
