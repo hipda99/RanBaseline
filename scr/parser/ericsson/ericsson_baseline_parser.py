@@ -9,6 +9,7 @@ import log
 from environment import *
 from scr.dao import ran_baseline_oracle
 from scr.helper import naming_helper
+from scr.helper.mapping_helper import ericsson_mapping_helper
 from scr.helper.naming_helper import START_PARSING_STATEMENT, PREPARING_TABLE_STATEMENT, PARSING_FILE_STATEMENT
 
 xml_namespaces = {'schemaLocation': 'http://www.ERICSSON.com/specs/ERICSSON_wl_bulkcm_xml_baseline_syn_1.0.0',
@@ -89,16 +90,18 @@ sw_column = [
     "MO"
 ]
 
-feature_column = [
-    "NAME",
-    "REFERENCE_FIELD",
-    "FILENAME",
+# feature_column = [
+#     "NAME",
+#     "REFERENCE_FIELD",
+#     "FILENAME",
 
-    "KEY_ID",
-    "FEATURESTATE",
-    "DESCRIPTION"
+#     "KEY_ID",
+#     "FEATURESTATE",
+#     "LICENSESTATE",
+#     "SERVICESTATE",
+#     "DESCRIPTION"
 
-]
+# ]
 
 
 def close_connection(connection, cur):
@@ -240,7 +243,7 @@ def prepare_oracle_table_feature(oracle_con, oracle_cur, frequency_type, field_m
     if table_name not in CREATED_TABLE:
 
         ran_baseline_oracle.drop(oracle_cur, "FEATURE_" + ERICSSON_TABLE_PREFIX + "_" + frequency_type)
-        ran_baseline_oracle.create_table(oracle_cur, "FEATURE_" + ERICSSON_TABLE_PREFIX + "_" + frequency_type, feature_column)
+        ran_baseline_oracle.create_table(oracle_cur, "FEATURE_" + ERICSSON_TABLE_PREFIX + "_" + frequency_type, ericsson_mapping_helper.feature_column)
 
         ran_baseline_oracle.drop(oracle_cur, table_name)
         ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
@@ -661,7 +664,7 @@ def parse_feature_2g(raw_file, frequency_type, field_mapping_dic, key_dic):
                             if key_id in key_dic:
                                 print(lines[index + 1])
 
-                                dic = dict.fromkeys(feature_column, '')
+                                dic = dict.fromkeys(ericsson_mapping_helper.feature_column, '')
                                 dic["NAME"] = identity
                                 dic["REFERENCE_FIELD"] = identity
                                 dic["FILENAME"] = filename
@@ -958,7 +961,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                     key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
 
                     if description in key_dic:
-                        dic = dict.fromkeys(feature_column, '')
+                        dic = dict.fromkeys(ericsson_mapping_helper.feature_column, '')
                         dic["NAME"] = ne_name
                         dic["REFERENCE_FIELD"] = ne_name
                         dic["FILENAME"] = filename
@@ -1003,7 +1006,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                             if key in key_dic:
                                 key_id = key.replace("featureState", "")
 
-                                dic = dict.fromkeys(feature_column, '')
+                                dic = dict.fromkeys(ericsson_mapping_helper.feature_column, '')
                                 dic["NAME"] = ne_name
                                 dic["REFERENCE_FIELD"] = ne_name
                                 dic["FILENAME"] = filename
@@ -1030,7 +1033,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                     key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
 
                     if key_id in key_dic:
-                        dic = dict.fromkeys(feature_column, '')
+                        dic = dict.fromkeys(ericsson_mapping_helper.feature_column, '')
                         dic["NAME"] = ne_name
                         dic["REFERENCE_FIELD"] = ne_name
                         dic["FILENAME"] = filename
@@ -1062,7 +1065,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                     if key_id != '' and featurestate != '':
 
                         if key_id in key_dic:
-                            dic = dict.fromkeys(feature_column, '')
+                            dic = dict.fromkeys(ericsson_mapping_helper.feature_column, '')
                             dic["NAME"] = ne_name
                             dic["REFERENCE_FIELD"] = ne_name
                             dic["FILENAME"] = filename
@@ -1091,7 +1094,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                     if key_id != '' and featurestate != '':
 
                         if key_id in key_dic:
-                            dic = dict.fromkeys(feature_column, '')
+                            dic = dict.fromkeys(ericsson_mapping_helper.feature_column, '')
                             dic["NAME"] = ne_name
                             dic["REFERENCE_FIELD"] = ne_name
                             dic["FILENAME"] = filename
@@ -1121,7 +1124,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                     if key_id != '' and featurestate != '':
 
                         if key_id in key_dic:
-                            dic = dict.fromkeys(feature_column, '')
+                            dic = dict.fromkeys(ericsson_mapping_helper.feature_column, '')
                             dic["NAME"] = ne_name
                             dic["REFERENCE_FIELD"] = ne_name
                             dic["FILENAME"] = filename

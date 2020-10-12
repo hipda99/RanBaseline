@@ -15,6 +15,8 @@ FEATURE_PARAMETER_GROUP_COLUMN_NAME = 'TYPE'
 FEATURE_PARAMETER_COLUMN_NAME = 'KeyID'
 FEATURE_BASELINE_COLUMN_NAME = 'BASELINE'
 FEATURE_DESCRIPTION_COLUMN_NAME = 'Description'
+FEATURE_SERVICESTATE_COLUMN_NAME = 'ServiceState'
+FEATURE_LICENSESTATE_COLUMN_NAME = 'LicenseState'
 
 LEVEL_COLUMN_NAME = 'Level'
 
@@ -39,6 +41,8 @@ feature_column = [
 
     "KEY_ID",
     "FEATURESTATE",
+    "LICENSESTATE",
+    "SERVICESTATE",
     "DESCRIPTION"
 
 ]
@@ -62,16 +66,17 @@ def read_ericsson_mapping(file_mapping_path_name, file_mapping_feature_path_name
 def read_feature(file_mapping_path_name):
     df = read_excel_mapping(file_mapping_path_name, 0)
 
-    param_dic = [
-        "NAME",
-        "REFERENCE_FIELD",
-        "FILENAME",
+    # param_dic = [
+    #     "NAME",
+    #     "REFERENCE_FIELD",
+    #     "FILENAME",
 
-        "KEY_ID",
-        "FEATURESTATE",
-        "DESCRIPTION"
+    #     "KEY_ID",
+    #     "FEATURESTATE",
+    #     "DESCRIPTION"        
 
-    ]
+    # ]
+    param_dic = feature_column
     baseline_dic = []
     key_dic = []
 
@@ -86,10 +91,19 @@ def read_feature(file_mapping_path_name):
         key_dic.append(param_name)
 
         baseline_value = str(row[FEATURE_BASELINE_COLUMN_NAME])
+        license_value = str(row[FEATURE_LICENSESTATE_COLUMN_NAME])
+        service_value = str(row[FEATURE_SERVICESTATE_COLUMN_NAME])
+        baseline_value = str(row[FEATURE_BASELINE_COLUMN_NAME])
         baseline_desc_value = str(row[FEATURE_DESCRIPTION_COLUMN_NAME])
 
         if baseline_value == "nan":
             baseline_value = ""
+        
+        if license_value == "nan":
+            license_value = ""
+        
+        if service_value == "nan":
+            service_value = ""
 
         if baseline_desc_value == "nan":
             baseline_desc_value = ""
@@ -98,6 +112,8 @@ def read_feature(file_mapping_path_name):
             {
                 "KEY_ID": param_name,
                 "FEATURESTATE": baseline_value,
+                "LICENSESTATE": license_value,
+                "SERVICESTATE": service_value,
                 "DESCRIPTION": baseline_desc_value,
                 "LV" : param_group
             }
