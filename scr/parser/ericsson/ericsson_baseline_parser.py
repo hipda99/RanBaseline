@@ -1018,9 +1018,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                                 dic["FILENAME"] = filename
 
                                 dic["DESCRIPTION"] = description
-                                dic["FEATURESTATE"] = featurestate     
-                                dic["LICENSESTATE"] = ''
-                                dic["SERVICESTATE"] = ''
+                                dic["FEATURESTATE"] = featurestate
                            
 
                                 dic["KEY_ID"] = key_id
