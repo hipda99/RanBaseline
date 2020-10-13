@@ -1951,7 +1951,7 @@ def find_feature_version_3g_4g(lines, index):
 
         # End of MO
         if dictData[0][0] == "=":
-            return key_id, featurestate, description
+            return key_id, featurestate, description, servicestate, licensestate
 
         key = dictData[0].upper()
         value = " ".join(dictData[1:])
