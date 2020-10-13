@@ -671,6 +671,8 @@ def parse_feature_2g(raw_file, frequency_type, field_mapping_dic, key_dic):
 
                                 dic["DESCRIPTION"] = description
                                 dic["FEATURESTATE"] = featurestate
+                                dic["LICENSESTATE"] = ""
+                                dic["SERVICESTATE"] = ""
 
                                 dic["KEY_ID"] = key_id
                                 dic["LV"] = "BASEBAND"
@@ -743,7 +745,7 @@ def parse_feature_3g(raw_file, frequency_type, field_mapping_dic):
                                         ne_name = matches.group(1)
                                         ne_name = ne_name.split(",")[0]
 
-                                        key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
+                                        key_id, featurestate, description, servicestate, licensestate = find_feature_version_3g_4g(lines, index)
                                         key = naming_helper.rule_column_name(key_id)
                                         key = key.upper()
 
@@ -758,7 +760,7 @@ def parse_feature_3g(raw_file, frequency_type, field_mapping_dic):
                                         ne_name = matches.group(1)
                                         ne_name = ne_name.split(",")[0]
 
-                                        key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
+                                        key_id, featurestate, description, servicestate, licensestate = find_feature_version_3g_4g(lines, index)
 
                                         if description == '':
                                             continue
@@ -817,7 +819,7 @@ def parse_feature_3g(raw_file, frequency_type, field_mapping_dic):
                                     ne_name = matches.group(1)
                                     ne_name = ne_name.split(",")[0]
 
-                                    key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
+                                    key_id, featurestate, description, servicestate, licensestate = find_feature_version_3g_4g(lines, index)
 
                                     if key_id == '':
                                         continue
@@ -835,7 +837,7 @@ def parse_feature_3g(raw_file, frequency_type, field_mapping_dic):
                                     ne_name = matches.group(1)
                                     ne_name = ne_name.split(",")[0]
 
-                                    key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
+                                    key_id, featurestate, description, servicestate, licensestate = find_feature_version_3g_4g(lines, index)
 
                                     if key_id == '':
                                         continue
@@ -958,7 +960,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                     ne_name = matches.group(1)
                     ne_name = ne_name.split(",")[0]
 
-                    key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
+                    key_id, featurestate, description, servicestate, licensestate = find_feature_version_3g_4g(lines, index)
 
                     if description in key_dic:
                         dic = dict.fromkeys(ericsson_mapping_helper.feature_column, '')
@@ -968,6 +970,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
 
                         dic["DESCRIPTION"] = description
                         dic["FEATURESTATE"] = featurestate
+                        dic["LICENSESTATE"] = servicestate
+                        dic["SERVICESTATE"] = licensestate
 
                         dic["KEY_ID"] = key_id
                         dic["LV"] = "RNC"
@@ -977,6 +981,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                         key_id = ''
                         featurestate = ''
                         description = ''
+                        servicestate = ''
+                        licensestate = ''
 
                     continue
 
@@ -1012,7 +1018,10 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                                 dic["FILENAME"] = filename
 
                                 dic["DESCRIPTION"] = description
-                                dic["FEATURESTATE"] = featurestate
+                                dic["FEATURESTATE"] = featurestate     
+                                dic["LICENSESTATE"] = ''
+                                dic["SERVICESTATE"] = ''
+                           
 
                                 dic["KEY_ID"] = key_id
                                 dic["LV"] = "NODEB"
@@ -1022,6 +1031,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                                 key_id = ''
                                 featurestate = ''
                                 description = ''
+                                servicestate = ''
+                                licensestate = ''
                     continue
 
                 matches = re.search(REGEX_FEATURE_3G_Baseband, line)
@@ -1030,7 +1041,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                     ne_name = matches.group(1)
                     ne_name = ne_name.split(",")[0]
 
-                    key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
+                    key_id, featurestate, description, servicestate, licensestate = find_feature_version_3g_4g(lines, index)
 
                     if key_id in key_dic:
                         dic = dict.fromkeys(ericsson_mapping_helper.feature_column, '')
@@ -1040,6 +1051,9 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
 
                         dic["DESCRIPTION"] = description
                         dic["FEATURESTATE"] = featurestate
+                        dic["LICENSESTATE"] = licensestate
+                        dic["SERVICESTATE"] = servicestate
+                        
 
                         dic["KEY_ID"] = key_id
                         dic["LV"] = "BASEBAND"
@@ -1049,6 +1063,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                         key_id = ''
                         featurestate = ''
                         description = ''
+                        servicestate = ''
+                        licensestate = ''
 
                     continue
 
@@ -1060,7 +1076,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                     ne_name = matches.group(1)
                     ne_name = ne_name.split(",")[0]
 
-                    key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
+                    key_id, featurestate, description, servicestate, licensestate = find_feature_version_3g_4g(lines, index)
 
                     if key_id != '' and featurestate != '':
 
@@ -1072,6 +1088,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
 
                             dic["DESCRIPTION"] = description
                             dic["FEATURESTATE"] = featurestate
+                            dic["LICENSESTATE"] = licensestate
+                            dic["SERVICESTATE"] = servicestate
 
                             dic["KEY_ID"] = key_id
                             dic["LV"] = "DU"
@@ -1080,6 +1098,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                             key_id = ''
                             featurestate = ''
                             description = ''
+                            servicestate = ''
+                            licensestate = ''
 
                     continue
 
@@ -1089,7 +1109,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                     ne_name = matches.group(1)
                     ne_name = ne_name.split(",")[0]
 
-                    key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
+                    key_id, featurestate, description, servicestate, licensestate = find_feature_version_3g_4g(lines, index)
 
                     if key_id != '' and featurestate != '':
 
@@ -1101,6 +1121,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
 
                             dic["DESCRIPTION"] = description
                             dic["FEATURESTATE"] = featurestate
+                            dic["LICENSESTATE"] = licensestate
+                            dic["SERVICESTATE"] = servicestate
 
                             dic["KEY_ID"] = key_id
                             dic["LV"] = "BASEBAND"
@@ -1110,6 +1132,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                             key_id = ''
                             featurestate = ''
                             description = ''
+                            servicestate = ''
+                            licensestate = ''
 
             elif frequency_type == "5G":
 
@@ -1119,7 +1143,7 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                     ne_name = matches.group(1)
                     ne_name = ne_name.split(",")[0]
 
-                    key_id, featurestate, description = find_feature_version_3g_4g(lines, index)
+                    key_id, featurestate, description, servicestate, licensestate = find_feature_version_3g_4g(lines, index)
 
                     if key_id != '' and featurestate != '':
 
@@ -1131,6 +1155,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
 
                             dic["DESCRIPTION"] = description
                             dic["FEATURESTATE"] = featurestate
+                            dic["LICENSESTATE"] = licensestate
+                            dic["SERVICESTATE"] = servicestate
 
                             dic["KEY_ID"] = key_id
                             dic["LV"] = "BASEBAND"
@@ -1140,6 +1166,8 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                             key_id = ''
                             featurestate = ''
                             description = ''
+                            servicestate = ''
+                            licensestate = ''
 
     # log.i("----- Start mongo.push : " + str(datetime.datetime.now()), ERICSSON_VENDOR, frequency_type)
     # for group_param in mongo_result:
@@ -1915,6 +1943,8 @@ def find_feature_version_3g_4g(lines, index):
     key_id = ""
     featurestate = ""
     description = ""
+    licensestate = ""
+    servicestate = ""
     while True:
         dictData = lines[index + row].split()
         row += 1
@@ -1941,9 +1971,18 @@ def find_feature_version_3g_4g(lines, index):
         if key.upper() == 'keyid'.upper():
             key_id = value
             continue
+        
+        #CR-2020 - Added serviceState and licenseState
+        if key.upper() == 'licenseState'.upper():
+            licensestate = value
+            continue
 
-        if featurestate != '' and key_id != '' and description != '':
-            return key_id, featurestate, description
+        if key.upper() == 'serviceState'.upper():
+            servicestate = value
+            continue
+
+        if featurestate != '' and key_id != '' and description != '' and not servicestate and not licensestate:
+            return key_id, featurestate, description, servicestate, licensestate
 
 
 def find_netypename(lines, index):
