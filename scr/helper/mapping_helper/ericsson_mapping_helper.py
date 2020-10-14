@@ -91,10 +91,13 @@ def read_feature(file_mapping_path_name):
         key_dic.append(param_name)
 
         baseline_value = str(row[FEATURE_BASELINE_COLUMN_NAME])
-        license_value = str(row[FEATURE_LICENSESTATE_COLUMN_NAME])
-        service_value = str(row[FEATURE_SERVICESTATE_COLUMN_NAME])
-        baseline_value = str(row[FEATURE_BASELINE_COLUMN_NAME])
         baseline_desc_value = str(row[FEATURE_DESCRIPTION_COLUMN_NAME])
+        license_value = ""
+        service_value = ""
+        if FEATURE_LICENSESTATE_COLUMN_NAME in row:
+            license_value = str(row[FEATURE_LICENSESTATE_COLUMN_NAME])
+        if FEATURE_SERVICESTATE_COLUMN_NAME in row:
+            service_value = str(row[FEATURE_SERVICESTATE_COLUMN_NAME])        
 
         if baseline_value == "nan":
             baseline_value = ""
