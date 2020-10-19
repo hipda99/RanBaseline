@@ -76,9 +76,13 @@ def prepare_oracle_table_5g(oracle_con, oracle_cur, frequency_type, field_mappin
             ran_baseline_oracle.drop(oracle_cur, table_name)
             ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
 
-            ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
-            if baseline_label_dic:                
-                ran_baseline_oracle.push(oracle_cur, table_name, baseline_label_dic[group_param])
+            try:
+                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
+                if baseline_label_dic:                
+                    ran_baseline_oracle.push(oracle_cur, table_name, baseline_label_dic[group_param])
+            except:
+                traceback.print_exc()
+                pass
 
     if drop_param:
 
@@ -116,13 +120,22 @@ def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mappin
             ran_baseline_oracle.drop(oracle_cur, table_name)
             ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
 
-            ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_dic[group_param])
+            try:
+                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_dic[group_param])
+                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
+                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_1800_anchor_dic[group_param])
 
-            if len(red_mapping_dic) != 0:
-                ran_baseline_oracle.push(oracle_cur, table_name, red_mapping_dic[group_param])
+                if len(red_mapping_dic) != 0:
+                    ran_baseline_oracle.push(oracle_cur, table_name, red_mapping_dic[group_param])
 
-            if baseline_label_dic:
-                ran_baseline_oracle.push(oracle_cur, table_name, baseline_label_dic[group_param])
+                if baseline_label_dic:
+                    ran_baseline_oracle.push(oracle_cur, table_name, baseline_label_dic[group_param])
+
+            except:
+                traceback.print_exc()
+                pass
+
+            
 
     if drop_param:
 
@@ -162,11 +175,15 @@ def prepare_oracle_table_3g(oracle_con, oracle_cur, frequency_type, field_mappin
             ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
 
             if ran_baseline_oracle.check_table_empty(oracle_cur, table_name) is True:
-                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_850_dic[group_param])
-                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2100_dic[group_param])
-                ran_baseline_oracle.push(oracle_cur, table_name, red_mapping_dic[group_param])
-                if baseline_label_dic:
-                    ran_baseline_oracle.push(oracle_cur, table_name, baseline_label_dic[group_param])
+                try:
+                    ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_850_dic[group_param])
+                    ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2100_dic[group_param])
+                    ran_baseline_oracle.push(oracle_cur, table_name, red_mapping_dic[group_param])
+                    if baseline_label_dic:
+                        ran_baseline_oracle.push(oracle_cur, table_name, baseline_label_dic[group_param])
+                except:
+                    traceback.print_exc()
+                    pass
 
     if drop_param:
         if (ZTE_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
