@@ -65,8 +65,46 @@ def open_connection():
     cur = connection.cursor()
     return connection, cur
 
+def prepare_oracle_table_5g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_2600_dic, drop_param=True, baseline_label_dic={}):
+    for group_param in field_mapping_dic:
+        table_name = naming_helper.get_table_name(BASELINE_TABLE_PREFIX.format(ZTE_TABLE_PREFIX), frequency_type, group_param)
 
-def prepare_oracle_table(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_dic, red_mapping_dic, drop_param=True, baseline_label_dic={}):
+        columns = field_mapping_dic[group_param]
+        column_collection = columns
+
+        if (ZTE_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+            ran_baseline_oracle.drop(oracle_cur, table_name)
+            ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
+
+            ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
+            ran_baseline_oracle.push(oracle_cur, table_name, baseline_label_dic[group_param])
+
+    if drop_param:
+
+        if (ZTE_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+            ran_baseline_oracle.drop(oracle_cur, "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type)
+            ran_baseline_oracle.create_table(oracle_cur, "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type, sw_column)
+
+        for group_param in field_mapping_dic:
+            table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, group_param)
+            field_mapping_dic[group_param].remove(BASELINE_TYPE)
+            field_mapping_dic[group_param].append('FILENAME')
+            field_mapping_dic[group_param].append('MO')
+            columns = field_mapping_dic[group_param]
+            column_collection = columns
+
+            if (ZTE_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+                ran_baseline_oracle.drop(oracle_cur, table_name)
+                ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
+
+    CREATED_TABLE[ZTE_TABLE_PREFIX + "_" + frequency_type] = []
+    log.i("Prepare_oracle_table End : CREATED_TABLE : " + str(CREATED_TABLE))
+
+    oracle_con.commit()
+
+    return
+
+def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_1800_anchor_dic, drop_param=True, baseline_label_dic={}):
     for group_param in field_mapping_dic:
         table_name = naming_helper.get_table_name(BASELINE_TABLE_PREFIX.format(ZTE_TABLE_PREFIX), frequency_type, group_param)
 
