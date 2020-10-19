@@ -6,6 +6,8 @@ ZTE:
             mapping: zte_3g_mapping.xlsx
         4G:
             mapping: zte_4g_mapping.xlsx
+        5G:
+            mapping: zte_5g_mapping.xlsx
 HW:
     network:
         2G:
