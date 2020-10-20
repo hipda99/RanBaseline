@@ -121,7 +121,7 @@ def run(vendor, frequency_type=""):
                         field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_1800_anchor_dic, base_mapping_2600_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         zte_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_1800_anchor_dic, True, baseline_label_dic)
                     elif source.FrequencyType == '5G':
-                        field_mapping_dic, base_mapping_2600_dic, cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
+                        field_mapping_dic, base_mapping_2600_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         zte_baseline_parser.prepare_oracle_table_5g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_2600_dic, True, baseline_label_dic)
 
                     zte_baseline_parser.run(source, field_mapping_dic, param_cell_level_dic)
