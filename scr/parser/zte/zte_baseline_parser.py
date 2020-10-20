@@ -6,6 +6,7 @@ import re
 import cx_Oracle
 from lxml import ElementInclude
 from lxml import etree
+from lxml.etree import XPathEvalError
 
 import log
 from environment import *
@@ -62,7 +63,7 @@ sw_column = [
 	"NEFUNCTION"
 ]
 
-REGEX_5G_LDN_NRCELLCU = r"^GNBDUFunction=((\d+)-(\d+)_(\d+)),NRCellCU=([^,]+).*$"
+REGEX_5G_LDN_NRCELLCU = r"^GNBCUCPFunction=((\d+)-(\d+)_(\d+)),NRCellCU=([^,]+).*$"
 REGEX_5G_LDN_NRPHYSICALCELLDU = r"^(NRRadioInfrastructure=\d+,NRPhysicalCellDU=([^,]+)).*$"
 REGEX_5G_LDN_NRCARRIER = r"^(NRRadioInfrastructure=\d+,NRCarrier=([^,]+)).*$"
 REGEX_5G_LDN_GNBDUFUNC = r"^GNBDUFunction=((\d+)-(\d+)_(\d+)).*$"
@@ -90,6 +91,22 @@ def strip_ns_prefix(tree):
 		#replace element name with its local name
 		element.tag = etree.QName(element).localname
 	return tree
+
+def parseData(node, xpath_str, index, ns=None, default=''):
+	ret = default
+	if node is not None and xpath_str is not None:
+		try:
+			if ns is not None:
+				ret = node.xpath(xpath_str,  namespaces = ns)[index]
+			else:
+				ret = node.xpath(xpath_str)[index]
+		except IndexError:
+			errMsg = f"XPath={xpath_str} index={index} not found"			
+		except XPathEvalError:
+			errMsg = f"XPath={xpath_str} eval error"
+		except Exception as e:
+			errMsg = f"XPath={xpath_str} index={index}, {str(e)}"
+	return ret
 
 def prepare_oracle_table_5g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_2600_dic, drop_param=True, baseline_label_dic={}):
 	for group_param in field_mapping_dic:
@@ -1240,10 +1257,10 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 # CR2020-NR/L2600
 def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
-	log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)
+	# log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)
 
-	oracle_con, oracle_cur = open_connection()
-	log.i("----- Start Parser : " + str(datetime.datetime.now()), ZTE_VENDOR, frequency_type)
+	# oracle_con, oracle_cur = open_connection()
+	# log.i("----- Start Parser : " + str(datetime.datetime.now()), ZTE_VENDOR, frequency_type)
 
 	mongo_result = {}
 	oracle_result = {}
@@ -1295,9 +1312,9 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							if m1:
 								gNBId = m1.group(4)
 
-						refNRPhysicalCellDU = nr_cell_du.xpath('.//refNRPhysicalCellDU/text()', namespaces=ns)[0]
-						du_cellname = nr_cell_du.xpath('.//userLabel/text()', namespaces=ns)[0]
-						cellLocalId = nr_cell_du.xpath('.//cellLocalId/text()', namespaces=ns)[0]
+						refNRPhysicalCellDU = parseData(nr_cell_du, f'.//refNRPhysicalCellDU/text()', 0, ns)
+						du_cellname = parseData(nr_cell_du, f'.//userLabel/text()', 0, ns)
+						cellLocalId = parseData(nr_cell_du, f'.//cellLocalId/text()', 0, ns)
 
 						refNRPhysicalCellDU_dic[refNRPhysicalCellDU] = {
 							'cellname': du_cellname,
@@ -1317,7 +1334,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					for physicalCellDu in physicalCellDu_collection:
 						ldn = physicalCellDu.get('ldn')
 						if ldn in refNRPhysicalCellDU_dic:
-							refNRCarrier = physicalCellDu.xpath('.//refNRCarrier/text()', namespaces=ns)[0]
+							# refNRCarrier = physicalCellDu.xpath('.//refNRCarrier/text()', namespaces=ns)[0]
+							refNRCarrier = parseData(physicalCellDu, f'.//refNRCarrier/text()', 0, ns)
 							refNRPhysicalCellDU_dic[ldn]['refNRCarrier'] = refNRCarrier
 							if refNRCarrier is not None:
 								pattern = re.compile(REGEX_5G_LDN_NRCARRIER)
@@ -1338,7 +1356,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					nr_cell_cus = node.xpath('.//mo[@moc="NRCellCU"]', namespaces=ns)
 					for nr_cell_cu in nr_cell_cus:
 						ldn = nr_cell_cu.get('ldn')
-						cu_cellname = nr_cell_cu.xpath('.//userLabel/text()', namespaces=ns)[0]
+						# cu_cellname = nr_cell_cu.xpath('.//userLabel/text()', namespaces=ns)[0]
+						cu_cellname = parseData(nr_cell_cu, f'.//userLabel/text()', 0, ns)
 						refCellCU_dic[ldn] = {
 							'cellname': cu_cellname,
 							'ldn': ldn
@@ -1350,7 +1369,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 						gnbCuFunction = neData.xpath(f".//mo[@moc='GNBCUCPFunction'][attributes/gNBId/text()='{gNBId}']/following-sibling::mo[1]", namespaces=ns)
 						for gnb in gnbCuFunction:
-							gnbName = gnb.xpath('.//attributes/gNBDUName/text()', namespaces=ns)[0]
+							# gnbName = gnb.xpath('.//attributes/gNBDUName/text()', namespaces=ns)[0]
+							gnbName = parseData(gnb, './/attributes/gNBDUName/text()', 0, ns)
 							gnb_dic[gNBId] = {
 								'gnb': gnbName,
 								'gNBId': gNBId
@@ -1367,11 +1387,11 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								plats = neData.xpath(u'.//module[@name="plat"]', namespaces=ns)
 								for plat in plats:
 									# Find managedElement
-									managedElement_ = plat.xpath(f'.//mo[@moc="ManagedElement"]', namespaces=ns)[0]
-									if managedElement_:
-										userLabel = managedElement_.xpath(f'.//userLabel/text()', namespaces=ns)[0]
-										gbscId = managedElement_.xpath(f'.//GBSCID/text()', namespaces=ns)[0]
-										rncId = managedElement_.xpath(f'.//RNCID/text()', namespaces=ns)[0]
+									managedElement_ = parseData(plat, f'.//mo[@moc="ManagedElement"]', 0, ns, default=None)
+									if managedElement_ is not None:
+										userLabel = parseData(managedElement_, f'.//userLabel/text()', 0, ns)
+										gbscId = parseData(managedElement_, f'.//GBSCID/text()', 0, ns)
+										rncId = parseData(managedElement_, f'.//RNCID/text()', 0, ns)
 										# find Sctp
 										mo_group_collection = plat.xpath(f'.//mo[@moc="{parameter_group}"]', namespaces=ns)
 										for mo in mo_group_collection:
@@ -1532,25 +1552,25 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 		except Exception as e:
 			log.e(f'---- ERROR: {str(e)}')
 
-	log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
-	for result in oracle_result:
+	# log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
+	# for result in oracle_result:
 
-		table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, result)
-		# granite_mongo.push(table_name, mongo_result[result])
-		try:
-			ran_baseline_oracle.push(oracle_cur, table_name, oracle_result[result])
-			oracle_con.commit()
-		except Exception as e:
-			log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)
-			log.e('Exception Into Table: ' + table_name, ZTE_VENDOR, frequency_type)
-			log.e(e, ZTE_VENDOR, frequency_type)
-			traceback.print_exc()
-			log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
+	# 	table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, result)
+	# 	# granite_mongo.push(table_name, mongo_result[result])
+	# 	try:
+	# 		ran_baseline_oracle.push(oracle_cur, table_name, oracle_result[result])
+	# 		oracle_con.commit()
+	# 	except Exception as e:
+	# 		log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)
+	# 		log.e('Exception Into Table: ' + table_name, ZTE_VENDOR, frequency_type)
+	# 		log.e(e, ZTE_VENDOR, frequency_type)
+	# 		traceback.print_exc()
+	# 		log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
 
-			oracle_con.commit()
-			oracle_con, oracle_cur = open_connection()
-			continue
+	# 		oracle_con.commit()
+	# 		oracle_con, oracle_cur = open_connection()
+	# 		continue
 
-	log.i("Done :::: " + filename + " ::::::::", ZTE_VENDOR, frequency_type)
-	log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
-	close_connection(oracle_con, oracle_cur)
+	# log.i("Done :::: " + filename + " ::::::::", ZTE_VENDOR, frequency_type)
+	# log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
+	# close_connection(oracle_con, oracle_cur)
