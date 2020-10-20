@@ -1257,10 +1257,10 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 # CR2020-NR/L2600
 def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
-	# log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)
+	log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)
 
-	# oracle_con, oracle_cur = open_connection()
-	# log.i("----- Start Parser : " + str(datetime.datetime.now()), ZTE_VENDOR, frequency_type)
+	oracle_con, oracle_cur = open_connection()
+	log.i("----- Start Parser : " + str(datetime.datetime.now()), ZTE_VENDOR, frequency_type)
 
 	mongo_result = {}
 	oracle_result = {}
@@ -1560,25 +1560,25 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 		except Exception as e:
 			log.e(f'---- ERROR: {str(e)}')
 
-	# log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
-	# for result in oracle_result:
+	log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
+	for result in oracle_result:
 
-	# 	table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, result)
-	# 	# granite_mongo.push(table_name, mongo_result[result])
-	# 	try:
-	# 		ran_baseline_oracle.push(oracle_cur, table_name, oracle_result[result])
-	# 		oracle_con.commit()
-	# 	except Exception as e:
-	# 		log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)
-	# 		log.e('Exception Into Table: ' + table_name, ZTE_VENDOR, frequency_type)
-	# 		log.e(e, ZTE_VENDOR, frequency_type)
-	# 		traceback.print_exc()
-	# 		log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
+		table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, result)
+		# granite_mongo.push(table_name, mongo_result[result])
+		try:
+			ran_baseline_oracle.push(oracle_cur, table_name, oracle_result[result])
+			oracle_con.commit()
+		except Exception as e:
+			log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)
+			log.e('Exception Into Table: ' + table_name, ZTE_VENDOR, frequency_type)
+			log.e(e, ZTE_VENDOR, frequency_type)
+			traceback.print_exc()
+			log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
 
-	# 		oracle_con.commit()
-	# 		oracle_con, oracle_cur = open_connection()
-	# 		continue
+			oracle_con.commit()
+			oracle_con, oracle_cur = open_connection()
+			continue
 
-	# log.i("Done :::: " + filename + " ::::::::", ZTE_VENDOR, frequency_type)
-	# log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
-	# close_connection(oracle_con, oracle_cur)
+	log.i("Done :::: " + filename + " ::::::::", ZTE_VENDOR, frequency_type)
+	log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
+	close_connection(oracle_con, oracle_cur)
