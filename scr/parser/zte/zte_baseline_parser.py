@@ -63,7 +63,7 @@ sw_column = [
 	"NEFUNCTION"
 ]
 
-REGEX_5G_LDN_NRCELLCU = r"^GNBCUCPFunction=((\d+)-(\d+)_(\d+)),NRCellCU=([^,]+).*$"
+REGEX_5G_LDN_NRCELLCU = r"^(GNBCUCPFunction=((\d+)-(\d+)_(\d+)),NRCellCU=([^,]+)).*$"
 REGEX_5G_LDN_NRPHYSICALCELLDU = r"^(NRRadioInfrastructure=\d+,NRPhysicalCellDU=([^,]+)).*$"
 REGEX_5G_LDN_NRCARRIER = r"^(NRRadioInfrastructure=\d+,NRCarrier=([^,]+)).*$"
 REGEX_5G_LDN_GNBDUFUNC = r"^GNBDUFunction=((\d+)-(\d+)_(\d+)).*$"
@@ -1257,10 +1257,10 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 # CR2020-NR/L2600
 def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
-	log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)
+	# log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)
 
-	oracle_con, oracle_cur = open_connection()
-	log.i("----- Start Parser : " + str(datetime.datetime.now()), ZTE_VENDOR, frequency_type)
+	# oracle_con, oracle_cur = open_connection()
+	# log.i("----- Start Parser : " + str(datetime.datetime.now()), ZTE_VENDOR, frequency_type)
 
 	mongo_result = {}
 	oracle_result = {}
@@ -1460,29 +1460,29 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										match_physicaldu = p_physicaldu.match(ldn)
 										match_nrcarrier = p_nrcarrier.match(ldn)
 										if match_cellcu:
-											cellCu = match_cellcu.group(4)
-											if cellCu in refCellCU_dic:
-												reference_name = refCellCU_dic[cellCu].get('cellname')
+											cellCu = match_cellcu.group(6)
+											key = match_cellcu.group(1)
+											if key in refCellCU_dic:
+												reference_name = refCellCU_dic[key].get('cellname')
 												cellLocalId = cellCu
 												if reference_name in cell_dic:
 													gNBId = cell_dic[reference_name].get('gNBId')
-
-											mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+																						
 										elif match_physicaldu:
 											physicalCellDu = match_physicaldu.group(1)
 											if physicalCellDu in refNRPhysicalCellDU_dic:
 												reference_name = refNRPhysicalCellDU_dic[physicalCellDu].get('cellname')
 												cellLocalId = refNRPhysicalCellDU_dic[physicalCellDu].get('cellLocalId')
 												gNBId = refNRPhysicalCellDU_dic[physicalCellDu].get('gNBId')
-
-											mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+											
 										elif match_nrcarrier:
 											refNrCarrier = match_nrcarrier.group(1)
 											if refNrCarrier in refNrCarrier_dic:
 												reference_name = refNrCarrier_dic[refNrCarrier].get('cellname')
 												cellLocalId = refNrCarrier_dic[refNrCarrier].get('cellLocalId')
 												gNBId = refNrCarrier_dic[refNrCarrier].get('gNBId')
-
+											
+										if gNBId is not None and cellLocalId is not None:
 											mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
 									else:
 										#GNB level
@@ -1499,6 +1499,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											p_gnbdufunc = re.compile(REGEX_5G_LDN_GNBDUFUNC)
 											p_gnbcucpfunc = re.compile(REGEX_5G_LDN_GNBCUCPFUNC)
 											match_gnbdufunc = p_gnbdufunc.match(ldn)
+											match_gnbcucpfunc = p_gnbcucpfunc.match(ldn)
 											if match_gnbdufunc:
 												gnb = match_gnbdufunc.group(4)
 												if gnb in gnb_dic:
@@ -1506,8 +1507,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													gNBId = gnb_dic[gnb].get('gNBId')
 
 												mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
-											elif match_gnbdufunc:
-												gnb = match_gnbdufunc.group(4)
+											elif match_gnbcucpfunc:
+												gnb = match_gnbcucpfunc.group(4)
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
@@ -1527,7 +1528,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											# Group EnDCPDCP ldn =  GNBCUCPFunction=520-04_550976,EnDCConfigCU=1,EnDCPDCP=1
 											mo_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn},qci={value}'
 
-									if mo_name is not None:
+									if mo_name is not None and reference_name is not None:
 										if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
 											COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0
 
@@ -1560,25 +1561,25 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 		except Exception as e:
 			log.e(f'---- ERROR: {str(e)}')
 
-	log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
-	for result in oracle_result:
+	# log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
+	# for result in oracle_result:
 
-		table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, result)
-		# granite_mongo.push(table_name, mongo_result[result])
-		try:
-			ran_baseline_oracle.push(oracle_cur, table_name, oracle_result[result])
-			oracle_con.commit()
-		except Exception as e:
-			log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)
-			log.e('Exception Into Table: ' + table_name, ZTE_VENDOR, frequency_type)
-			log.e(e, ZTE_VENDOR, frequency_type)
-			traceback.print_exc()
-			log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
+	# 	table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, result)
+	# 	# granite_mongo.push(table_name, mongo_result[result])
+	# 	try:
+	# 		ran_baseline_oracle.push(oracle_cur, table_name, oracle_result[result])
+	# 		oracle_con.commit()
+	# 	except Exception as e:
+	# 		log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)
+	# 		log.e('Exception Into Table: ' + table_name, ZTE_VENDOR, frequency_type)
+	# 		log.e(e, ZTE_VENDOR, frequency_type)
+	# 		traceback.print_exc()
+	# 		log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
 
-			oracle_con.commit()
-			oracle_con, oracle_cur = open_connection()
-			continue
+	# 		oracle_con.commit()
+	# 		oracle_con, oracle_cur = open_connection()
+	# 		continue
 
-	log.i("Done :::: " + filename + " ::::::::", ZTE_VENDOR, frequency_type)
-	log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
-	close_connection(oracle_con, oracle_cur)
+	# log.i("Done :::: " + filename + " ::::::::", ZTE_VENDOR, frequency_type)
+	# log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
+	# close_connection(oracle_con, oracle_cur)
