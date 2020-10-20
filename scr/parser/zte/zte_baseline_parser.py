@@ -1359,8 +1359,9 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 				# Check each MO under module = nr				
 				for parameter_group, valuedic in field_mapping_dic.items():
-					cell_type = cell_level_dic[parameter_group]					
-					mo_group_collection = node.xpath('.//mo[@moc="{parameter_group}"]', namespaces=ns)
+					cell_type = cell_level_dic[parameter_group]		
+					xpath = f'.//mo[@moc="{parameter_group}"]'			
+					mo_group_collection = node.xpath(xpath, namespaces=ns)
 
 					for mo in mo_group_collection:
 						ldn = mo.get('ldn')	
