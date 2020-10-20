@@ -1449,6 +1449,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									gNBId = None
 									cellLocalId = None
 									mo_name = None
+									qci = None
 									mongo_value_pair_dic = {}
 									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 									if level_type == 'CELL Level':
@@ -1492,11 +1493,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												gnb = match_gnbdufunc.group(4)
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
-													gNBId = gnb_dic[gnb].get('gNBId')
-
-												# Group EnDCPDCP ldn =  GNBCUCPFunction=520-04_550976,EnDCConfigCU=1,EnDCPDCP=1
-												qci = parseData(node, f'.//attributes/qci/text()', 0, ns)
-												mo_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn},qci={qci}'
+													gNBId = gnb_dic[gnb].get('gNBId')												
 
 										else:
 											p_gnbdufunc = re.compile(REGEX_5G_LDN_GNBDUFUNC)
@@ -1526,6 +1523,9 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 										if str(tag).upper() in oracle_value_pair_dic:
 											oracle_value_pair_dic[str(tag).upper()] = value
+										if parameter_group.upper() == 'EnDCPDCP'.upper() and str(tag).upper() == 'qci'.upper():
+											# Group EnDCPDCP ldn =  GNBCUCPFunction=520-04_550976,EnDCConfigCU=1,EnDCPDCP=1
+											mo_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn},qci={value}'
 
 									if mo_name is not None:
 										if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
