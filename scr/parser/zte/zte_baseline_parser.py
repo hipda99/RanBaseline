@@ -1359,92 +1359,95 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 				# Check each MO under module = nr				
 				for parameter_group, valuedic in field_mapping_dic.items():
-					cell_type = cell_level_dic[parameter_group]		
-					xpath = f'.//mo[@moc="{parameter_group}"]'			
-					mo_group_collection = node.xpath(xpath, namespaces=ns)
+					try:
+						cell_type = cell_level_dic[parameter_group]		
+						xpath = f'.//mo[@moc="{parameter_group}"]'			
+						mo_group_collection = node.xpath(xpath, namespaces=ns)
 
-					for mo in mo_group_collection:
-						ldn = mo.get('ldn')	
-						reference_name = None		
-						gNBId = None	
-						cellLocalId = None	
-						mo = None	
+						for mo in mo_group_collection:
+							ldn = mo.get('ldn')	
+							reference_name = None		
+							gNBId = None	
+							cellLocalId = None	
+							mo = None	
 
-						for att in mo.attrib:
-					
-							mongo_value_pair_dic = {}
-							oracle_value_pair_dic = dict.fromkeys(valuedic, '')							
-							value = mo[att]
-														
-							mongo_value_pair_dic[att] = value
+							for att in mo.attrib:
+						
+								mongo_value_pair_dic = {}
+								oracle_value_pair_dic = dict.fromkeys(valuedic, '')							
+								value = mo[att]
+															
+								mongo_value_pair_dic[att] = value
 
-							if str(att).upper() in oracle_value_pair_dic:
-								oracle_value_pair_dic[str(att).upper()] = value
+								if str(att).upper() in oracle_value_pair_dic:
+									oracle_value_pair_dic[str(att).upper()] = value
 
-							cell_type = cell_level_dic[parameter_group]
+								cell_type = cell_level_dic[parameter_group]
 
-							if cell_type == 'CELL Level':
-								p_cellcu = re.compile(REGEX_5G_LDN_NRCELLCU)
-								p_physicaldu = re.compile(REGEX_5G_LDN_NRPHYSICALCELLDU)
-								p_nrcarrier = re.compile(REGEX_5G_LDN_NRCARRIER)
-								match_cellcu = p_cellcu.match(ldn)
-								if match_cellcu:
-									cellCu = match_cellcu.group(4)
-									if cellCu in refCellCU_dic:
-										reference_name = refCellCU_dic[cellCu].get('cellname')
-										cellLocalId = cellCu
-										if reference_name in cell_dic:
-											gNBId = cell_dic[reference_name].get('gNBId')
-									
-									mo = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
-								elif p_physicaldu:
-									physicalCellDu = p_physicaldu.group(1)
-									if physicalCellDu in refNRPhysicalCellDU_dic:
-										reference_name = refNRPhysicalCellDU_dic[physicalCellDu].get('cellname')
-										cellLocalId = refCellCU_dic[physicalCellDu].get('cellLocalId')
-										gNBId = refCellCU_dic[physicalCellDu].get('gNBId')
-									
-									mo = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
-								elif p_nrcarrier:
-									refNrCarrier = p_nrcarrier.group(1)
-									if refNrCarrier in refNrCarrier_dic:
-										reference_name = refNrCarrier_dic[refNrCarrier].get('cellname')
-										cellLocalId = refNrCarrier_dic[refNrCarrier].get('cellLocalId')
-										gNBId = refNrCarrier_dic[refNrCarrier].get('gNBId')
-
-									mo = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+								if cell_type == 'CELL Level':
+									p_cellcu = re.compile(REGEX_5G_LDN_NRCELLCU)
+									p_physicaldu = re.compile(REGEX_5G_LDN_NRPHYSICALCELLDU)
+									p_nrcarrier = re.compile(REGEX_5G_LDN_NRCARRIER)
+									match_cellcu = p_cellcu.match(ldn)
+									if match_cellcu:
+										cellCu = match_cellcu.group(4)
+										if cellCu in refCellCU_dic:
+											reference_name = refCellCU_dic[cellCu].get('cellname')
+											cellLocalId = cellCu
+											if reference_name in cell_dic:
+												gNBId = cell_dic[reference_name].get('gNBId')
 										
-								if mo is not None:
-									if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
-										COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0								
-								
-									COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] + 1
+										mo = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+									elif p_physicaldu:
+										physicalCellDu = p_physicaldu.group(1)
+										if physicalCellDu in refNRPhysicalCellDU_dic:
+											reference_name = refNRPhysicalCellDU_dic[physicalCellDu].get('cellname')
+											cellLocalId = refCellCU_dic[physicalCellDu].get('cellLocalId')
+											gNBId = refCellCU_dic[physicalCellDu].get('gNBId')
+										
+										mo = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+									elif p_nrcarrier:
+										refNrCarrier = p_nrcarrier.group(1)
+										if refNrCarrier in refNrCarrier_dic:
+											reference_name = refNrCarrier_dic[refNrCarrier].get('cellname')
+											cellLocalId = refNrCarrier_dic[refNrCarrier].get('cellLocalId')
+											gNBId = refNrCarrier_dic[refNrCarrier].get('gNBId')
 
-									oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = reference_name
-									oracle_value_pair_dic['FILENAME'] = filename
-									oracle_value_pair_dic['LV'] = cell_type
-									oracle_value_pair_dic['MO'] = mo
+										mo = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+											
+									if mo is not None:
+										if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
+											COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0								
+									
+										COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] + 1
 
-									mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = reference_name
-									mongo_value_pair_dic['FILENAME'] = filename
-									mongo_value_pair_dic['LV'] = cell_type
-									mongo_value_pair_dic['MO'] = mo
+										oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = reference_name
+										oracle_value_pair_dic['FILENAME'] = filename
+										oracle_value_pair_dic['LV'] = cell_type
+										oracle_value_pair_dic['MO'] = mo
 
-									if parameter_group in mongo_result:
-										mongo_result[parameter_group].append(mongo_value_pair_dic)
-									else:
-										mongo_result[parameter_group] = []
-										mongo_result[parameter_group].append(mongo_value_pair_dic)
+										mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = reference_name
+										mongo_value_pair_dic['FILENAME'] = filename
+										mongo_value_pair_dic['LV'] = cell_type
+										mongo_value_pair_dic['MO'] = mo
 
-									if parameter_group in oracle_result:
-										oracle_result[parameter_group].append(oracle_value_pair_dic)
-									else:
-										oracle_result[parameter_group] = []
-										oracle_result[parameter_group].append(oracle_value_pair_dic)
+										if parameter_group in mongo_result:
+											mongo_result[parameter_group].append(mongo_value_pair_dic)
+										else:
+											mongo_result[parameter_group] = []
+											mongo_result[parameter_group].append(mongo_value_pair_dic)
 
-							else:
-								#GNB level
-								pass
+										if parameter_group in oracle_result:
+											oracle_result[parameter_group].append(oracle_value_pair_dic)
+										else:
+											oracle_result[parameter_group] = []
+											oracle_result[parameter_group].append(oracle_value_pair_dic)
+
+								else:
+									#GNB level
+									pass
+					except Exception as e:
+						print(e)
 
 					# Not Cell Level
 					# else:
