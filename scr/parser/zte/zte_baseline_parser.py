@@ -1449,7 +1449,6 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									gNBId = None
 									cellLocalId = None
 									mo_name = None
-									qci = None
 									mongo_value_pair_dic = {}
 									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 									if level_type == 'CELL Level':
