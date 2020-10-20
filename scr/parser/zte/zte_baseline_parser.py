@@ -101,7 +101,7 @@ def parseData(node, xpath_str, index, ns=None, default=''):
 			else:
 				ret = node.xpath(xpath_str)[index]
 		except IndexError:
-			errMsg = f"XPath={xpath_str} index={index} not found"			
+			errMsg = f"XPath={xpath_str} index={index} not found"
 		except XPathEvalError:
 			errMsg = f"XPath={xpath_str} eval error"
 		except Exception as e:
@@ -1483,7 +1483,6 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												gNBId = refNrCarrier_dic[refNrCarrier].get('gNBId')
 
 											mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
-
 									else:
 										#GNB level
 										if parameter_group.upper() == 'EnDCPDCP'.upper():
@@ -1495,10 +1494,13 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
 
-												mo_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn}'
+												# Group EnDCPDCP ldn =  GNBCUCPFunction=520-04_550976,EnDCConfigCU=1,EnDCPDCP=1
+												qci = parseData(node, f'.//attributes/qci/text()', 0, ns)
+												mo_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn},qci={qci}'
 
 										else:
 											p_gnbdufunc = re.compile(REGEX_5G_LDN_GNBDUFUNC)
+											p_gnbcucpfunc = re.compile(REGEX_5G_LDN_GNBCUCPFUNC)
 											match_gnbdufunc = p_gnbdufunc.match(ldn)
 											if match_gnbdufunc:
 												gnb = match_gnbdufunc.group(4)
@@ -1506,6 +1508,12 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
 
+												mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
+											elif p_gnbcucpfunc:
+												gnb = p_gnbcucpfunc.group(4)
+												if gnb in gnb_dic:
+													reference_name = gnb_dic[gnb].get('gnb')
+													gNBId = gnb_dic[gnb].get('gNBId')
 												mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
 									# Get all attribute
 									attributes = mo.xpath(f'.//attributes/*', namespaces=ns)
