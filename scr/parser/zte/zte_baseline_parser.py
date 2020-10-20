@@ -1369,7 +1369,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							reference_name = None		
 							gNBId = None	
 							cellLocalId = None	
-							mo = None	
+							mo_name = None	
 
 							for att in mo.attrib:
 						
@@ -1397,7 +1397,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											if reference_name in cell_dic:
 												gNBId = cell_dic[reference_name].get('gNBId')
 										
-										mo = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+										mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
 									elif p_physicaldu:
 										physicalCellDu = p_physicaldu.group(1)
 										if physicalCellDu in refNRPhysicalCellDU_dic:
@@ -1405,7 +1405,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											cellLocalId = refCellCU_dic[physicalCellDu].get('cellLocalId')
 											gNBId = refCellCU_dic[physicalCellDu].get('gNBId')
 										
-										mo = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+										mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
 									elif p_nrcarrier:
 										refNrCarrier = p_nrcarrier.group(1)
 										if refNrCarrier in refNrCarrier_dic:
@@ -1413,7 +1413,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											cellLocalId = refNrCarrier_dic[refNrCarrier].get('cellLocalId')
 											gNBId = refNrCarrier_dic[refNrCarrier].get('gNBId')
 
-										mo = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+										mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
 											
 									if mo is not None:
 										if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
@@ -1424,12 +1424,12 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = reference_name
 										oracle_value_pair_dic['FILENAME'] = filename
 										oracle_value_pair_dic['LV'] = cell_type
-										oracle_value_pair_dic['MO'] = mo
+										oracle_value_pair_dic['MO'] = mo_name
 
 										mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = reference_name
 										mongo_value_pair_dic['FILENAME'] = filename
 										mongo_value_pair_dic['LV'] = cell_type
-										mongo_value_pair_dic['MO'] = mo
+										mongo_value_pair_dic['MO'] = mo_name
 
 										if parameter_group in mongo_result:
 											mongo_result[parameter_group].append(mongo_value_pair_dic)
