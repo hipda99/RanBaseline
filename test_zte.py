@@ -13,4 +13,4 @@ from scr.parser.zte import zte_baseline_parser
 # parser_db.update_status(ERICSSON_VENDOR, 'Baseline_5G', parser_db.STATUS_CLOSE)
 
 
-zte_baseline_parser.parse_5g('D:/Libraries/git/true/RanBaselineApp/test/UMEID_ITBBU_ZTE_20201019060000-001.xml', '5G', {}, {})
+zte_baseline_parser.parse_5g('D:/Libraries/git/true/RanBaselineApp/test/UMEID_ITBBU_ZTE_20201019060000-001.xml', '5G', {'AmcDL': ['DLILAMCENABLE', 'BASELINE_TYPE', 'REFERENCE_FIELD', 'DLOLAMCENABLE', 'DLOLTRACEENABLE'], 'CarrierDL': ['FREQUENCY', 'BASELINE_TYPE', 'REFERENCE_FIELD', 'NRBANDWIDTH'], 'CarrierUL': ['FREQUENCY', 'BASELINE_TYPE', 'REFERENCE_FIELD', 'NRBANDWIDTH'] }, {'AmcDL': 'CELL Level', 'CarrierDL': 'CELL Level', 'CarrierUL': 'CELL Level'})

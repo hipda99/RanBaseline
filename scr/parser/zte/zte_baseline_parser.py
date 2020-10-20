@@ -66,6 +66,7 @@ REGEX_5G_LDN_NRCELLCU = r"^GNBDUFunction=((\d+)-(\d+)_(\d+)),NRCellCU=([^,]+).*$
 REGEX_5G_LDN_NRPHYSICALCELLDU = r"^(NRRadioInfrastructure=\d+,NRPhysicalCellDU=([^,]+)).*$"
 REGEX_5G_LDN_NRCARRIER = r"^(NRRadioInfrastructure=\d+,NRCarrier=([^,]+)).*$"
 REGEX_5G_LDN_GNBDUFUNC = r"^GNBDUFunction=((\d+)-(\d+)_(\d+)).*$"
+REGEX_5G_LDN_GNBCUCPFUNC = r"^GNBCUCPFunction=((\d+)-(\d+)_(\d+)).*$"
 REGEX_SW_NAME_4G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,BrM=1,BrmBackupManager=1,BrmBackup=(.*)'
 REGEX_SW_NAME_3G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,SwInventory=1,SwVersion=(.*)'
 
@@ -1239,10 +1240,10 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 # CR2020-NR/L2600
 def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
-	# log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)		
+	log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)		
 
-	# oracle_con, oracle_cur = open_connection()
-	# log.i("----- Start Parser : " + str(datetime.datetime.now()), ZTE_VENDOR, frequency_type)
+	oracle_con, oracle_cur = open_connection()
+	log.i("----- Start Parser : " + str(datetime.datetime.now()), ZTE_VENDOR, frequency_type)
 
 	mongo_result = {}
 	oracle_result = {}	
@@ -1253,169 +1254,195 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 	# tree = ElementInclude.default_loader(raw_file, 'xml')
 	parser = etree.XMLParser(recover=True, encoding='UTF-8')
 	with open(raw_file, encoding="UTF-8", errors='ignore') as xml_file:
-		# Create a parser
-		tree = strip_ns_prefix(etree.parse(xml_file, parser=parser))
-		# tree = etree.parse(xml_file, parser=parser)
-		# root = tree.getroot()
-		ns = { 
-			"xmlns": "http://www.zte.com/specs/nrm",
-			"xsi": "http://www.w3.org/2001/XMLSchema-instance"					
-		}
+		try:
+			# Create a parser
+			tree = strip_ns_prefix(etree.parse(xml_file, parser=parser))
+			# tree = etree.parse(xml_file, parser=parser)
+			ns = { 
+				"xmlns": "http://www.zte.com/specs/nrm",
+				"xsi": "http://www.w3.org/2001/XMLSchema-instance"					
+			}
 
-		neData_collection = tree.xpath(u'//NEData', namespaces=ns)
-		node_cnt = 0
-		for neData in neData_collection:
+			neData_collection = tree.xpath(u'//NEData', namespaces=ns)
+			node_cnt = 0
+			for neData in neData_collection:
 
-			subNetwork = neData.get('SubNetwork')
-			managedElement = neData.get('ManagedElement')
-			# data = etree.fromstring(etree.tostring(neData))
-			nodes = neData.xpath(u'.//module[@name="nr"]', namespaces=ns)
-			if len(nodes) < 1:				
-				# print(f'NR Cell not found in subNetwork={subNetwork}, managedElement={managedElement}')
-				continue
+				subNetwork = neData.get('SubNetwork')
+				managedElement = neData.get('ManagedElement')
+				# !!! not using namespace due to xpath "following-sibling" problem, unable to detect GNBname
+				# nodes = neData.xpath(u'.//xmlns:module[@name="nr"]', namespaces=ns) 
+				nodes = neData.xpath(u'.//module[@name="nr"]', namespaces=ns)
+				if len(nodes) < 1:				
+					# print(f'NR Cell not found in subNetwork={subNetwork}, managedElement={managedElement}')
+					continue
 
-			for node in nodes:
-				# nr = etree.fromstring(etree.tostring(node))
-				refNRPhysicalCellDU_dic = {}
-				refCellCU_dic = {}
-				cell_dic = {}
-				gnb_dic = {}
-				refNrCarrier_dic = {}
+				for node in nodes:
+					refNRPhysicalCellDU_dic = {}
+					refCellCU_dic = {}
+					cell_dic = {}
+					gnb_dic = {}
+					refNrCarrier_dic = {}
 
-				# Get NR DU Cell 
-				nr_cell_dus = node.xpath('.//mo[@moc="NRCellDU"]', namespaces=ns)
-				for nr_cell_du in nr_cell_dus:
-					nr_cell_du_ldn = nr_cell_du.get('ldn')
-					# base_xml = etree.fromstring(etree.tostring(nr_cell_du))
+					# Get NR DU Cell 
+					nr_cell_dus = node.xpath('.//mo[@moc="NRCellDU"]', namespaces=ns)
+					for nr_cell_du in nr_cell_dus:
+						nr_cell_du_ldn = nr_cell_du.get('ldn')
 
-					gNBId = None
-					if nr_cell_du_ldn is not None:
-						p1 = re.compile(REGEX_5G_LDN_GNBDUFUNC)
-						m1 = p1.match(nr_cell_du_ldn)
-						if m1:
-							gNBId = m1.group(4)
-					
-					refNRPhysicalCellDU = nr_cell_du.xpath('.//refNRPhysicalCellDU/text()', namespaces=ns)[0]
-					du_cellname = nr_cell_du.xpath('.//userLabel/text()', namespaces=ns)[0]
-					cellLocalId = nr_cell_du.xpath('.//cellLocalId/text()', namespaces=ns)[0]
-					
-					refNRPhysicalCellDU_dic[refNRPhysicalCellDU] = {
-						'cellname': du_cellname,
-						'ldn': nr_cell_du_ldn,
-						'gNBId': gNBId,
-						'cellLocalId': cellLocalId
-					}
-					cell_dic[du_cellname] = {
-						'gNBId': gNBId,
-						'cellLocalId': cellLocalId
-					}					
-					
-					node_cnt +=1
+						gNBId = None
+						if nr_cell_du_ldn is not None:
+							p1 = re.compile(REGEX_5G_LDN_GNBDUFUNC)
+							m1 = p1.match(nr_cell_du_ldn)
+							if m1:
+								gNBId = m1.group(4)
+						
+						refNRPhysicalCellDU = nr_cell_du.xpath('.//refNRPhysicalCellDU/text()', namespaces=ns)[0]
+						du_cellname = nr_cell_du.xpath('.//userLabel/text()', namespaces=ns)[0]
+						cellLocalId = nr_cell_du.xpath('.//cellLocalId/text()', namespaces=ns)[0]
+						
+						refNRPhysicalCellDU_dic[refNRPhysicalCellDU] = {
+							'cellname': du_cellname,
+							'ldn': nr_cell_du_ldn,
+							'gNBId': gNBId,
+							'cellLocalId': cellLocalId
+						}
+						cell_dic[du_cellname] = {
+							'gNBId': gNBId,
+							'cellLocalId': cellLocalId
+						}					
+						
+						node_cnt +=1
 
-				# Get NR PhysicalCellDU
-				physicalCellDu_collection = node.xpath('.//mo[@moc="NRPhysicalCellDU"]', namespaces=ns)
-				for physicalCellDu in physicalCellDu_collection:
-					ldn = physicalCellDu.get('ldn')
-					if ldn in refNRPhysicalCellDU_dic:
-						refNRCarrier = physicalCellDu.xpath('.//refNRCarrier/text()', namespaces=ns)[0]
-						refNRPhysicalCellDU_dic[ldn]['refNRCarrier'] = refNRCarrier
-						if refNRCarrier is not None:
-							pattern = re.compile(REGEX_5G_LDN_NRCARRIER)
-							match = pattern.match(refNRCarrier)
-							if match:
-								nrCarrierId = match.group(2)
+					# Get NR PhysicalCellDU
+					physicalCellDu_collection = node.xpath('.//mo[@moc="NRPhysicalCellDU"]', namespaces=ns)
+					for physicalCellDu in physicalCellDu_collection:
+						ldn = physicalCellDu.get('ldn')
+						if ldn in refNRPhysicalCellDU_dic:
+							refNRCarrier = physicalCellDu.xpath('.//refNRCarrier/text()', namespaces=ns)[0]
+							refNRPhysicalCellDU_dic[ldn]['refNRCarrier'] = refNRCarrier
+							if refNRCarrier is not None:
+								pattern = re.compile(REGEX_5G_LDN_NRCARRIER)
+								match = pattern.match(refNRCarrier)
+								if match:
+									nrCarrierId = match.group(2)
 
-								refNrCarrier_dic[refNRCarrier] = {
-									'cellname': refNRPhysicalCellDU_dic[ldn]['cellname'],
-									'ldn': refNRCarrier,
-									'gNBId': refNRPhysicalCellDU_dic[ldn]['gNBId'],
-									'cellLocalId': refNRPhysicalCellDU_dic[ldn]['cellLocalId'],
-									'nrCarrierId': nrCarrierId
-								}
-					
+									refNrCarrier_dic[refNRCarrier] = {
+										'cellname': refNRPhysicalCellDU_dic[ldn]['cellname'],
+										'ldn': refNRCarrier,
+										'gNBId': refNRPhysicalCellDU_dic[ldn]['gNBId'],
+										'cellLocalId': refNRPhysicalCellDU_dic[ldn]['cellLocalId'],
+										'nrCarrierId': nrCarrierId
+									}
+						
 
-				# Get NR CU Cell
-				nr_cell_cus = node.xpath('.//mo[@moc="NRCellCU"]', namespaces=ns)
-				for nr_cell_cu in nr_cell_cus:
-					ldn = nr_cell_cu.get('ldn')
-					cu_cellname = nr_cell_cu.xpath('.//userLabel/text()', namespaces=ns)[0]
-					refCellCU_dic[ldn] = {
-						'cellname': cu_cellname,
-						'ldn': ldn
-					}
-
-				# Get GNB
-				for key, value in refNRPhysicalCellDU_dic.items():
-					gNBId = value['gNBId']
-
-					gnbCuFunction = neData.xpath(f".//mo[@moc='GNBCUCPFunction'][attributes/gNBId/text()='{gNBId}']/following-sibling::mo[1]", namespaces=ns)
-					# gnbCuFunction = neData.xpath(f".//mo[@moc='GNBCUCPFunction'][attributes/gNBId/text()='{gNBId}']", namespaces=ns)
-					for gnb in gnbCuFunction:						
-						gnbName = gnb.xpath('.//attributes/gNBDUName/text()', namespaces=ns)[0]
-						gnb_dic[gNBId] = {
-							'gnb': gnbName,
-							'gNBId': gNBId
+					# Get NR CU Cell
+					nr_cell_cus = node.xpath('.//mo[@moc="NRCellCU"]', namespaces=ns)
+					for nr_cell_cu in nr_cell_cus:
+						ldn = nr_cell_cu.get('ldn')
+						cu_cellname = nr_cell_cu.xpath('.//userLabel/text()', namespaces=ns)[0]
+						refCellCU_dic[ldn] = {
+							'cellname': cu_cellname,
+							'ldn': ldn
 						}
 
-				# Check each MO under module = nr				
-				for parameter_group, valuedic in field_mapping_dic.items():
-					try:
-						cell_type = cell_level_dic[parameter_group]		
-						xpath = f'.//mo[@moc="{parameter_group}"]'			
-						mo_group_collection = node.xpath(xpath, namespaces=ns)
+					# Get GNB
+					for key, value in refNRPhysicalCellDU_dic.items():
+						gNBId = value['gNBId']
 
-						for mo in mo_group_collection:
-							ldn = mo.get('ldn')	
-							reference_name = None		
-							gNBId = None	
-							cellLocalId = None	
-							mo_name = None	
+						gnbCuFunction = neData.xpath(f".//mo[@moc='GNBCUCPFunction'][attributes/gNBId/text()='{gNBId}']/following-sibling::mo[1]", namespaces=ns)
+						for gnb in gnbCuFunction:						
+							gnbName = gnb.xpath('.//attributes/gNBDUName/text()', namespaces=ns)[0]
+							gnb_dic[gNBId] = {
+								'gnb': gnbName,
+								'gNBId': gNBId
+							}
 
-							for att in mo.attrib:
+					# Check each MO under module = nr				
+					for parameter_group, valuedic in field_mapping_dic.items():
 						
-								mongo_value_pair_dic = {}
-								oracle_value_pair_dic = dict.fromkeys(valuedic, '')							
-								value = mo[att]
-															
-								mongo_value_pair_dic[att] = value
+							cell_type = cell_level_dic[parameter_group]		
+							xpath = f'.//mo[@moc="{parameter_group}"]'			
+							mo_group_collection = node.xpath(xpath, namespaces=ns)
 
-								if str(att).upper() in oracle_value_pair_dic:
-									oracle_value_pair_dic[str(att).upper()] = value
+							for mo in mo_group_collection:
+								ldn = mo.get('ldn')	
+								reference_name = None		
+								gNBId = None	
+								cellLocalId = None	
+								mo_name = None	
+								# Get all attribute
+								attributes = mo.xpath(f'.//attributes/*', namespaces=ns)
+								for attribute in attributes:			
+								
+									mongo_value_pair_dic = {}
+									oracle_value_pair_dic = dict.fromkeys(valuedic, '')	
+									tag = attribute.tag															
+									value = attribute.text
+																
+									mongo_value_pair_dic[str(tag).upper()] = value
 
-								cell_type = cell_level_dic[parameter_group]
+									if str(tag).upper() in oracle_value_pair_dic:
+										oracle_value_pair_dic[str(tag).upper()] = value
 
-								if cell_type == 'CELL Level':
-									p_cellcu = re.compile(REGEX_5G_LDN_NRCELLCU)
-									p_physicaldu = re.compile(REGEX_5G_LDN_NRPHYSICALCELLDU)
-									p_nrcarrier = re.compile(REGEX_5G_LDN_NRCARRIER)
-									match_cellcu = p_cellcu.match(ldn)
-									if match_cellcu:
-										cellCu = match_cellcu.group(4)
-										if cellCu in refCellCU_dic:
-											reference_name = refCellCU_dic[cellCu].get('cellname')
-											cellLocalId = cellCu
-											if reference_name in cell_dic:
-												gNBId = cell_dic[reference_name].get('gNBId')
-										
-										mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
-									elif p_physicaldu:
-										physicalCellDu = p_physicaldu.group(1)
-										if physicalCellDu in refNRPhysicalCellDU_dic:
-											reference_name = refNRPhysicalCellDU_dic[physicalCellDu].get('cellname')
-											cellLocalId = refCellCU_dic[physicalCellDu].get('cellLocalId')
-											gNBId = refCellCU_dic[physicalCellDu].get('gNBId')
-										
-										mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
-									elif p_nrcarrier:
-										refNrCarrier = p_nrcarrier.group(1)
-										if refNrCarrier in refNrCarrier_dic:
-											reference_name = refNrCarrier_dic[refNrCarrier].get('cellname')
-											cellLocalId = refNrCarrier_dic[refNrCarrier].get('cellLocalId')
-											gNBId = refNrCarrier_dic[refNrCarrier].get('gNBId')
+									level_type = cell_level_dic[parameter_group]
 
-										mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+									if level_type == 'CELL Level':
+										p_cellcu = re.compile(REGEX_5G_LDN_NRCELLCU)
+										p_physicaldu = re.compile(REGEX_5G_LDN_NRPHYSICALCELLDU)
+										p_nrcarrier = re.compile(REGEX_5G_LDN_NRCARRIER)
+										match_cellcu = p_cellcu.match(ldn)
+										match_physicaldu = p_physicaldu.match(ldn)
+										match_nrcarrier = p_nrcarrier.match(ldn)
+										if match_cellcu:
+											cellCu = match_cellcu.group(4)
+											if cellCu in refCellCU_dic:
+												reference_name = refCellCU_dic[cellCu].get('cellname')
+												cellLocalId = cellCu
+												if reference_name in cell_dic:
+													gNBId = cell_dic[reference_name].get('gNBId')
 											
-									if mo is not None:
+											mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+										elif match_physicaldu:
+											physicalCellDu = match_physicaldu.group(1)
+											if physicalCellDu in refNRPhysicalCellDU_dic:
+												reference_name = refNRPhysicalCellDU_dic[physicalCellDu].get('cellname')
+												cellLocalId = refNRPhysicalCellDU_dic[physicalCellDu].get('cellLocalId')
+												gNBId = refNRPhysicalCellDU_dic[physicalCellDu].get('gNBId')
+											
+											mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+										elif match_nrcarrier:
+											refNrCarrier = match_nrcarrier.group(1)
+											if refNrCarrier in refNrCarrier_dic:
+												reference_name = refNrCarrier_dic[refNrCarrier].get('cellname')
+												cellLocalId = refNrCarrier_dic[refNrCarrier].get('cellLocalId')
+												gNBId = refNrCarrier_dic[refNrCarrier].get('gNBId')
+
+											mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+
+									else:
+										#GNB level
+										if parameter_group.upper() == 'EnDCPDCP'.upper():
+											p_gnbcucpfunc = re.compile(REGEX_5G_LDN_GNBCUCPFUNC)
+											match_gnbdufunc = p_gnbcucpfunc.match(ldn)
+											if match_gnbdufunc:
+												gnb = match_gnbdufunc.group(4)
+												if gnb in gnb_dic:
+													reference_name = gnb_dic[gnb].get('gnb')
+													gNBId = gnb_dic[gnb].get('gNBId')											
+												
+												mo_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn}'
+
+										else:
+											p_gnbdufunc = re.compile(REGEX_5G_LDN_GNBDUFUNC)
+											match_gnbdufunc = p_gnbdufunc.match(ldn)
+											if match_gnbdufunc:
+												gnb = match_gnbdufunc.group(4)
+												if gnb in gnb_dic:
+													reference_name = gnb_dic[gnb].get('gnb')
+													gNBId = gnb_dic[gnb].get('gNBId')											
+												
+												mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
+										
+									if mo_name is not None:
 										if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
 											COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0								
 									
@@ -1423,12 +1450,12 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 										oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = reference_name
 										oracle_value_pair_dic['FILENAME'] = filename
-										oracle_value_pair_dic['LV'] = cell_type
+										oracle_value_pair_dic['LV'] = level_type
 										oracle_value_pair_dic['MO'] = mo_name
 
 										mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = reference_name
 										mongo_value_pair_dic['FILENAME'] = filename
-										mongo_value_pair_dic['LV'] = cell_type
+										mongo_value_pair_dic['LV'] = level_type
 										mongo_value_pair_dic['MO'] = mo_name
 
 										if parameter_group in mongo_result:
@@ -1442,17 +1469,31 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										else:
 											oracle_result[parameter_group] = []
 											oracle_result[parameter_group].append(oracle_value_pair_dic)
+									else:
+										log.e(f'---- ERROR: No MO name for {parameter_group} ldn = {ldn}')
 
-								else:
-									#GNB level
-									pass
-					except Exception as e:
-						print(e)
+		except Exception as e:
+			log.e(f'---- ERROR: {str(e)}')
 
-					# Not Cell Level
-					# else:
-					# 	mo_xml = etree.fromstring(etree.tostring(mo))			
+	log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
+	for result in oracle_result:
 
-	# log.i("Done :::: " + filename + " ::::::::", ZTE_VENDOR, frequency_type)
-	# log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
-	# close_connection(oracle_con, oracle_cur)
+		table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, result)
+		# granite_mongo.push(table_name, mongo_result[result])
+		try:
+			ran_baseline_oracle.push(oracle_cur, table_name, oracle_result[result])
+			oracle_con.commit()
+		except Exception as e:
+			log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)
+			log.e('Exception Into Table: ' + table_name, ZTE_VENDOR, frequency_type)
+			log.e(e, ZTE_VENDOR, frequency_type)
+			traceback.print_exc()
+			log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
+
+			oracle_con.commit()
+			oracle_con, oracle_cur = open_connection()
+			continue
+
+	log.i("Done :::: " + filename + " ::::::::", ZTE_VENDOR, frequency_type)
+	log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
+	close_connection(oracle_con, oracle_cur)
