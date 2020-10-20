@@ -1506,8 +1506,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													gNBId = gnb_dic[gnb].get('gNBId')
 
 												mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
-											elif p_gnbcucpfunc:
-												gnb = p_gnbcucpfunc.group(4)
+											elif match_gnbdufunc:
+												gnb = match_gnbdufunc.group(4)
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
