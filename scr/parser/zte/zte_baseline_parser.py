@@ -1380,9 +1380,6 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					# Check each MO under module = nr
 					for parameter_group, valuedic in field_mapping_dic.items():
 
-						if 'UMEID_ITBBU_ZTE_20201019060000-010' in raw_file and 'EnDCCtrl' in parameter_group:
-							ttt = True
-
 						level_type = cell_level_dic[parameter_group]
 						# Except group Sctp need to search at root, special not under module = nr
 						mo_group_collection = None
@@ -1470,8 +1467,6 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											cellLocalId = cellCu
 											if reference_name in cell_dic:
 												gNBId = cell_dic[reference_name].get('gNBId')
-										else:
-											log.e(f'Not found key={key} in refCellCU_dic = {refCellCU_dic}')
 																					
 									elif match_physicaldu:
 										physicalCellDu = match_physicaldu.group(1)
@@ -1561,6 +1556,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										oracle_result[parameter_group] = []
 										oracle_result[parameter_group].append(oracle_value_pair_dic)
 								else:
+									if 'UMEID_ITBBU_ZTE_20201019060000-010' in raw_file and 'EnDCCtrl' in parameter_group:
+										ttt = True
 									log.e(f'---- ERROR: No MO name for {parameter_group} ldn = {ldn}')
 
 		except Exception as e:
