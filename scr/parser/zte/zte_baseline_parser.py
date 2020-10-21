@@ -1470,6 +1470,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											cellLocalId = cellCu
 											if reference_name in cell_dic:
 												gNBId = cell_dic[reference_name].get('gNBId')
+										else:
+											log.e(f'Not found key={key} in refCellCU_dic = {refCellCU_dic}')
 																					
 									elif match_physicaldu:
 										physicalCellDu = match_physicaldu.group(1)
