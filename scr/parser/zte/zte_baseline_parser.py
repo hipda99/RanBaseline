@@ -1447,8 +1447,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							for mo in mo_group_collection:
 								ldn = mo.get('ldn')
 								reference_name = None
-								gNBId = None
-								cellLocalId = None
+								gNBId = ''
+								cellLocalId = ''
 								mo_name = None
 								mongo_value_pair_dic = {}
 								oracle_value_pair_dic = dict.fromkeys(valuedic, '')
@@ -1481,9 +1481,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											reference_name = refNrCarrier_dic[refNrCarrier].get('cellname')
 											cellLocalId = refNrCarrier_dic[refNrCarrier].get('cellLocalId')
 											gNBId = refNrCarrier_dic[refNrCarrier].get('gNBId')
-										
-									if gNBId is not None and cellLocalId is not None:
-										mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
+																			
+									mo_name = nr_cell_path.format(subNetwork, managedElement, gNBId, cellLocalId)
 								else:
 									#GNB level
 									if parameter_group.upper() == 'EnDCPDCP'.upper():
@@ -1556,8 +1555,6 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										oracle_result[parameter_group] = []
 										oracle_result[parameter_group].append(oracle_value_pair_dic)
 								else:
-									if 'UMEID_ITBBU_ZTE_20201019060000-010' in raw_file and 'EnDCCtrl' in parameter_group:
-										ttt = True
 									log.e(f'---- ERROR: No MO name for {parameter_group} ldn = {ldn}')
 
 		except Exception as e:
