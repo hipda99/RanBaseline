@@ -1557,8 +1557,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						nobeb_collection = node.xpath('.//mo[@moc="ENBCUCPFunction"]', namespaces=ns)
 						for nodeb in nobeb_collection:
 							ldn = nodeb.get('ldn')
-							name = parseData(nodeb, f'.//attributes/enbName', 0, ns)
-							nodebId = parseData(nodeb, f'.//attributes/eNBId', 0, ns)
+							name = parseData(nodeb, f'.//attributes/enbName/text()', 0, ns)
+							nodebId = parseData(nodeb, f'.//attributes/eNBId/text()', 0, ns)
 							nb_dic[ldn] = {
 								'name': name,
 								'id': nodebId
