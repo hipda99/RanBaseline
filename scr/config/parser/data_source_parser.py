@@ -105,26 +105,12 @@ def collect_ericsson_file(raw_file):
 
 
 def collect_zte_file(raw_file):    
-    if raw_file.FrequencyType == '5G':
-        collect_zte_5g_file(raw_file)
-    else:
-        collect_zte_any_file(raw_file)
-
-    log.i("Read file count : " + str(raw_file.RawFileList.__len__()), ZTE_VENDOR)
-
-def collect_zte_any_file(raw_file):
     if raw_file.Path != '':
         for filename in glob.glob(raw_file.Path + '*.xml'):
             if re.match(raw_file.FileFormat.upper(), filename.upper()):
                 raw_file.RawFileList.append(filename)
 
         log.i("Read file count : " + str(raw_file.RawFileList.__len__()), ZTE_VENDOR)
-
-
-def collect_zte_5g_file(raw_file):
-    if raw_file.Path != '':
-        for filename in glob.glob(raw_file.Path + 'UMEID_ITBBU_ZTE_*.xml'):
-            raw_file.RawFileList.append(filename)
 
 def collect_ericsson_2g_file(raw_file):
     if raw_file.Path != '':
