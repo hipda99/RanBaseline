@@ -50,6 +50,7 @@ g3_cell_path = 'SubNetwork={0},ManagedElement={1},RncFunction={2},UtranCellFDD={
 g3_rnc_path = 'SubNetwork={0},ManagedElement={1},RncFunction={2}'
 
 nr_cell_path = 'SubNetwork={0},ManagedElement={1},GNBFunction={2},NrCell={3}'
+tdd_cell_path = 'SubNetwork={0},ManagedElement={1},ENBFunction={2},EUtranCellTDD={3}'
 gnb_path = 'SubNetwork={0},ManagedElement={1},GNBFunction={2}'
 
 KEY_TABLE = "{0}_{1}_{2}"
@@ -66,6 +67,7 @@ sw_column = [
 
 REGEX_4G_LDN_ENBCUCPFUNC = r"^(ENBCUCPFunction=(\d+)).*$"
 REGEX_4G_LDN_CELLFDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellFDDLTE=([^,]+)).*$"
+REGEX_4G_LDN_CELLTDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellTDDLTE=([^,]+)).*$"
 REGEX_5G_LDN_NRCELLCU = r"^(GNBCUCPFunction=((\d+)-(\d+)_(\d+)),NRCellCU=([^,]+)).*$"
 REGEX_5G_LDN_NRPHYSICALCELLDU = r"^(NRRadioInfrastructure=\d+,NRPhysicalCellDU=([^,]+)).*$"
 REGEX_5G_LDN_NRCARRIER = r"^(NRRadioInfrastructure=\d+,NRCarrier=([^,]+)).*$"
@@ -1522,11 +1524,11 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						continue
 
 					for node in nodes:
-						cell_dic = {}
 						cellfdd_ldn_dic = {}
+						celltdd_ldn_dic = {}
 						nb_dic = {}
 
-						# Get NR DU Cell
+						# Get TDD
 						cells = node.xpath('.//mo[@moc="CUEUtranCellTDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
@@ -1548,8 +1550,33 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								'cellLocalId': cellLocalId,
 								'nodeBLdn': nodeBLdn
 							}
+							celltdd_ldn_dic[ldn] = data
+
+							node_cnt +=1
+						
+						# Get FDD
+						cells = node.xpath('.//mo[@moc="CUEUtranCellFDDLTE"]', namespaces=ns)
+						for cell in cells:
+							ldn = cell.get('ldn')
+
+							nodeBId = None
+							nodeBLdn = None
+							if ldn is not None:
+								p1 = re.compile(REGEX_4G_LDN_ENBCUCPFUNC)
+								m1 = p1.match(ldn)
+								if m1:
+									nodeBId = m1.group(2)
+									nodeBLdn = m1.group(1)
+
+							name = parseData(cell, f'.//userLabel/text()', 0, ns)
+							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
+							data = {
+								'cellname': name,
+								'nbId': nodeBId,
+								'cellLocalId': cellLocalId,
+								'nodeBLdn': nodeBLdn
+							}
 							cellfdd_ldn_dic[ldn] = data
-							cell_dic[name] = data
 
 							node_cnt +=1
 
@@ -1564,11 +1591,16 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								'id': nodebId
 							}
 
-						for cell, value in cell_dic.items():
+						for cell, value in cellfdd_ldn_dic.items():
 							nbLdn = value['nodeBLdn']
 							if nbLdn in nb_dic:
-								cell_dic[cell]['nodeBName'] = nb_dic[nbLdn]['name']
-								cell_dic[cell]['nodeBId'] = nb_dic[nbLdn]['id']
+								cellfdd_ldn_dic[cell]['nodeBName'] = nb_dic[nbLdn]['name']
+								cellfdd_ldn_dic[cell]['nodeBId'] = nb_dic[nbLdn]['id']
+						for cell, value in celltdd_ldn_dic.items():
+							nbLdn = value['nodeBLdn']
+							if nbLdn in nb_dic:
+								celltdd_ldn_dic[cell]['nodeBName'] = nb_dic[nbLdn]['name']
+								celltdd_ldn_dic[cell]['nodeBId'] = nb_dic[nbLdn]['id']
 
 
 						# Check each MO under module = nr
@@ -1623,16 +1655,29 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									mongo_value_pair_dic = {}
 									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 									if level_type == 'CELL Level':
-										p_cell = re.compile(REGEX_4G_LDN_CELLFDDLTE)
-										match_cell = p_cell.match(ldn)
-										if match_cell:
-											cellId = match_cell.group(6)
-											key = match_cell.group(1)
+										p_cellfdd = re.compile(REGEX_4G_LDN_CELLFDDLTE)
+										p_celltdd = re.compile(REGEX_4G_LDN_CELLTDDLTE)
+										match_cellfdd = p_cellfdd.match(ldn)
+										match_celltdd = p_celltdd.match(ldn)
+										# Check FDD
+										if match_cellfdd:
+											cellId = match_cellfdd.group(6)
+											key = match_cellfdd.group(1)
 											if key in cellfdd_ldn_dic:
 												reference_name = cellfdd_ldn_dic[key].get('cellname')
 												cellLocalId = cellfdd_ldn_dic[key].get('cellLocalId')
 												nbId = cellfdd_ldn_dic[reference_name].get('nbId')
-										mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
+											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
+										# Check TDD
+										elif match_celltdd:
+											cellId = match_celltdd.group(6)
+											key = match_celltdd.group(1)
+											if key in celltdd_ldn_dic:
+												reference_name = celltdd_ldn_dic[key].get('cellname')
+												cellLocalId = celltdd_ldn_dic[key].get('cellLocalId')
+												nbId = celltdd_ldn_dic[reference_name].get('nbId')
+											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
+										
 									else:
 										#NB level
 										p_nb = re.compile(REGEX_4G_LDN_ENBCUCPFUNC)
