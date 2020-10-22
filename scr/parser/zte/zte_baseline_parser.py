@@ -1607,6 +1607,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						for parameter_group, valuedic in field_mapping_dic.items():
 
 							level_type = cell_level_dic[parameter_group]
+							if parameter_group.upper() == 'SecurityManagement'.upper() or parameter_group.upper() == 'DualConnectionBearLTE'.upper() or  parameter_group.upper() == 'EUtranCellMeasFDDLTE'.upper():
+								ttt = True
 							# Except group Sctp need to search at root
 							if parameter_group.upper() == 'Sctp'.upper():
 								# Go to module plat
