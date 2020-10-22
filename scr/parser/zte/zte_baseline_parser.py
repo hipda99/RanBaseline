@@ -1607,6 +1607,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						for parameter_group, valuedic in field_mapping_dic.items():
 
 							level_type = cell_level_dic[parameter_group]
+							if parameter_group.upper() == 'EUtranCellMeasFDDLTE'.upper():
+								ttt = True
 							# Except group Sctp need to search at root
 							if parameter_group.upper() == 'Sctp'.upper():
 								# Go to module plat
@@ -1666,7 +1668,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											if key in cellfdd_ldn_dic:
 												reference_name = cellfdd_ldn_dic[key].get('cellname')
 												cellLocalId = cellfdd_ldn_dic[key].get('cellLocalId')
-												nbId = cellfdd_ldn_dic[reference_name].get('nbId')
+												nbId = cellfdd_ldn_dic[key].get('nbId')
 											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
 										# Check TDD
 										elif match_celltdd:
@@ -1675,7 +1677,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											if key in celltdd_ldn_dic:
 												reference_name = celltdd_ldn_dic[key].get('cellname')
 												cellLocalId = celltdd_ldn_dic[key].get('cellLocalId')
-												nbId = celltdd_ldn_dic[reference_name].get('nbId')
+												nbId = celltdd_ldn_dic[key].get('nbId')
 											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
 										
 									else:
@@ -1683,10 +1685,10 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										p_nb = re.compile(REGEX_4G_LDN_ENBCUCPFUNC)
 										match_nb = p_nb.match(ldn)
 										if match_nb:
-											ldn = match_nb.group(1)
-											if ldn in nb_dic:
-												reference_name = nb_dic[ldn].get('name')
-												nbId = nb_dic[ldn].get('id')
+											nb_ldn = match_nb.group(1)
+											if nb_ldn in nb_dic:
+												reference_name = nb_dic[nb_ldn].get('name')
+												nbId = nb_dic[nb_ldn].get('id')
 											if parameter_group.upper() == 'NrRatMeasCfgLTE'.upper() or parameter_group.upper() == 'QoSServiceClassLTE'.upper() or parameter_group.upper() == 'UeEUtranMeasurementLTE'.upper():
 												mo_name = env_mo_path.format(subNetwork, managedElement, nbId) + f',{ldn}'
 											else:

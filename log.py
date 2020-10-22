@@ -26,7 +26,7 @@ def count():
 
 
 def e(message, vender='all', freq="na"):
-    message = freq + "    " + message
+    message = freq + "    " + str(message)
     log = LOG_PATH + vender + "_error_" + str(today) + ".log"
 
     logging.basicConfig(filename=log, level=logging.DEBUG, format='%(asctime)s - %(message)s', datefmt='%d/%m/%Y %H:%M:%S')

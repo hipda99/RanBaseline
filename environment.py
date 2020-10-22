@@ -10,6 +10,8 @@ print("IP : ", host_ip)
 
 if host_name == "adisits-MBP" or host_name == 'adisits-MacBook-Pro.local':
     environment = 'north'
+elif host_name == 'HELLKITCHEN':
+    environment = 'hell'
 elif host_name == "MT8NGOSS-INVP12":
     environment = 'prod'
 else:
@@ -122,6 +124,35 @@ if environment == 'north':
 
     # config: point to config directory of zte
     CONFIGURATION_PATH = '/Users/adisit/SourceCode/RanBaselineApp/source/config/north/'
+
+    # config: (use only you want to generate json file) directory to store result of json file
+    JSON_RESULT_PATH = '/app/ngoss/zte_result/{0}/{1}/'
+
+    # config: zte mapping file
+    MAPPING_FILE_PATH = CONFIGURATION_PATH + MAPPING_NAME
+
+    # config: data source file
+    RAW_FILE_PATH_COLLECTION = CONFIGURATION_PATH + 'RawFilePathCollection.xlsx'
+
+    # file separator [window = '\\'], [linux = '/']
+    PATH_SEPARATOR = '/'
+
+    LOG_PATH = './logs/'
+
+if environment == 'hell':
+    # Configuration of Oracle
+    ORACLE_HOST = '10.50.64.209'
+    ORACLE_PORT = '1521'
+    ORACLE_SID = 'xcom'
+    ORACLE_USERNAME = 'ranbase'
+    ORACLE_PASSWORD = 'ng055'
+
+    # Configuration of MongoDB
+    MONGO_HOST = 'mongodb://10.50.64.209:27017/'
+    MONGO_NAME = 'ranbase'
+
+    # config: point to config directory of zte
+    CONFIGURATION_PATH = '/c/Users/next_/git/true/RanBaselineApp/source/config/dev'
 
     # config: (use only you want to generate json file) directory to store result of json file
     JSON_RESULT_PATH = '/app/ngoss/zte_result/{0}/{1}/'
