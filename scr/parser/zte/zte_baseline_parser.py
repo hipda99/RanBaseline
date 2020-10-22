@@ -1661,7 +1661,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										match_celltdd = p_celltdd.match(ldn)
 										# Check FDD
 										if match_cellfdd:
-											cellId = match_cellfdd.group(6)
+											cellId = match_cellfdd.group(5)
 											key = match_cellfdd.group(1)
 											if key in cellfdd_ldn_dic:
 												reference_name = cellfdd_ldn_dic[key].get('cellname')
