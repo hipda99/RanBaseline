@@ -22,8 +22,15 @@ def read_mapping_yaml():
 
 def read_data_source(vendor):
 
-    if vendor == ERICSSON_SW_VENDOR or vendor == ERICSSON_FEATURE_VENDOR:
+    if 'Ericsson' in vendor:
         vendor = ERICSSON_VENDOR
+    elif 'Huawei' in vendor:
+        vendor = HUAWEI_VENDOR
+    elif 'ZTE' in vendor:
+        vendor = ZTE_VENDOR
+    
+    # if vendor == ERICSSON_SW_VENDOR or vendor == ERICSSON_FEATURE_VENDOR:
+    #     vendor = ERICSSON_VENDOR
 
     yaml_value = read_mapping_yaml()
 

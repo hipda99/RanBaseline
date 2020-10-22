@@ -24,8 +24,8 @@ BASELINE_TYPE = 'BASELINE_TYPE'
 REFERENCE_FIELD_COLUMN_NAME = 'REFERENCE_FIELD'
 
 # 2020CR - NR/TDD - Additional L2600, Anchor L1800
-BASELINE_4G_2600_COLUMN = 'baseline_2600'
-BASELINE_4G_1800_ANCHOR_COLUMN = 'baseline_1800_Anchor'
+BASELINE_4G_2600_COLUMN = 'Baseline_2600'
+BASELINE_4G_1800_ANCHOR_COLUMN = 'Baseline_1800_Anchor'
 
 # 3G
 BASELINE_3G_850_COLUMN = 'Baseline_850'
@@ -49,9 +49,7 @@ def read_zte_mapping(file_mapping_path_name, frequency_type, frequency):
     elif frequency_type == '4G':
         return read_4g(file_mapping_path_name)
     elif frequency_type == '5G':
-        return read_5g(file_mapping_path_name)
-        
-
+        return read_5g(file_mapping_path_name)    
 
 def read_3g(file_mapping_path_name):
     df = read_excel_mapping(file_mapping_path_name, 0)
