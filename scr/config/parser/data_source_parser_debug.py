@@ -102,14 +102,13 @@ def collect_ericsson_file(raw_file):
         collect_ericsson_file_by_extension(raw_file, 'log')
 
 
-def collect_zte_file(raw_file):
+def collect_zte_file(raw_file):    
     if raw_file.Path != '':
         for filename in glob.glob(raw_file.Path + '*.xml'):
             if re.match(raw_file.FileFormat.upper(), filename.upper()):
                 raw_file.RawFileList.append(filename)
 
         log.i("Read file count : " + str(raw_file.RawFileList.__len__()), ZTE_VENDOR)
-
 
 def collect_ericsson_2g_file(raw_file):
     if raw_file.Path != '':
