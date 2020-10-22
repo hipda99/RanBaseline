@@ -44,6 +44,7 @@ def read_data_source(vendor):
             continue
 
         # For test only 
+        print(row['Path'])
         if 'STH-ENM' not in row['Path'] or 'ZTE_UME' not in row['Path']:
             continue
 
