@@ -1628,6 +1628,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												reference_name = cellfdd_ldn_dic[key].get('cellname')
 												cellLocalId = cellfdd_ldn_dic[key].get('cellLocalId')
 												nbId = cellfdd_ldn_dic[key].get('nbId')
+											else:
+												log.e(f'Not found key={key} in celltdd_ldn_dic={cellfdd_ldn_dic}')
 											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
 										# Check TDD
 										elif match_celltdd:
@@ -1637,6 +1639,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												reference_name = celltdd_ldn_dic[key].get('cellname')
 												cellLocalId = celltdd_ldn_dic[key].get('cellLocalId')
 												nbId = celltdd_ldn_dic[key].get('nbId')
+											else:
+												log.e(f'Not found key={key} in celltdd_ldn_dic={celltdd_ldn_dic}')
 											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
 										
 									else:
@@ -1648,6 +1652,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											if nb_ldn in nb_dic:
 												reference_name = nb_dic[nb_ldn].get('name')
 												nbId = nb_dic[nb_ldn].get('id')
+											else:
+												log.e(f'Not found ldn={nb_ldn} in nb_dic={nb_dic}')
 											if parameter_group.upper() == 'NrRatMeasCfgLTE'.upper() or parameter_group.upper() == 'QoSServiceClassLTE'.upper() or parameter_group.upper() == 'UeEUtranMeasurementLTE'.upper():
 												mo_name = env_mo_path.format(subNetwork, managedElement, nbId) + f',{ldn}'
 											else:
@@ -1680,7 +1686,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 	log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
 	close_connection(oracle_con, oracle_cur)
 
-def insertData(parameter_group, mo_name, ldn, reference_name, level_type, frequency_type, node, namespace, mongo_value_pair_dic, mongo_result, oracle_value_pair_dic, oracle_result, filename, test= None):
+def insertData(parameter_group, mo_name, ldn, reference_name, level_type, frequency_type, node, namespace, mongo_value_pair_dic, mongo_result, oracle_value_pair_dic, oracle_result, filename):
 	# Get all attribute
 	attributes = node.xpath(f'.//attributes/*', namespaces=namespace)
 	for attribute in attributes:
@@ -1725,4 +1731,4 @@ def insertData(parameter_group, mo_name, ldn, reference_name, level_type, freque
 			oracle_result[parameter_group] = []
 			oracle_result[parameter_group].append(oracle_value_pair_dic)
 	else:
-		log.e(f'---- ERROR: No MO name for {parameter_group} ldn = {ldn}, check = {str(test)}')
+		log.e(f'---- ERROR: No MO name for {parameter_group} ldn = {ldn}')
