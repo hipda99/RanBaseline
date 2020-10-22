@@ -1412,21 +1412,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											mo_name = f"SubNetwork={subNetwork},ManagedElement={managedElement},GBSCID={gbscId},RNCID={rncId}"
 											mongo_value_pair_dic = {}
 											oracle_value_pair_dic = dict.fromkeys(valuedic, '')
-											insertData(
-												parameter_group,
-												mo_name,
-												ldn,
-												reference_name,
-												level_type,
-												frequency_type,
-												mo,
-												ns,
-												mongo_value_pair_dic,
-												mongo_result,
-												oracle_value_pair_dic,
-												oracle_result,
-												filename
-											)
+											insertData(parameter_group,mo_name,ldn,reference_name,level_type,frequency_type,
+												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename)
 							else:
 								xpath = f'.//mo[@moc="{parameter_group}"]'
 								mo_group_collection = node.xpath(xpath, namespaces=ns)
@@ -1502,21 +1489,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									if parameter_group.upper() == 'EnDCPDCP'.upper():
 										# Group EnDCPDCP ldn =  GNBCUCPFunction=520-04_550976,EnDCConfigCU=1,EnDCPDCP=1
 										mo_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn}'
-									insertData(
-										parameter_group,
-										mo_name,
-										ldn,
-										reference_name,
-										level_type,
-										frequency_type,
-										mo,
-										ns,
-										mongo_value_pair_dic,
-										mongo_result,
-										oracle_value_pair_dic,
-										oracle_result,
-										filename
-									)
+									insertData(parameter_group,mo_name,ldn,reference_name,level_type,frequency_type,
+												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename)
 				elif frequency_type == '4G':
 					nodes = neData.xpath(u'.//module[@name="lte"]', namespaces=ns)
 					if len(nodes) < 1:
@@ -1607,8 +1581,6 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						for parameter_group, valuedic in field_mapping_dic.items():
 
 							level_type = cell_level_dic[parameter_group]
-							if parameter_group.upper() == 'SecurityManagement'.upper() or parameter_group.upper() == 'DualConnectionBearLTE'.upper() or  parameter_group.upper() == 'EUtranCellMeasFDDLTE'.upper():
-								ttt = True
 							# Except group Sctp need to search at root
 							if parameter_group.upper() == 'Sctp'.upper():
 								# Go to module plat
@@ -1628,21 +1600,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											mo_name = f"SubNetwork={subNetwork},ManagedElement={managedElement},GBSCID={gbscId},RNCID={rncId}"
 											mongo_value_pair_dic = {}
 											oracle_value_pair_dic = dict.fromkeys(valuedic, '')
-											insertData(
-												parameter_group,
-												mo_name,
-												ldn,
-												reference_name,
-												level_type,
-												frequency_type,
-												mo,
-												ns,
-												mongo_value_pair_dic,
-												mongo_result,
-												oracle_value_pair_dic,
-												oracle_result,
-												filename
-											)
+											insertData(parameter_group,mo_name,ldn,reference_name,level_type,frequency_type,
+												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename)
 							else:
 								mo_group_collection = None
 								xpath = f'.//mo[@moc="{parameter_group}"]'
@@ -1693,21 +1652,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												mo_name = env_mo_path.format(subNetwork, managedElement, nbId) + f',{ldn}'
 											else:
 												mo_name = env_mo_path.format(subNetwork, managedElement, nbId)
-									insertData(
-										parameter_group,
-										mo_name,
-										ldn,
-										reference_name,
-										level_type,
-										frequency_type,
-										mo,
-										ns,
-										mongo_value_pair_dic,
-										mongo_result,
-										oracle_value_pair_dic,
-										oracle_result,
-										filename
-									)
+									insertData(parameter_group,mo_name,ldn,reference_name,level_type,frequency_type,
+												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename, nb_dic)
 		except Exception as e:
 			log.e(f'---- ERROR: {str(e)}')
 
@@ -1734,7 +1680,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 	log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
 	close_connection(oracle_con, oracle_cur)
 
-def insertData(parameter_group, mo_name, ldn, reference_name, level_type, frequency_type, node, namespace, mongo_value_pair_dic, mongo_result, oracle_value_pair_dic, oracle_result, filename):
+def insertData(parameter_group, mo_name, ldn, reference_name, level_type, frequency_type, node, namespace, mongo_value_pair_dic, mongo_result, oracle_value_pair_dic, oracle_result, filename, test= None):
 	# Get all attribute
 	attributes = node.xpath(f'.//attributes/*', namespaces=namespace)
 	for attribute in attributes:
@@ -1779,4 +1725,4 @@ def insertData(parameter_group, mo_name, ldn, reference_name, level_type, freque
 			oracle_result[parameter_group] = []
 			oracle_result[parameter_group].append(oracle_value_pair_dic)
 	else:
-		log.e(f'---- ERROR: No MO name for {parameter_group} ldn = {ldn}')
+		log.e(f'---- ERROR: No MO name for {parameter_group} ldn = {ldn}, check = {str(test)}')
