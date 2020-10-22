@@ -65,7 +65,7 @@ sw_column = [
 ]
 
 
-REGEX_4G_LDN_ENBCUCPFUNC = r"^(ENBCUCPFunction=(\d+)).*$"
+REGEX_4G_LDN_ENBCUCPFUNC = r"^(ENBCUCPFunction=([^,]*)).*$"
 REGEX_4G_LDN_CELLFDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellFDDLTE=([^,]+)).*$"
 REGEX_4G_LDN_CELLTDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellTDDLTE=([^,]+)).*$"
 REGEX_5G_LDN_NRCELLCU = r"^(GNBCUCPFunction=((\d+)-(\d+)_(\d+)),NRCellCU=([^,]+)).*$"
