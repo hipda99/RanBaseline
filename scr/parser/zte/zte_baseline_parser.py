@@ -1670,7 +1670,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
 										# Check TDD
 										elif match_celltdd:
-											cellId = match_celltdd.group(6)
+											cellId = match_celltdd.group(5)
 											key = match_celltdd.group(1)
 											if key in celltdd_ldn_dic:
 												reference_name = celltdd_ldn_dic[key].get('cellname')
