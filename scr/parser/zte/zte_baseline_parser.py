@@ -1659,7 +1659,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											else:
 												mo_name = env_mo_path.format(subNetwork, managedElement, nbId)
 									insertData(parameter_group,mo_name,ldn,reference_name,level_type,frequency_type,
-												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename, nb_dic)
+												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename)
 		except Exception as e:
 			log.e(f'---- ERROR: {str(e)}')
 
