@@ -303,7 +303,7 @@ def read_4g(file_mapping_path_name):
             baseline_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_2600_TYPE
             baseline_2600_dic[param_group][0][LV_COLUMN] = cell_level
 
-            baseline_1800_anchor_dic[param_group][0] = [{param_name: baseline_1800_anchor_value}]
+            baseline_1800_anchor_dic[param_group] = [{param_name: baseline_1800_anchor_value}]
             baseline_1800_anchor_dic[param_group][0][BASELINE_TYPE] = BASELINE_1800_ANCHOR_TYPE
             baseline_1800_anchor_dic[param_group][0][LV_COLUMN] = cell_level
 
