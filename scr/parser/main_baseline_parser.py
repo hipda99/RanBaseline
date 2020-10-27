@@ -81,6 +81,11 @@ def run_baseline(vendor, frequency_type=""):
                     elif source.FrequencyType == '5G':
                         field_mapping_dic, base_mapping_2600_dic, param_cell_level_dic, param_mo_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         ericsson_baseline_parser.prepare_oracle_table_5g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_2600_dic, False, baseline_label_dic)
+                
+                elif vendor == ERICSSON_FEATURE_VENDOR:
+
+                    field_mapping_dic, base_mapping_dic, key_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency, source.FileMappingFeaturePath)
+                    ericsson_baseline_parser.prepare_oracle_table_feature(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic)
 
 
             except Exception:
