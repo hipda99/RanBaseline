@@ -63,6 +63,10 @@ def rule_column_name(columm_name, frequency_type=None):
     columm_name = columm_name.replace("systemInformationBlock3_", "sysInfoBk3_")
     columm_name = columm_name.replace("CFGSWITCH", "CFGSW")
     columm_name = columm_name.replace("COMMENT", "")
+    columm_name = columm_name.replace("QCIPROFILEENDCCONFIGEXT", "QCIPRFENDCCNFGEXT")
+    columm_name = columm_name.replace("SCSSPECIFICCARRIERLISTDL", "SCSSPCFCCRRRLSTDL")
+    columm_name = columm_name.replace("SCSSPECIFICCARRIERLISTUL", "SCSSPCFCCRRRLSTUL")
+    columm_name = columm_name.replace("UTRANCELLRESELECTIONTDDLTE", "UTRANCLLRSLCTNTDDLTE")
 
     if columm_name[0].isdigit():
         columm_name = "X" + columm_name
