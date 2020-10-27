@@ -157,7 +157,7 @@ def prepare_oracle_table_5g(oracle_con, oracle_cur, frequency_type, field_mappin
 
 	return
 
-def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_1800_anchor_dic, drop_param=True, baseline_label_dic={}):
+def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_anchor_dic, drop_param=True, baseline_label_dic={}):
 	for group_param in field_mapping_dic:
 		table_name = naming_helper.get_table_name(BASELINE_TABLE_PREFIX.format(ZTE_TABLE_PREFIX), frequency_type, group_param)
 
@@ -171,7 +171,7 @@ def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mappin
 			try:
 				ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_dic[group_param])
 				ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
-				ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_1800_anchor_dic[group_param])
+				ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_anchor_dic[group_param])
 
 				if len(red_mapping_dic) != 0:
 					ran_baseline_oracle.push(oracle_cur, table_name, red_mapping_dic[group_param])

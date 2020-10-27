@@ -18,14 +18,14 @@ RED_ZONE = 'redzone'
 
 # New type 
 L2600_BASELINE = 'baseline_2600'
-L1800_ANCHOR = 'baseline_1800_anchor'
+ANCHOR = 'baseline_anchor'
 
 BASELINE_TYPE = 'BASELINE_TYPE'
 REFERENCE_FIELD_COLUMN_NAME = 'REFERENCE_FIELD'
 
 # 2020CR - NR/TDD - Additional L2600, Anchor L1800
 BASELINE_4G_2600_COLUMN = 'Baseline_2600'
-BASELINE_4G_1800_ANCHOR_COLUMN = 'Baseline_1800_Anchor'
+BASELINE_4G_ANCHOR_COLUMN = 'Baseline_Anchor'
 
 # 3G
 BASELINE_3G_850_COLUMN = 'Baseline_850'
@@ -134,7 +134,7 @@ def read_4g(file_mapping_path_name):
     baseline_dic = {}
     red_baseline_dic = {}
     baseline_2600_dic = {}
-    baseline_1800_anchor_dic = {}
+    baseline_anchor_dic = {}
     cell_level_dic = {}
     tmp_check_key_dic = {}
 
@@ -158,9 +158,9 @@ def read_4g(file_mapping_path_name):
         if baseline_label_value == "nan":
             baseline_label_value = ""
 
-        l1800_anchor_value = str(row[BASELINE_4G_1800_ANCHOR_COLUMN])
-        if l1800_anchor_value == 'nan':
-            l1800_anchor_value = ""
+        anchor_value = str(row[BASELINE_4G_ANCHOR_COLUMN])
+        if anchor_value == 'nan':
+            anchor_value = ""
 
         l2600_value = str(row[BASELINE_4G_2600_COLUMN])
         if l2600_value == 'nan':
@@ -175,8 +175,8 @@ def read_4g(file_mapping_path_name):
                 red_baseline_dic[param_group][0][param_name] = red_zone_value
                 red_baseline_dic[param_group][0][BASELINE_TYPE] = RED_ZONE
 
-                baseline_1800_anchor_dic[param_group][0][param_name] = l1800_anchor_value
-                baseline_1800_anchor_dic[param_group][0][BASELINE_TYPE] = L1800_ANCHOR
+                baseline_anchor_dic[param_group][0][param_name] = anchor_value
+                baseline_anchor_dic[param_group][0][BASELINE_TYPE] = ANCHOR
 
                 baseline_2600_dic[param_group][0][param_name] = l2600_value
                 baseline_2600_dic[param_group][0][BASELINE_TYPE] = L2600_BASELINE                            
@@ -197,8 +197,8 @@ def read_4g(file_mapping_path_name):
             red_baseline_dic[param_group] = [{param_name: red_zone_value}]
             red_baseline_dic[param_group][0][BASELINE_TYPE] = RED_ZONE
 
-            baseline_1800_anchor_dic[param_group] = [{param_name: l1800_anchor_value}]
-            baseline_1800_anchor_dic[param_group][0][BASELINE_TYPE] = L1800_ANCHOR
+            baseline_anchor_dic[param_group] = [{param_name: anchor_value}]
+            baseline_anchor_dic[param_group][0][BASELINE_TYPE] = ANCHOR
 
             baseline_2600_dic[param_group] = [{param_name: l2600_value}]
             baseline_2600_dic[param_group][0][BASELINE_TYPE] = L2600_BASELINE
@@ -208,7 +208,7 @@ def read_4g(file_mapping_path_name):
 
             tmp_check_key_dic[param_group.upper()] = [param_name.upper()]
 
-    return param_dic, baseline_dic, red_baseline_dic, baseline_2600_dic, baseline_1800_anchor_dic, cell_level_dic, baseline_label_dic
+    return param_dic, baseline_dic, red_baseline_dic, baseline_2600_dic, baseline_anchor_dic, cell_level_dic, baseline_label_dic
 
 def read_5g(file_mapping_path_name):
     df = read_excel_mapping(file_mapping_path_name, 0)

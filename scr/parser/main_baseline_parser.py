@@ -47,8 +47,8 @@ def run_baseline(vendor, frequency_type=""):
                         field_mapping_dic, base_mapping_850_dic, base_mapping_2100_dic, red_mapping_dic,  cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         zte_baseline_parser.prepare_oracle_table_3g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_850_dic, base_mapping_2100_dic, red_mapping_dic, False, baseline_label_dic)
                     elif source.FrequencyType == '4G':
-                        field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_1800_anchor_dic, cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
-                        zte_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_1800_anchor_dic, False, baseline_label_dic)
+                        field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_anchor_dic, cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
+                        zte_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_anchor_dic, False, baseline_label_dic)
                     elif source.FrequencyType == '5G':
                         field_mapping_dic, base_mapping_2600_dic, cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         zte_baseline_parser.prepare_oracle_table_5g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_2600_dic, False, baseline_label_dic)
@@ -57,12 +57,15 @@ def run_baseline(vendor, frequency_type=""):
                 elif vendor == HUAWEI_VENDOR:
 
                     if source.FrequencyType == "4G":
-                        field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
-                        huewei_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, False, baseline_label_dic)
+                        field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
+                        huewei_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, False, baseline_label_dic)
                     elif source.FrequencyType == "3G":
 
                         field_mapping_dic, base_mapping_850bma_dic, base_mapping_850upc_dic, base_mapping_2100_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         huewei_baseline_parser.prepare_oracle_table_3g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_850bma_dic, base_mapping_850upc_dic, base_mapping_2100_dic, False, baseline_label_dic)
+                    elif source.FrequencyType == "5G":
+                        field_mapping_dic, base_mapping_2600_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
+                        huewei_baseline_parser.prepare_oracle_table_5g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_2600_dic, False, baseline_label_dic)
                     else:
                         field_mapping_dic, base_mapping_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         huewei_baseline_parser.prepare_oracle_table_2g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic, False, baseline_label_dic)
@@ -73,8 +76,8 @@ def run_baseline(vendor, frequency_type=""):
 
                     if source.FrequencyType == "4G":
                         
-                        field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, base_mapping_1800_anchor_dic, param_cell_level_dic, param_mo_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
-                        ericsson_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, base_mapping_1800_anchor_dic, False, baseline_label_dic)
+                        field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, base_mapping_anchor_dic, param_cell_level_dic, param_mo_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
+                        ericsson_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, base_mapping_anchor_dic, False, baseline_label_dic)
                     elif source.FrequencyType == '3G':
                         field_mapping_dic, base_mapping_dic, param_cell_level_dic, param_mo_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         ericsson_baseline_parser.prepare_oracle_table(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic, False, baseline_label_dic)
@@ -123,8 +126,8 @@ def run(vendor, frequency_type=""):
                         field_mapping_dic, base_mapping_850_dic, base_mapping_2100_dic, red_mapping_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         zte_baseline_parser.prepare_oracle_table_3g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_850_dic, base_mapping_2100_dic, red_mapping_dic, True, baseline_label_dic)
                     elif source.FrequencyType == '4G':
-                        field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_1800_anchor_dic, base_mapping_2600_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
-                        zte_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_1800_anchor_dic, True, baseline_label_dic)
+                        field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_anchor_dic, base_mapping_2600_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
+                        zte_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_anchor_dic, True, baseline_label_dic)
                     elif source.FrequencyType == '5G':
                         field_mapping_dic, base_mapping_2600_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
                         zte_baseline_parser.prepare_oracle_table_5g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_2600_dic, True, baseline_label_dic)
@@ -135,14 +138,17 @@ def run(vendor, frequency_type=""):
 
                     if source.FrequencyType == "4G":
                         field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
-                        huewei_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, True, baseline_label_dic)
+                        huewei_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, False, baseline_label_dic)
                     elif source.FrequencyType == "3G":
 
                         field_mapping_dic, base_mapping_850bma_dic, base_mapping_850upc_dic, base_mapping_2100_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
-                        huewei_baseline_parser.prepare_oracle_table_3g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_850bma_dic, base_mapping_850upc_dic, base_mapping_2100_dic, True, baseline_label_dic)
+                        huewei_baseline_parser.prepare_oracle_table_3g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_850bma_dic, base_mapping_850upc_dic, base_mapping_2100_dic, False, baseline_label_dic)
+                    elif source.FrequencyType == "5G":
+                        field_mapping_dic, base_mapping_2600_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
+                        huewei_baseline_parser.prepare_oracle_table_5g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_2600_dic, False, baseline_label_dic)
                     else:
                         field_mapping_dic, base_mapping_dic, param_cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
-                        huewei_baseline_parser.prepare_oracle_table_2g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic, True, baseline_label_dic)
+                        huewei_baseline_parser.prepare_oracle_table_2g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic, False, baseline_label_dic)
 
                     huewei_baseline_parser.run(source, field_mapping_dic, param_cell_level_dic)
                 elif vendor == ERICSSON_VENDOR:
@@ -151,8 +157,8 @@ def run(vendor, frequency_type=""):
 
                     if source.FrequencyType == "4G":
 
-                        field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, base_mapping_1800_anchor_dic, param_cell_level_dic, param_mo_dic, base_mapping_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
-                        ericsson_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, base_mapping_1800_anchor_dic, True, base_mapping_label_dic)
+                        field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, base_mapping_anchor_dic, param_cell_level_dic, param_mo_dic, base_mapping_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
+                        ericsson_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, base_mapping_anchor_dic, True, base_mapping_label_dic)
 
                         # ran_baseline_oracle.create_trigger(oracle_cur)
                     elif source.FrequencyType == "3G":

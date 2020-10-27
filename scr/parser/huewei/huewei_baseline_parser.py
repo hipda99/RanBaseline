@@ -155,7 +155,7 @@ def prepare_oracle_table_3g(oracle_con, oracle_cur, frequency_type, field_mappin
     return
 
 
-def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, drop_param=True, base_mapping_label_dic = {}):
+def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_900_dic, base_mapping_1800_dic, base_mapping_2100_dic, base_mapping_2600_dic, drop_param=True, base_mapping_label_dic = {}):
     log.i(PREPARING_TABLE_STATEMENT + " : " + HUAWEI_VENDOR + " : " + frequency_type, HUAWEI_VENDOR, frequency_type)
 
     for group_param in field_mapping_dic:
@@ -169,6 +169,39 @@ def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mappin
             ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_900_dic[group_param])
             ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_1800_dic[group_param])
             ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2100_dic[group_param])
+            ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
+            ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_label_dic[group_param])
+
+    if drop_param:
+        if (HUAWEI_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+            ran_baseline_oracle.drop(oracle_cur, "SW_" + HUAWEI_TABLE_PREFIX + "_" + frequency_type)
+            ran_baseline_oracle.create_table(oracle_cur, "SW_" + HUAWEI_TABLE_PREFIX + "_" + frequency_type, sw_4g_column)
+
+        for group_param in field_mapping_dic:
+            table_name = naming_helper.get_table_name(HUAWEI_TABLE_PREFIX, frequency_type, group_param)
+            column_collection = field_mapping_dic[group_param]
+
+            if (HUAWEI_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+                ran_baseline_oracle.drop(oracle_cur, table_name)
+                ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
+
+    CREATED_TABLE[HUAWEI_TABLE_PREFIX + "_" + frequency_type] = []
+    oracle_con.commit()
+
+    return
+
+def prepare_oracle_table_5g(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_2600_dic, drop_param=True, base_mapping_label_dic = {}):
+    log.i(PREPARING_TABLE_STATEMENT + " : " + HUAWEI_VENDOR + " : " + frequency_type, HUAWEI_VENDOR, frequency_type)
+
+    for group_param in field_mapping_dic:
+        table_name = naming_helper.get_table_name(BASELINE_TABLE_PREFIX.format(HUAWEI_TABLE_PREFIX), frequency_type, group_param)
+        column_collection = field_mapping_dic[group_param]
+
+        if (HUAWEI_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+            ran_baseline_oracle.drop(oracle_cur, table_name)
+            ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
+
+            ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
             ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_label_dic[group_param])
 
     if drop_param:
