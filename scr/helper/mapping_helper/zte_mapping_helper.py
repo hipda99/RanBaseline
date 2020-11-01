@@ -16,16 +16,25 @@ LEVEL_COLUMN_NAME = 'Level'
 BASELINE = 'baseline'
 RED_ZONE = 'redzone'
 
-# New type 
+# New type for L2600 & NR2600
 L2600_BASELINE = 'baseline_2600'
-ANCHOR = 'baseline_anchor'
+REDZONE_L2600_BASELINE = 'baseline_redzone_2600'
+# Add anchor for LTE (all band)
+L900_ANCHOR = 'baseline_l900_anchor'
+L1800_ANCHOR = 'baseline_l1800_anchor'
+L2100_ANCHOR = 'baseline_l2100_anchor'
+L2600_ANCHOR = 'baseline_l2600_anchor'
 
 BASELINE_TYPE = 'BASELINE_TYPE'
 REFERENCE_FIELD_COLUMN_NAME = 'REFERENCE_FIELD'
 
 # 2020CR - NR/TDD - Additional L2600, Anchor L1800
 BASELINE_4G_2600_COLUMN = 'Baseline_2600'
-BASELINE_4G_ANCHOR_COLUMN = 'Baseline_Anchor'
+BASELINE_4G_REDZONE_2600_COLUMN = 'Baseline_Redzone_2600'
+BASELINE_4G_L900_ANCHOR_COLUMN = 'Baseline_L900_Anchor'
+BASELINE_4G_L1800_ANCHOR_COLUMN = 'Baseline_L1800_Anchor'
+BASELINE_4G_L2100_ANCHOR_COLUMN = 'Baseline_L2100_Anchor'
+BASELINE_4G_L2600_ANCHOR_COLUMN = 'Baseline_L2600_Anchor'
 
 # 3G
 BASELINE_3G_850_COLUMN = 'Baseline_850'
@@ -37,8 +46,10 @@ RED_ZONE_3G_2100_TYPE = 'redzone_2100'
 BASELINE_3G_2100_TYPE = 'baseline_2100'
 BASELINE_3G_2100_TYPE = 'baseline_2100'
 
+# 5G
 # 2020CR - NR/TDD- 5G NR
 BASELINE_5G_2600_TYPE = 'baseline_2600'
+BASELINE_5G_REDZONE_2600_TYPE = 'baseline_redzone_2600'
 
 BASELINE_LABEL_TYPE = 'label'
 
@@ -134,7 +145,11 @@ def read_4g(file_mapping_path_name):
     baseline_dic = {}
     red_baseline_dic = {}
     baseline_2600_dic = {}
-    baseline_anchor_dic = {}
+    baseline_redzone_2600_dic = {}
+    baseline_l900_anchor_dic = {}
+    baseline_l1800_anchor_dic = {}
+    baseline_l2100_anchor_dic = {}
+    baseline_l2600_anchor_dic = {}
     cell_level_dic = {}
     tmp_check_key_dic = {}
 
@@ -216,6 +231,7 @@ def read_5g(file_mapping_path_name):
     param_dic = {}
     baseline_label_dic = {}
     baseline_2600_dic = {}
+    baseline_redzone_2600_dic = {}
     cell_level_dic = {}
     tmp_check_key_dic = {}
 
