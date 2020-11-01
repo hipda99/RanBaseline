@@ -1692,6 +1692,10 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                         key_match = re.match("(\w+)\[\d+\].*",keyname[0])                                    
                                         if key_match:
                                             keyname = str(key_match.group(1)).strip()
+                                        else:
+                                            keyname = keyname[0]
+                                    else:
+                                        keyname = dictData[1]
                                     tail_name = struct_dict[1].split('.')
                                     obj_key = tail_name[1]
                                     key = naming_helper.rule_column_name(keyname[0] + "_" + obj_key)
