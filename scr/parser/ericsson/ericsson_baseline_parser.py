@@ -1642,6 +1642,9 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                     break
 
                                 # End of MO
+
+                            if 'endcAllowedPlmnList'.lower() in dictData[0].lower():
+                                ttt = True
                             if dictData[0][0] == "=":
                                 if group_param in mongo_result:
                                     mongo_result[group_param].append(mongo_value_pair_dic)
