@@ -1698,7 +1698,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                         keyname = dictData[1]
                                     tail_name = struct_dict[1].split('.')
                                     obj_key = tail_name[1]
-                                    key = naming_helper.rule_column_name(keyname[0] + "_" + obj_key)
+                                    key = naming_helper.rule_column_name(keyname + "_" + obj_key)
 
                                     mongo_value_pair_dic[key] = " ".join(struct_dict[3:])
 
