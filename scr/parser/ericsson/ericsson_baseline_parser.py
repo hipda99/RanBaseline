@@ -1688,9 +1688,13 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                 for i in range(size_number):
                                     struct_dict = lines[index + row].split()
                                     keyname = lines[index + previous_row].split()
+                                    if len(keyname) > 0:
+                                        key_match = re.match("(\w+)\[\d+\].*",keyname[0])                                    
+                                        if key_match:
+                                            keyname = str(key_match.group(1)).strip()
                                     tail_name = struct_dict[1].split('.')
                                     obj_key = tail_name[1]
-                                    key = naming_helper.rule_column_name(keyname + "_" + obj_key)
+                                    key = naming_helper.rule_column_name(keyname[0] + "_" + obj_key)
 
                                     mongo_value_pair_dic[key] = " ".join(struct_dict[3:])
 
