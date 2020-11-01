@@ -1624,6 +1624,9 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
                         row = 2
 
+                        if group_param == "EUtranCellFDD".upper():
+                            ttt = True
+
                         while True:
                             dictData = lines[index + row].split()
 
