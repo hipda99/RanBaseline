@@ -1624,9 +1624,6 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
                         row = 2
 
-                        if group_param == "EUtranCellFDD".upper():
-                            ttt = True
-
                         while True:
                             dictData = lines[index + row].split()
 
@@ -1664,6 +1661,25 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
                             if dictData[0] == "Struct":
 
+                                size_number = int(dictData[3])
+
+                                row = row + 1
+                                for i in range(size_number):
+                                    struct_dict = lines[index + row].split()
+                                    tail_name = struct_dict[1].split('.')
+                                    obj_key = tail_name[1]
+                                    key = naming_helper.rule_column_name(dictData[1] + "_" + obj_key)
+
+                                    mongo_value_pair_dic[key] = " ".join(struct_dict[3:])
+
+                                    if key in param_collection:
+                                        oracle_value_pair_dic[key] = " ".join(struct_dict[3:])
+
+                                    row = row + 1
+
+                                continue
+
+                            if (dictData[0] == ">>>" and 'Struct[' in dictData[1]):
                                 size_number = int(dictData[3])
 
                                 row = row + 1
