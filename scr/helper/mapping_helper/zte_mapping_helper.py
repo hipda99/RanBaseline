@@ -23,18 +23,18 @@ REFERENCE_FIELD_COLUMN_NAME = 'REFERENCE_FIELD'
 # Excel Column name
 BASELINE_4G_2600_COLUMN = 'Baseline_2600'
 BASELINE_4G_REDZONE_2600_COLUMN = 'Baseline_Redzone_2600'
-BASELINE_4G_L900_ANCHOR_COLUMN = 'Baseline_L900_Anchor'
-BASELINE_4G_L1800_ANCHOR_COLUMN = 'Baseline_L1800_Anchor'
-BASELINE_4G_L2100_ANCHOR_COLUMN = 'Baseline_L2100_Anchor'
-BASELINE_4G_L2600_ANCHOR_COLUMN = 'Baseline_L2600_Anchor'
+BASELINE_4G_L900_ANCHOR_COLUMN = 'Baseline_900_Anchor'
+BASELINE_4G_L1800_ANCHOR_COLUMN = 'Baseline_1800_Anchor'
+BASELINE_4G_L2100_ANCHOR_COLUMN = 'Baseline_2100_Anchor'
+BASELINE_4G_L2600_ANCHOR_COLUMN = 'Baseline_2600_Anchor'
 # Database column label
 L2600_BASELINE = 'baseline_2600'
 REDZONE_L2600_BASELINE = 'baseline_redzone_2600'
 # Add anchor for LTE (all band)
-L900_ANCHOR = 'baseline_l900_anchor'
-L1800_ANCHOR = 'baseline_l1800_anchor'
-L2100_ANCHOR = 'baseline_l2100_anchor'
-L2600_ANCHOR = 'baseline_l2600_anchor'
+L900_ANCHOR = 'baseline_900_anchor'
+L1800_ANCHOR = 'baseline_1800_anchor'
+L2100_ANCHOR = 'baseline_2100_anchor'
+L2600_ANCHOR = 'baseline_2600_anchor'
 
 # 3G
 BASELINE_3G_850_COLUMN = 'Baseline_850'
