@@ -51,7 +51,7 @@ def run_baseline(vendor, frequency_type=""):
                         zte_baseline_parser.prepare_oracle_table_4g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_dic, red_mapping_dic, base_mapping_2600_dic, base_mapping_redzone_2600_dic, base_mapping_900_anchor_dic, base_mapping_1800_anchor_dic, base_mapping_2100_anchor_dic, base_mapping_2600_anchor_dic, False, baseline_label_dic)
                     elif source.FrequencyType == '5G':
                         field_mapping_dic, base_mapping_2600_dic, base_mapping_redzone_2600_dic, cell_level_dic, baseline_label_dic = field_mapping_parser.read_mapping(vendor, source.FileMappingPath, source.FrequencyType, source.Frequency)
-                        zte_baseline_parser.prepare_oracle_table_5g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_2600_dic, False, baseline_label_dic)
+                        zte_baseline_parser.prepare_oracle_table_5g(oracle_con, oracle_cur, source.FrequencyType, field_mapping_dic, base_mapping_2600_dic, base_mapping_redzone_2600_dic, False, baseline_label_dic)
                     
 
                 elif vendor == HUAWEI_VENDOR:
