@@ -166,13 +166,20 @@ def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mappin
                 ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_900_dic[group_param])
                 ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_1800_dic[group_param])
                 ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2100_dic[group_param])
-                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
+
+                # L2600
+                if (len(base_mapping_2600_dic) != 0):
+                    ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
 
                 # Anchor
-                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_900_anchor_dic[group_param])
-                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_1800_anchor_dic[group_param])
-                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2100_anchor_dic[group_param])
-                ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_anchor_dic[group_param])
+                if (len(base_mapping_900_anchor_dic) != 0):
+                    ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_900_anchor_dic[group_param])
+                if (len(base_mapping_1800_anchor_dic) != 0):
+                    ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_1800_anchor_dic[group_param])
+                if (len(base_mapping_2100_anchor_dic) != 0):
+                    ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2100_anchor_dic[group_param])
+                if (len(base_mapping_2600_anchor_dic) != 0):
+                    ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_anchor_dic[group_param])
 
                 ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_label_dic[group_param])
 
