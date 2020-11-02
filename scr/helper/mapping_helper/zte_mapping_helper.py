@@ -27,6 +27,7 @@ BASELINE_4G_L900_ANCHOR_COLUMN = 'Baseline_900_Anchor'
 BASELINE_4G_L1800_ANCHOR_COLUMN = 'Baseline_1800_Anchor'
 BASELINE_4G_L2100_ANCHOR_COLUMN = 'Baseline_2100_Anchor'
 BASELINE_4G_L2600_ANCHOR_COLUMN = 'Baseline_2600_Anchor'
+
 # Database column label
 L2600_BASELINE = 'baseline_2600'
 REDZONE_L2600_BASELINE = 'baseline_redzone_2600'
