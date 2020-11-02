@@ -246,6 +246,8 @@ def read_4g(file_mapping_path_name):
             # CR2020 - Add L2600 & Anchor
             baseline_2600_dic[param_group] = [{param_name: l2600_value}]
             baseline_2600_dic[param_group][0][BASELINE_TYPE] = L2600_BASELINE
+            baseline_redzone_2600_dic[param_group] = [{param_name: redzone_l2600_value}]
+            baseline_redzone_2600_dic[param_group][0][BASELINE_TYPE] = REDZONE_L2600_BASELINE
             baseline_l900_anchor_dic[param_group] = [{param_name: l900_anchor_value}]
             baseline_l900_anchor_dic[param_group][0][BASELINE_TYPE] = L900_ANCHOR
             baseline_l1800_anchor_dic[param_group] = [{param_name: l1800_anchor_value}]
