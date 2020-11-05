@@ -15,10 +15,10 @@ import log
 
 # main_baseline_parser.run_baseline(ZTE_VENDOR, "2G")
 # main_baseline_parser.run_baseline(ZTE_VENDOR, "3G")
-main_baseline_parser.run_baseline(ZTE_VENDOR, "4G")
-main_baseline_parser.run_baseline(ZTE_VENDOR, "5G")
+# main_baseline_parser.run_baseline(ZTE_VENDOR, "4G")
+# main_baseline_parser.run_baseline(ZTE_VENDOR, "5G")
 
 # main_baseline_parser.run_baseline(HUAWEI_VENDOR, "2G")
 # main_baseline_parser.run_baseline(HUAWEI_VENDOR, "3G")
-# main_baseline_parser.run_baseline(HUAWEI_VENDOR, "4G")
+main_baseline_parser.run_baseline(HUAWEI_VENDOR, "4G")
 log.i("Done all")
