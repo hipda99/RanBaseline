@@ -89,7 +89,8 @@ def collect_huawei_file(raw_file):
         collect_huawei_file_by_extension(raw_file, 'txt')
     elif raw_file.FrequencyType == '4G':
         collect_huawei_file_by_extension(raw_file, 'xml')
-
+    elif raw_file.FrequencyType == '5G':
+        collect_huawei_file_by_extension(raw_file, 'xml')
     # print(raw_file)
 
 

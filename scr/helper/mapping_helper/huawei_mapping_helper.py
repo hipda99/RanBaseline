@@ -37,7 +37,9 @@ LV_COLUMN = 'LV'
 
 
 def read_huawei_mapping(file_mapping_path_name, frequency_type, frequency):
-    if frequency_type == "4G":
+    if frequency_type == "5G":
+        return read_5g(file_mapping_path_name)
+    elif frequency_type == "4G":
         return read_4g(file_mapping_path_name)
     elif frequency_type == "3G":
         return read_3g(file_mapping_path_name)

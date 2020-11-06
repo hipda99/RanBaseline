@@ -16,6 +16,8 @@ Huawei:
       mapping: hw_3g_mapping.xlsx
     4G:
       mapping: hw_4g_mapping.xlsx
+    5G:
+      mapping: hw_5g_mapping.xlsx
 
 Ericsson:
   network:
