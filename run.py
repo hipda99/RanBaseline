@@ -20,5 +20,6 @@ import log
 
 # main_baseline_parser.run_baseline(HUAWEI_VENDOR, "2G")
 # main_baseline_parser.run_baseline(HUAWEI_VENDOR, "3G")
-main_baseline_parser.run_baseline(HUAWEI_VENDOR, "4G")
+# main_baseline_parser.run_baseline(HUAWEI_VENDOR, "4G")
+main_baseline_parser.run_baseline(HUAWEI_VENDOR, "5G")
 log.i("Done all")
