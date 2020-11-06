@@ -308,6 +308,7 @@ def read_4g(file_mapping_path_name):
 
     param_dic = {}
     baseline_label_dic = {}
+    baseline_900_dic = {}
     baseline_1800_dic = {}
     baseline_2100_dic = {}
     baseline_2600_dic = {}
@@ -359,6 +360,9 @@ def read_4g(file_mapping_path_name):
             if param_name.upper() not in tmp_check_key_dic[param_group.upper()]:
                 param_dic[param_group].append(param_name)
 
+                baseline_900_dic[param_group][0][param_name] = baseline_900_value
+                baseline_900_dic[param_group][0][BASELINE_TYPE] = BASELINE_900_TYPE
+                baseline_900_dic[param_group][0][LV_COLUMN] = cell_level
 
                 baseline_1800_dic[param_group][0][param_name] = baseline_1800_value
                 baseline_1800_dic[param_group][0][BASELINE_TYPE] = BASELINE_1800_TYPE
@@ -385,6 +389,7 @@ def read_4g(file_mapping_path_name):
 
                 if comment_param_name.upper() not in tmp_check_key_dic[param_group.upper()]:
                     param_dic[param_group].append(comment_param_name)
+                    baseline_900_dic[param_group][0][comment_param_name] = comment_value
                     baseline_1800_dic[param_group][0][comment_param_name] = comment_value
                     baseline_2100_dic[param_group][0][comment_param_name] = comment_value
                     baseline_2600_dic[param_group][0][comment_param_name] = comment_value
@@ -402,6 +407,7 @@ def read_4g(file_mapping_path_name):
 
                 if comment_param_name.upper() not in tmp_check_key_dic[param_group.upper()]:
                     param_dic[param_group].append(comment_param_name)
+                    baseline_900_dic[param_group][0][comment_param_name] = comment_value
                     baseline_1800_dic[param_group][0][comment_param_name] = comment_value
                     baseline_2100_dic[param_group][0][comment_param_name] = comment_value
                     baseline_2600_dic[param_group][0][comment_param_name] = comment_value
@@ -418,6 +424,9 @@ def read_4g(file_mapping_path_name):
             param_dic[param_group].append("REFERENCE_FIELD")
             param_dic[param_group].append(BASELINE_TYPE)
 
+            baseline_900_dic[param_group] = [{param_name: baseline_900_value}]
+            baseline_900_dic[param_group][0][BASELINE_TYPE] = BASELINE_900_TYPE
+            baseline_900_dic[param_group][0][LV_COLUMN] = cell_level
 
             baseline_1800_dic[param_group] = [{param_name: baseline_1800_value}]
             baseline_1800_dic[param_group][0][BASELINE_TYPE] = BASELINE_1800_TYPE
@@ -442,6 +451,7 @@ def read_4g(file_mapping_path_name):
 
             comment_param_name = get_huawei_comment_column_name("C", param_name.upper(), comment_tmp)
             param_dic[param_group].append(comment_param_name)
+            baseline_900_dic[param_group][0][comment_param_name] = comment_value
             baseline_1800_dic[param_group][0][comment_param_name] = comment_value
             baseline_2100_dic[param_group][0][comment_param_name] = comment_value
             baseline_2600_dic[param_group][0][comment_param_name] = comment_value
@@ -449,6 +459,8 @@ def read_4g(file_mapping_path_name):
             baseline_label_dic[param_group][0][comment_param_name] = baseline_label_value + " : " + comment_tmp
 
             tmp_check_key_dic[param_group.upper()].append(comment_param_name.upper())
+
+    return param_dic, baseline_900_dic, baseline_1800_dic, baseline_2100_dic, baseline_2600_dic, param_cell_level, baseline_label_dic
 
 
 
@@ -560,3 +572,5 @@ def read_5g(file_mapping_path_name):
             baseline_label_dic[param_group][0][comment_param_name] = baseline_label_value + " : " + comment_tmp
 
             tmp_check_key_dic[param_group.upper()].append(comment_param_name.upper())
+
+    return param_dic, baseline_2600_dic, param_cell_level, baseline_label_dic
