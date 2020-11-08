@@ -757,7 +757,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
     oracle_con.commit()
 
-    xpath = './/spec:syndata[FunctionType="gNodeBFunction"]'
+    xpath = './/spec:syndata[@FunctionType="gNodeBFunction"]'
 
     # sectoreqmref = get_sectoreqmref(tree)
 
@@ -977,7 +977,7 @@ def get_nename(tree):
     return ""
 
 def get_gnodeB(tree):
-    xpath = './/spec:syndata[FunctionType="gNodeBFunction"]'
+    xpath = './/spec:syndata[@FunctionType="gNodeBFunction"]'
 
     class_node_collections = tree.xpath(xpath, namespaces=xml_namespaces)
 
@@ -1141,7 +1141,7 @@ def get_4g_root_cell(tree):
 
 # CR2020 - Add 5G NR Cell
 def get_5g_root_cell(tree):
-    xpath = './/spec:syndata[FunctionType="gNodeBFunction"]'
+    xpath = './/spec:syndata[@FunctionType="gNodeBFunction"]'
 
     cell = {}
 
