@@ -753,19 +753,19 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
         dic["NEFUNCTION"] = nefunction
         dic["FILENAME"] = filename
 
-        sw_key = "SW_" + HUAWEI_TABLE_PREFIX + "_" + frequency_type
+        # sw_key = "SW_" + HUAWEI_TABLE_PREFIX + "_" + frequency_type
 
-        sw_result[sw_key] = []
-        sw_result[sw_key].append(dic)
+        # sw_result[sw_key] = []
+        # sw_result[sw_key].append(dic)
 
-        ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
-        oracle_con.commit()
+        # ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
+        # oracle_con.commit()
 
         xpath = './/spec:syndata[@FunctionType="gNodeBFunction"]'
 
         # sectoreqmref = get_sectoreqmref(tree)
 
-        class_node_collections = tree.xpath(xpath, namespaces=xml_namespaces)
+        class_node_collections = tree.xpath(xpath)
 
         for class_node_collection in class_node_collections:
 
