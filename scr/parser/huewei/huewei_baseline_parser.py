@@ -730,6 +730,9 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     productversion = get_productversion(tree_)
     nefunction = get_nefunction(tree_, nename)
     swversion = get_swversion_4g(tree_)
+
+    cell = get_5g_root_cell(tree_)
+
     filename_dic = raw_file.split("/")
     filename = filename_dic[len(filename_dic) - 1]
 
@@ -755,24 +758,24 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     oracle_con.commit()
 
     # Strip Namespaces from XML
-    parser = etree.XMLParser(recover=True, encoding='utf-8')
+    # parser = etree.XMLParser(recover=True, encoding='utf-8')
     try:
         with open(raw_file, encoding="utf-8", errors='ignore') as xml_file:
             # Create a parser
-            tree = strip_ns_prefix(etree.parse(xml_file, parser=parser))
+            # tree = strip_ns_prefix(etree.parse(xml_file, parser=parser))
             
-            root = tree.getroot()
-            xpath = './/syndata[@FunctionType="gNodeBFunction"]'
+            # root = tree.getroot()
+            xpath = './/spec:syndata[@FunctionType="gNodeBFunction"]'
 
             # sectoreqmref = get_sectoreqmref(root)
 
-            class_node_collections = root.xpath(xpath)
+            class_node_collections = tree_.xpath(xpath, namespaces=xml_namespaces)
 
             for class_node_collection in class_node_collections:
 
-                # Get GNodeB
-                gnodeB = get_gnodeB_xpath(class_node_collection)
-                cells = get_5g_cell_xpath(root)
+                # # Get GNodeB
+                # gnodeB = get_gnodeB_xpath(class_node_collection)
+                # cells = get_5g_cell_xpath(root)
 
                 # Get Cell Data
                 for class_node in class_node_collection:
@@ -811,20 +814,20 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
 
                                     if group_level.upper() == KEY_CELL_LEVEL.upper():
 
-                                        if value in cells:
+                                        if value in cell:
 
                                             if key.upper() == KEY_NR_CELLID.upper():
                                                 mo = mo + "," + KEY_NR_CELLID + "=" + value
 
-                                                reference_field = cells[value]
+                                                reference_field = cell[value]
 
                                             elif key.upper() == KEY_NR_DU_CELLID.upper():
                                                 mo = mo + "," + KEY_NR_DU_CELLID + "=" + value
 
-                                                reference_field = cells[value]
+                                                reference_field = cell[value]
 
                                     elif group_level.upper() == KEY_NODEB_LEVEL.upper():
-                                        reference_field = gnodeB
+                                        reference_field = nename
                                     else:
                                         reference_field = nename
 
