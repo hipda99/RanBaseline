@@ -503,7 +503,7 @@ def parse_4g_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_di
     nefunction = get_nefunction(tree, nename)
     swversion = get_swversion_4g(tree)
 
-    cell = get_4g_root_cell(tree)
+    cell = get_4g_5g_root_cell(tree)
 
     filename_dic = raw_file.split("/")
 
@@ -844,7 +844,7 @@ def get_nefunction(tree, nename):
     return ""
 
 
-def get_4g_root_cell(tree):
+def get_4g_5g_root_cell(tree):
     xpath = './/spec:syndata'
 
     cell = {}
@@ -855,8 +855,10 @@ def get_4g_root_cell(tree):
         for class_node in class_node_collection:
             for group_node in class_node:
                 group_param = remove_xml_descriptor(group_node.tag).upper()
+                if group_param == "NRCELL":
+                    ttt = True
 
-                if group_param != "CELL":
+                if group_param != "CELL" or group_param != "NRCELL":
                     continue
 
                 localcellid = ""
@@ -868,7 +870,7 @@ def get_4g_root_cell(tree):
                             key = remove_xml_descriptor(attribute.tag)
                             value = str(attribute.text).strip()
 
-                            if key == "LocalCellId":
+                            if key == "LocalCellId" or key == "NrCellId":
                                 localcellid = value
                             elif key == "CellName":
                                 cell[localcellid] = value
