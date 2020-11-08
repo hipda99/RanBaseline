@@ -725,43 +725,43 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
 
     log.i("----- Start Parser HW 5G", HUAWEI_VENDOR, frequency_type)
 
+    tree_ = ElementInclude.default_loader(raw_file, 'xml')
+    nename = get_gnodeB(tree_)
+    productversion = get_productversion(tree_)
+    nefunction = get_nefunction(tree_, nename)
+    swversion = get_swversion_4g(tree_)
+    filename_dic = raw_file.split("/")
+    filename = filename_dic[len(filename_dic) - 1]
+
+    mongo_result = {}
+    oracle_result = {}
+    sw_result = {}
+
+    dic = dict.fromkeys(sw_4g_column, '')
+    dic["NENAME"] = nename
+    dic["PRODUCTVERSION"] = productversion
+    dic["SWVERSION"] = swversion
+    dic["REFERENCE_FIELD"] = nename
+    dic["MO"] = KEY_NENAME + "=" + nename
+    dic["NEFUNCTION"] = nefunction
+    dic["FILENAME"] = filename
+
+    sw_key = "SW_" + HUAWEI_TABLE_PREFIX + "_" + frequency_type
+
+    sw_result[sw_key] = []
+    sw_result[sw_key].append(dic)
+
+    ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
+    oracle_con.commit()
+
+    # Strip Namespaces from XML
     parser = etree.XMLParser(recover=True, encoding='utf-8')
     try:
         with open(raw_file, encoding="utf-8", errors='ignore') as xml_file:
             # Create a parser
             tree = strip_ns_prefix(etree.parse(xml_file, parser=parser))
-            # tree = ElementInclude.default_loader(raw_file, 'xml')
+            
             root = tree.getroot()
-            nename = get_gnodeB(root)
-            productversion = get_productversion(root)
-            nefunction = get_nefunction(root, nename)
-            swversion = get_swversion_4g(root)
-
-            filename_dic = raw_file.split("/")
-
-            filename = filename_dic[len(filename_dic) - 1]
-
-            mongo_result = {}
-            oracle_result = {}
-            sw_result = {}
-
-            dic = dict.fromkeys(sw_4g_column, '')
-            dic["NENAME"] = nename
-            dic["PRODUCTVERSION"] = productversion
-            dic["SWVERSION"] = swversion
-            dic["REFERENCE_FIELD"] = nename
-            dic["MO"] = KEY_NENAME + "=" + nename
-            dic["NEFUNCTION"] = nefunction
-            dic["FILENAME"] = filename
-
-            # sw_key = "SW_" + HUAWEI_TABLE_PREFIX + "_" + frequency_type
-
-            # sw_result[sw_key] = []
-            # sw_result[sw_key].append(dic)
-
-            # ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
-            # oracle_con.commit()
-
             xpath = './/syndata[@FunctionType="gNodeBFunction"]'
 
             # sectoreqmref = get_sectoreqmref(root)
@@ -923,7 +923,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
                         mongo_result.clear()
                         oracle_result.clear()
     except Exception as e:
-        print(e)
+        log.e(f"ERROR {str(e)}")
 
     oracle_con.commit()
 
