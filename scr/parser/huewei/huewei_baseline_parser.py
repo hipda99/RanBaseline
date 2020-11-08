@@ -780,7 +780,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
                 # Get Cell Data
                 for class_node in class_node_collection:
                     for group_node in class_node:
-                        group_param = str(group_node.tag).upper()
+                        group_param = remove_xml_descriptor(group_node.tag).upper()
+                        # group_param = str(group_node.tag).upper()
 
                         if group_param not in mongo_result:
                             mongo_result[group_param] = []
@@ -806,7 +807,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
 
                                 # no comment
                                 try:
-                                    key = str(attribute.tag).upper()
+                                    key = remove_xml_descriptor(attribute.tag).upper()
+                                    # key = str(attribute.tag).upper()
                                     value = str(attribute.text).strip()
 
                                     value = naming_helper.clean_value_data(value)
