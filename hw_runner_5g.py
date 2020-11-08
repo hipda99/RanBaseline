@@ -31,14 +31,6 @@ parser_db.update_status(HUAWEI_VENDOR, '5G', parser_db.STATUS_OPEN)
 
 main_baseline_parser.run(HUAWEI_VENDOR, "5G")
 
-oracle_con, oracle_cur = open_connection()
-ran_baseline_oracle.gen_txrx_cell(oracle_cur)
-ran_baseline_oracle.gen_txrx_node(oracle_cur)
-
-oracle_con.commit()
-
-close_connection(oracle_con, oracle_cur)
-
 TIME_END_SCRIPT = datetime.datetime.now()
 log.i("Time : " + str(TIME_END_SCRIPT - TIME_START_SCRIPT), HUAWEI_VENDOR, "5G")
 log.i("--------------------------------", HUAWEI_VENDOR, "5G")
