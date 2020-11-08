@@ -1007,7 +1007,7 @@ def get_gnodeB(tree):
 
 def get_gnodeB_xpath(node):    
 
-    class_node_collections = node.xpath(f'.//gNodeBFunction/attributes/gNodeBFunctionName/text()', namespaces=xml_namespaces)
+    class_node_collections = node.xpath(f'.//class/gNodeBFunction/attributes/gNodeBFunctionName/text()', namespaces=xml_namespaces)
 
     for node in class_node_collections:
         return node
