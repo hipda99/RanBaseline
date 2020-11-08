@@ -45,6 +45,10 @@ LV_FIELD = "LV"
 
 SYSOBJECTID = ""
 
+# 5G KeyID
+KEY_NR_CELLID = "NrCellId"
+KEY_NR_DU_CELLID = "NrDuCellId"
+
 encodings = ['utf-8', 'windows-1250', 'windows-1252']
 
 sw_2g_column = [
@@ -238,9 +242,12 @@ def run(source, field_mapping_dic, param_cell_level_dic):
             cell = get_3g_root_cell(raw_file)
             nodeb = get_nodeb_list(raw_file)
             pool.apply_async(parse_2g_3g, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic, cell, nodeb,))
+        
+        elif source.FrequencyType == '4G':
+            pool.apply_async(parse_4g, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic,))
 
-        else:
-            pool.apply_async(parse_4g_5g, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic,))
+        elif source.FrequencyType == '5G':
+            pool.apply_async(parse_5g, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic,))
         # parse_4g(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic)
 
     pool.close()
@@ -489,12 +496,12 @@ def parse_2g_3g(raw_file, frequency_type, field_mapping_dic, param_cell_level_di
     log.i("    ", HUAWEI_VENDOR, frequency_type)
 
 
-def parse_4g_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
+def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     log.i(PARSING_FILE_STATEMENT.format(raw_file))
 
     oracle_con, oracle_cur = open_connection()
 
-    log.i("----- Start Parser HW 4G/5G", HUAWEI_VENDOR, frequency_type)
+    log.i("----- Start Parser HW 4G", HUAWEI_VENDOR, frequency_type)
 
     tree = ElementInclude.default_loader(raw_file, 'xml')
 
@@ -503,7 +510,7 @@ def parse_4g_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_di
     nefunction = get_nefunction(tree, nename)
     swversion = get_swversion_4g(tree)
 
-    cell = get_4g_5g_root_cell(tree)
+    cell = get_4g_root_cell(tree)
 
     filename_dic = raw_file.split("/")
 
@@ -709,6 +716,215 @@ def parse_4g_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_di
     log.i("Done :::: " + filename + " ::::::::", HUAWEI_VENDOR, frequency_type)
     log.i("----- Parser done ----", HUAWEI_VENDOR, frequency_type)
 
+def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
+    log.i(PARSING_FILE_STATEMENT.format(raw_file))
+
+    oracle_con, oracle_cur = open_connection()
+
+    log.i("----- Start Parser HW 5G", HUAWEI_VENDOR, frequency_type)
+
+    tree = ElementInclude.default_loader(raw_file, 'xml')
+
+    nename = get_gnodeB(tree)
+    productversion = get_productversion(tree)
+    nefunction = get_nefunction(tree, nename)
+    swversion = get_swversion_4g(tree)
+
+    cell = get_5g_root_cell(tree)
+
+    filename_dic = raw_file.split("/")
+
+    filename = filename_dic[len(filename_dic) - 1]
+
+    mongo_result = {}
+    oracle_result = {}
+    sw_result = {}
+
+    dic = dict.fromkeys(sw_4g_column, '')
+    dic["NENAME"] = nename
+    dic["PRODUCTVERSION"] = productversion
+    dic["SWVERSION"] = swversion
+    dic["REFERENCE_FIELD"] = nename
+    dic["MO"] = KEY_NENAME + "=" + nename
+    dic["NEFUNCTION"] = nefunction
+    dic["FILENAME"] = filename
+
+    sw_key = "SW_" + HUAWEI_TABLE_PREFIX + "_" + frequency_type
+
+    sw_result[sw_key] = []
+    sw_result[sw_key].append(dic)
+
+    ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
+    oracle_con.commit()
+
+    xpath = './/spec:syndata[FunctionType="gNodeBFunction"]'
+
+    # sectoreqmref = get_sectoreqmref(tree)
+
+    class_node_collections = tree.xpath(xpath, namespaces=xml_namespaces)
+
+    for class_node_collection in class_node_collections:
+
+        # Get GNodeB
+        gnodeB = get_gnodeB_xpath(class_node_collection)
+        cells = get_5g_cell_xpath(tree)
+
+        # Get Cell Data
+        for class_node in class_node_collection:
+            for group_node in class_node:
+                group_param = remove_xml_descriptor(group_node.tag).upper()
+
+                if group_param not in mongo_result:
+                    mongo_result[group_param] = []
+                    oracle_result[group_param] = []
+
+                if group_param not in field_mapping_dic:
+                    continue
+
+                group_param = group_param
+                group_level = param_cell_level_dic[group_param]
+
+                param_collection = field_mapping_dic[group_param]
+
+                mongo_value_pair_dic = {}
+                oracle_value_pair_dic = dict.fromkeys(param_collection, '')
+
+                mo = KEY_NENAME + "=" + nename
+                reference_field = ""
+
+                last_param = ""
+                for attribute_node in group_node:
+                    for attribute in attribute_node:
+
+                        # no comment
+                        try:
+                            key = remove_xml_descriptor(attribute.tag).upper()
+                            value = str(attribute.text).strip()
+
+                            value = naming_helper.clean_value_data(value)
+                            last_param = key
+
+                            if group_level.upper() == KEY_CELL_LEVEL.upper():
+
+                                if value in cells:
+
+                                    if key.upper() == KEY_NR_CELLID.upper():
+                                        mo = mo + "," + KEY_NR_CELLID + "=" + value
+
+                                        reference_field = cells[value]
+
+                                    elif key.upper() == KEY_NR_DU_CELLID.upper():
+                                        mo = mo + "," + KEY_NR_DU_CELLID + "=" + value
+
+                                        reference_field = cells[value]
+
+                            elif group_level.upper() == KEY_NODEB_LEVEL.upper():
+                                reference_field = gnodeB
+                            else:
+                                reference_field = nename
+
+                            # if key.upper() == 'SECTOREQMREF':
+
+                            #     tmp_value = ""
+                            #     key_element = ""
+                            #     sectoreqm_value = ""
+
+                            #     for elements in attribute:
+                            #         for element in elements:
+                            #             key_element = remove_xml_descriptor(element.tag).upper()
+                            #             value_element = str(element.text).strip()
+
+                            #             if tmp_value == "":
+                            #                 tmp_value = value_element
+                            #                 sectoreqm_value = sectoreqmref[value_element]
+                            #             else:
+                            #                 tmp_value = tmp_value + "|" + value_element
+                            #                 sectoreqm_value = sectoreqm_value + "|" + sectoreqmref[value_element]
+
+                            #     value = tmp_value
+                            #     key = "SECTOREQMID"
+
+                            #     mongo_value_pair_dic["SECTORID"] = sectoreqm_value
+                            #     oracle_value_pair_dic["SECTORID"] = sectoreqm_value
+
+                            mongo_value_pair_dic[key.upper()] = value
+
+                            if key.upper() in param_collection:
+                                oracle_value_pair_dic[key.upper()] = value
+
+                        # comment logic
+                        except:
+
+                            # Check Multi comments
+                            if VALUE_PAIR_SEPARATOR in attribute.text:
+                                extracted_value_collection = attribute.text.split(VALUE_PAIR_SEPARATOR)
+
+                                for value_pair in extracted_value_collection:
+
+                                    comment_key, comment_value = param_value_pair_splitter(value_pair)
+                                    comment_key = naming_helper.get_huawei_comment_column_name("C", last_param, comment_key)
+                                    comment_value = naming_helper.clean_value_data(comment_value)
+
+                                    mongo_value_pair_dic[comment_key] = comment_value
+
+                                    if comment_key in param_collection:
+                                        oracle_value_pair_dic[comment_key] = comment_value
+
+                            # Check comment key-value
+                            elif PARAM_VALUE_ASSIGNER in attribute.text:
+
+                                comment_key, comment_value = param_value_pair_splitter(attribute.text)
+                                comment_key = naming_helper.get_huawei_comment_column_name("C", last_param, comment_key)
+
+                                comment_value = naming_helper.clean_value_data(comment_value)
+
+                                mongo_value_pair_dic[comment_key] = comment_value
+
+                                if comment_key in param_collection:
+                                    oracle_value_pair_dic[comment_key] = comment_value
+
+                            # Comment single value
+                            else:
+
+                                comment_key = naming_helper.get_huawei_comment_column_name("C", last_param, "")
+                                comment_value = str(attribute.text).strip()
+                                comment_value = naming_helper.clean_value_data(comment_value)
+
+                                mongo_value_pair_dic[comment_key] = comment_value
+                                if comment_key in param_collection:
+                                    oracle_value_pair_dic[comment_key] = comment_value
+
+                if KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param) not in COUNT_DATA:
+                    COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = 0
+                COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] + 1
+
+                mongo_value_pair_dic[KEY_MO_FIELD] = mo
+                mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
+                mongo_value_pair_dic[FILENAME_FIELD] = filename
+                mongo_value_pair_dic[LV_FIELD] = group_level
+
+                oracle_value_pair_dic[KEY_MO_FIELD] = mo
+                oracle_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
+                oracle_value_pair_dic[FILENAME_FIELD] = filename
+                oracle_value_pair_dic[LV_FIELD] = group_level
+
+                mongo_result[group_param].append(mongo_value_pair_dic)
+                oracle_result[group_param].append(oracle_value_pair_dic)
+
+                collection_name = naming_helper.get_table_name(HUAWEI_TABLE_PREFIX, frequency_type, group_param)
+                # granite_mongo.push(collection_name, mongo_result[group_param])
+                ran_baseline_oracle.push(oracle_cur, collection_name, oracle_result[group_param])
+
+                mongo_result.clear()
+                oracle_result.clear()
+
+    oracle_con.commit()
+
+    close_connection(oracle_con, oracle_cur)
+
+    log.i("Done :::: " + filename + " ::::::::", HUAWEI_VENDOR, frequency_type)
+    log.i("----- Parser done ----", HUAWEI_VENDOR, frequency_type)
+
 
 def remove_word_inside_symbol(text, start_symbol, end_symbol, is_remove_symbol):
     replaced_text = str(text[text.index(start_symbol) + 1:text.rindex(end_symbol)])
@@ -759,6 +975,45 @@ def get_nename(tree):
                             continue
 
     return ""
+
+def get_gnodeB(tree):
+    xpath = './/spec:syndata[FunctionType="gNodeBFunction"]'
+
+    class_node_collections = tree.xpath(xpath, namespaces=xml_namespaces)
+
+    for class_node_collection in class_node_collections:
+        for class_node in class_node_collection:
+            for group_node in class_node:
+                group_param = remove_xml_descriptor(group_node.tag).upper()
+
+                if group_param != "gNodeBFunction".upper():
+                    continue
+
+                for attribute_node in group_node:
+                    for attribute in attribute_node:
+
+                        try:
+                            param = remove_xml_descriptor(attribute.tag)
+                            value = str(attribute.text).strip()
+
+                            if str(param).upper() == "gNodeBFunctionName".upper():
+                                return value
+
+                        except:
+                            # traceback.print_exc()
+                            continue
+
+    return ""
+
+def get_gnodeB_xpath(node):    
+
+    class_node_collections = node.xpath(f'.//gNodeBFunction/attributes/gNodeBFunctionName/text()', namespaces=xml_namespaces)
+
+    for node in class_node_collections:
+        return node
+
+    return ""
+
 
 
 def get_swversion_4g(tree):
@@ -844,7 +1099,7 @@ def get_nefunction(tree, nename):
     return ""
 
 
-def get_4g_5g_root_cell(tree):
+def get_4g_root_cell(tree):
     xpath = './/spec:syndata'
 
     cell = {}
@@ -855,10 +1110,8 @@ def get_4g_5g_root_cell(tree):
         for class_node in class_node_collection:
             for group_node in class_node:
                 group_param = remove_xml_descriptor(group_node.tag).upper()
-                if group_param == "NRCELL":
-                    ttt = True
 
-                if group_param != "CELL" and group_param != "NRCELL":
+                if group_param != "CELL":
                     continue
 
                 localcellid = ""
@@ -870,7 +1123,7 @@ def get_4g_5g_root_cell(tree):
                             key = remove_xml_descriptor(attribute.tag)
                             value = str(attribute.text).strip()
 
-                            if key == "LocalCellId" or key == "NrCellId":
+                            if key == "LocalCellId":
                                 localcellid = value
                             elif key == "CellName":
                                 cell[localcellid] = value
@@ -884,6 +1137,79 @@ def get_4g_5g_root_cell(tree):
                             continue
 
     log.i("----------------------------------------------------------", HUAWEI_VENDOR, "4G")
+    return cell
+
+# CR2020 - Add 5G NR Cell
+def get_5g_root_cell(tree):
+    xpath = './/spec:syndata[FunctionType="gNodeBFunction"]'
+
+    cell = {}
+
+    class_node_collection_root = tree.xpath(xpath, namespaces=xml_namespaces)
+    # class_node_collection = tree.xpath(xpath, namespaces=xml_namespaces)
+    for class_node_collection in class_node_collection_root:
+        for class_node in class_node_collection:
+            for group_node in class_node:
+                group_param = remove_xml_descriptor(group_node.tag).upper()
+
+                if group_param != "NRDUCell".upper() and group_param != "NRCell".upper():
+                    continue
+
+                localcellid = ""
+
+                for attribute_node in group_node:
+                    for attribute in attribute_node:
+
+                        try:
+                            key = remove_xml_descriptor(attribute.tag)
+                            value = str(attribute.text).strip()
+
+                            if str(key).upper() == "NrCellId".upper() or str(key).upper() == "NrDuCellId".upper():
+                                localcellid = value
+                            elif str(key).upper() == "CellName".upper() or str(key).upper() == "NrDuCellName".upper():
+                                cell[localcellid] = value
+                            else:
+                                continue
+
+                            # log.i("Root_cell Key:" + key + ", Value:" + value)
+
+                        except:
+                            # traceback.print_exc()
+                            continue
+
+    log.i("----------------------------------------------------------", HUAWEI_VENDOR, "5G")
+    return cell
+
+# CR2020 - Add 5G NR Cell
+def get_5g_cell_xpath(node):    
+    
+    cell = {}
+
+    # NRCell
+    class_node_collection_root = node.xpath(f'.//NRCell', namespaces=xml_namespaces)    
+    for nrcell in class_node_collection_root:
+        try:
+            # Get cell Id 
+            cellIds = nrcell.xpath(f'.//attributes/NrCellId/text()')[0]
+            cellName = nrcell.xpath(f'.//attributes/CellName/text()')[0]
+            cell[cellIds] = cellName
+
+        except Exception as e:
+            log.e(f"Not found NRCell {str(e)}")
+    
+    # NRDUCell
+    class_node_collection_root = node.xpath(f'.//NRDUCell', namespaces=xml_namespaces)    
+    for nrcell in class_node_collection_root:
+        try:
+            # Get cell Id 
+            cellIds = nrcell.xpath(f'.//attributes/NrDuCellId/text()')[0]
+            cellName = nrcell.xpath(f'.//attributes/NrDuCellName/text()')[0]
+            cell[cellIds] = cellName
+
+        except Exception as e:
+            log.e(f"Not found NRCell {str(e)}")
+
+    log.i("----------------------------------------------------------", HUAWEI_VENDOR, "5G")
     return cell
 
 
