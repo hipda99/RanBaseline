@@ -728,7 +728,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     parser = etree.XMLParser(recover=True, encoding='utf-8')
     with open(raw_file, encoding="utf-8", errors='ignore') as xml_file:
         # Create a parser
-        tree = etree.parse(xml_file, parser=parser)
+        tree = strip_ns_prefix(etree.parse(xml_file, parser=parser))
         # tree = ElementInclude.default_loader(raw_file, 'xml')
 
         nename = get_gnodeB(tree)
