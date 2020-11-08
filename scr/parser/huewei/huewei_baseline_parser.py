@@ -766,7 +766,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
 
             # sectoreqmref = get_sectoreqmref(root)
 
-            class_node_collections = root.xpath(xpath, namespaces=xml_namespaces)
+            class_node_collections = root.xpath(xpath)
 
             for class_node_collection in class_node_collections:
 
