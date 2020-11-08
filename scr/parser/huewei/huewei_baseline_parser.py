@@ -240,7 +240,7 @@ def run(source, field_mapping_dic, param_cell_level_dic):
             pool.apply_async(parse_2g_3g, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic, cell, nodeb,))
 
         else:
-            pool.apply_async(parse_4g, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic,))
+            pool.apply_async(parse_4g_5g, args=(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic,))
         # parse_4g(raw_file, source.FrequencyType, field_mapping_dic, param_cell_level_dic)
 
     pool.close()
@@ -489,12 +489,12 @@ def parse_2g_3g(raw_file, frequency_type, field_mapping_dic, param_cell_level_di
     log.i("    ", HUAWEI_VENDOR, frequency_type)
 
 
-def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
+def parse_4g_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     log.i(PARSING_FILE_STATEMENT.format(raw_file))
 
     oracle_con, oracle_cur = open_connection()
 
-    log.i("----- Start Parser HW 4G", HUAWEI_VENDOR, frequency_type)
+    log.i("----- Start Parser HW 4G/5G", HUAWEI_VENDOR, frequency_type)
 
     tree = ElementInclude.default_loader(raw_file, 'xml')
 

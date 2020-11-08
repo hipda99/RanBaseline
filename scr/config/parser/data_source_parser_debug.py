@@ -45,7 +45,7 @@ def read_data_source(vendor):
 
         # For test only 
         print(row['Path'])
-        if 'STH-ENM' not in row['Path'] and 'ZTE_UME' not in row['Path']:
+        if 'STH-ENM' not in row['Path'] and 'ZTE_UME' not in row['Path'] and 'CFGDATA' not in row['Path']:
             continue
 
         raw_file = RawFile(row)
@@ -87,7 +87,8 @@ def collect_huawei_file(raw_file):
         collect_huawei_file_by_extension(raw_file, 'txt')
     elif raw_file.FrequencyType == '4G':
         collect_huawei_file_by_extension(raw_file, 'xml')
-
+    elif raw_file.FrequencyType == '5G':
+        collect_huawei_file_by_extension(raw_file, 'xml')
     # print(raw_file)
 
 
