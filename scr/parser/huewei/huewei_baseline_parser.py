@@ -858,7 +858,7 @@ def get_4g_5g_root_cell(tree):
                 if group_param == "NRCELL":
                     ttt = True
 
-                if group_param != "CELL" or group_param != "NRCELL":
+                if group_param != "CELL" and group_param != "NRCELL":
                     continue
 
                 localcellid = ""
