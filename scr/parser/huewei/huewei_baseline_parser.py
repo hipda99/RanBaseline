@@ -762,7 +762,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
             # ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
             # oracle_con.commit()
 
-            xpath = './/spec:syndata[@FunctionType="gNodeBFunction"]'
+            xpath = './/spec[@FunctionType="gNodeBFunction"]'
 
             # sectoreqmref = get_sectoreqmref(root)
 
