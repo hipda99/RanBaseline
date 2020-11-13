@@ -1,5 +1,7 @@
+import os
 import glob
 import re
+import date
 
 import yaml
 from pandas import *
@@ -125,11 +127,12 @@ def collect_ericsson_2g_file(raw_file):
             raw_file.RawFileList.append(filename)
 
 def collect_huawei_file_by_expression(raw_file):
-    file_name_format = raw_file.FileFormat.split('.')[0]
     if raw_file.Path != '':
         for filename in glob.glob(raw_file.Path + '*'):
             if re.match(raw_file.FileFormat.upper(), filename.upper()):
-                raw_file.RawFileList.append(filename)
+                timestamp = date.fromtimestamp(os.path.getctime(filename))
+                if date.today() == timestamp:
+                    raw_file.RawFileList.append(filename)
 
         log.i("Read file count : " + str(raw_file.RawFileList.__len__()), HUAWEI_VENDOR)
 
