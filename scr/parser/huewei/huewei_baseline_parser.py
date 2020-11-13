@@ -757,152 +757,167 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     tree_ = etree.parse(xml_file)
     # tree = ElementInclude.default_loader(raw_file, 'xml')
     nename = get_gnodeB(tree_)
-    productversion = get_productversion(tree_)
-    nefunction = get_nefunction(tree_, nename)
-    swversion = get_swversion_4g(tree_)
+    # Found gNodeB
+    if nename:    
+        productversion = get_productversion(tree_)
+        nefunction = get_nefunction(tree_, nename)
+        swversion = get_swversion_4g(tree_)
 
-    cell = get_5g_root_cell(tree_)
+        cell = get_5g_root_cell(tree_)
 
-    filename_dic = raw_file.split("/")
-    filename = filename_dic[len(filename_dic) - 1]
+        filename_dic = raw_file.split("/")
+        filename = filename_dic[len(filename_dic) - 1]
 
-    mongo_result = {}
-    oracle_result = {}
-    sw_result = {}
+        mongo_result = {}
+        oracle_result = {}
+        sw_result = {}
 
-    dic = dict.fromkeys(sw_4g_column, '')
-    dic["NENAME"] = nename
-    dic["PRODUCTVERSION"] = productversion
-    dic["SWVERSION"] = swversion
-    dic["REFERENCE_FIELD"] = nename
-    dic["MO"] = KEY_NENAME + "=" + nename
-    dic["NEFUNCTION"] = nefunction
-    dic["FILENAME"] = filename
+        dic = dict.fromkeys(sw_4g_column, '')
+        dic["NENAME"] = nename
+        dic["PRODUCTVERSION"] = productversion
+        dic["SWVERSION"] = swversion
+        dic["REFERENCE_FIELD"] = nename
+        dic["MO"] = KEY_NENAME + "=" + nename
+        dic["NEFUNCTION"] = nefunction
+        dic["FILENAME"] = filename
 
-    sw_key = "SW_" + HUAWEI_TABLE_PREFIX + "_" + frequency_type
+        sw_key = "SW_" + HUAWEI_TABLE_PREFIX + "_" + frequency_type
 
-    sw_result[sw_key] = []
-    sw_result[sw_key].append(dic)
+        sw_result[sw_key] = []
+        sw_result[sw_key].append(dic)
 
-    ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
-    oracle_con.commit()
+        ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
+        oracle_con.commit()
 
-    # Strip Namespaces from XML
-    # parser = etree.XMLParser(recover=True, encoding='utf-8')
-    try:
-        with open(raw_file, encoding="utf-8", errors='ignore') as xml_file:
-            # Create a parser
-            # tree = strip_ns_prefix(etree.parse(xml_file, parser=parser))
-            
-            # root = tree.getroot()
-            xpath = './/spec:syndata[@FunctionType="gNodeBFunction"]'
+        # Strip Namespaces from XML
+        # parser = etree.XMLParser(recover=True, encoding='utf-8')
+        try:
+            with open(raw_file, encoding="utf-8", errors='ignore') as xml_file:
+                # Create a parser
+                # tree = strip_ns_prefix(etree.parse(xml_file, parser=parser))
+                
+                # root = tree.getroot()
+                xpath = './/spec:syndata[@FunctionType="gNodeBFunction"]'
 
-            # sectoreqmref = get_sectoreqmref(root)
+                # sectoreqmref = get_sectoreqmref(root)
 
-            class_node_collections = tree_.xpath(xpath, namespaces=xml_namespaces)
+                class_node_collections = tree_.xpath(xpath, namespaces=xml_namespaces)
 
-            for class_node_collection in class_node_collections:
+                for class_node_collection in class_node_collections:
 
-                # # Get GNodeB
-                # gnodeB = get_gnodeB_xpath(class_node_collection)
-                # cells = get_5g_cell_xpath(root)
+                    # # Get GNodeB
+                    # gnodeB = get_gnodeB_xpath(class_node_collection)
+                    # cells = get_5g_cell_xpath(root)
 
-                # Get Cell Data
-                for class_node in class_node_collection:
-                    for group_node in class_node:
-                        group_param = remove_xml_descriptor(group_node.tag).upper()
-                        # group_param = str(group_node.tag).upper()
+                    # Get Cell Data
+                    for class_node in class_node_collection:
+                        for group_node in class_node:
+                            group_param = remove_xml_descriptor(group_node.tag).upper()
+                            # group_param = str(group_node.tag).upper()
 
-                        if group_param not in mongo_result:
-                            mongo_result[group_param] = []
-                            oracle_result[group_param] = []
+                            if group_param not in mongo_result:
+                                mongo_result[group_param] = []
+                                oracle_result[group_param] = []
 
-                        if group_param not in field_mapping_dic:
-                            continue
+                            if group_param not in field_mapping_dic:
+                                continue
 
-                        group_param = group_param
-                        group_level = param_cell_level_dic[group_param]
+                            group_param = group_param
+                            group_level = param_cell_level_dic[group_param]
 
-                        param_collection = field_mapping_dic[group_param]
+                            param_collection = field_mapping_dic[group_param]
 
-                        mongo_value_pair_dic = {}
-                        oracle_value_pair_dic = dict.fromkeys(param_collection, '')
+                            mongo_value_pair_dic = {}
+                            oracle_value_pair_dic = dict.fromkeys(param_collection, '')
 
-                        mo = KEY_NENAME + "=" + nename
-                        reference_field = ""
+                            mo = KEY_NENAME + "=" + nename
+                            reference_field = ""
 
-                        last_param = ""
-                        for attribute_node in group_node:
-                            for attribute in attribute_node:
+                            last_param = ""
+                            for attribute_node in group_node:
+                                for attribute in attribute_node:
 
-                                # no comment
-                                try:
-                                    key = remove_xml_descriptor(attribute.tag).upper()
-                                    # key = str(attribute.tag).upper()
-                                    value = str(attribute.text).strip()
+                                    # no comment
+                                    try:
+                                        key = remove_xml_descriptor(attribute.tag).upper()
+                                        # key = str(attribute.tag).upper()
+                                        value = str(attribute.text).strip()
 
-                                    value = naming_helper.clean_value_data(value)
-                                    last_param = key
+                                        value = naming_helper.clean_value_data(value)
+                                        last_param = key
 
-                                    if group_level.upper() == KEY_CELL_LEVEL.upper():
+                                        if group_level.upper() == KEY_CELL_LEVEL.upper():
 
-                                        if value in cell:
+                                            if value in cell:
 
-                                            if key.upper() == KEY_NR_CELLID.upper():
-                                                mo = mo + "," + KEY_NR_CELLID + "=" + value
+                                                if key.upper() == KEY_NR_CELLID.upper():
+                                                    mo = mo + "," + KEY_NR_CELLID + "=" + value
 
-                                                reference_field = cell[value]
+                                                    reference_field = cell[value]
 
-                                            elif key.upper() == KEY_NR_DU_CELLID.upper():
-                                                mo = mo + "," + KEY_NR_DU_CELLID + "=" + value
+                                                elif key.upper() == KEY_NR_DU_CELLID.upper():
+                                                    mo = mo + "," + KEY_NR_DU_CELLID + "=" + value
 
-                                                reference_field = cell[value]
+                                                    reference_field = cell[value]
 
-                                    elif group_level.upper() == KEY_NODEB_LEVEL.upper():
-                                        reference_field = nename
-                                    else:
-                                        reference_field = nename
+                                        elif group_level.upper() == KEY_NODEB_LEVEL.upper():
+                                            reference_field = nename
+                                        else:
+                                            reference_field = nename
 
-                                    # if key.upper() == 'SECTOREQMREF':
+                                        # if key.upper() == 'SECTOREQMREF':
 
-                                    #     tmp_value = ""
-                                    #     key_element = ""
-                                    #     sectoreqm_value = ""
+                                        #     tmp_value = ""
+                                        #     key_element = ""
+                                        #     sectoreqm_value = ""
 
-                                    #     for elements in attribute:
-                                    #         for element in elements:
-                                    #             key_element = str(element.tag).upper()
-                                    #             value_element = str(element.text).strip()
+                                        #     for elements in attribute:
+                                        #         for element in elements:
+                                        #             key_element = str(element.tag).upper()
+                                        #             value_element = str(element.text).strip()
 
-                                    #             if tmp_value == "":
-                                    #                 tmp_value = value_element
-                                    #                 sectoreqm_value = sectoreqmref[value_element]
-                                    #             else:
-                                    #                 tmp_value = tmp_value + "|" + value_element
-                                    #                 sectoreqm_value = sectoreqm_value + "|" + sectoreqmref[value_element]
+                                        #             if tmp_value == "":
+                                        #                 tmp_value = value_element
+                                        #                 sectoreqm_value = sectoreqmref[value_element]
+                                        #             else:
+                                        #                 tmp_value = tmp_value + "|" + value_element
+                                        #                 sectoreqm_value = sectoreqm_value + "|" + sectoreqmref[value_element]
 
-                                    #     value = tmp_value
-                                    #     key = "SECTOREQMID"
+                                        #     value = tmp_value
+                                        #     key = "SECTOREQMID"
 
-                                    #     mongo_value_pair_dic["SECTORID"] = sectoreqm_value
-                                    #     oracle_value_pair_dic["SECTORID"] = sectoreqm_value
+                                        #     mongo_value_pair_dic["SECTORID"] = sectoreqm_value
+                                        #     oracle_value_pair_dic["SECTORID"] = sectoreqm_value
 
-                                    mongo_value_pair_dic[key.upper()] = value
+                                        mongo_value_pair_dic[key.upper()] = value
 
-                                    if key.upper() in param_collection:
-                                        oracle_value_pair_dic[key.upper()] = value
+                                        if key.upper() in param_collection:
+                                            oracle_value_pair_dic[key.upper()] = value
 
-                                # comment logic
-                                except:
+                                    # comment logic
+                                    except:
 
-                                    # Check Multi comments
-                                    if VALUE_PAIR_SEPARATOR in attribute.text:
-                                        extracted_value_collection = attribute.text.split(VALUE_PAIR_SEPARATOR)
+                                        # Check Multi comments
+                                        if VALUE_PAIR_SEPARATOR in attribute.text:
+                                            extracted_value_collection = attribute.text.split(VALUE_PAIR_SEPARATOR)
 
-                                        for value_pair in extracted_value_collection:
+                                            for value_pair in extracted_value_collection:
 
-                                            comment_key, comment_value = param_value_pair_splitter(value_pair)
+                                                comment_key, comment_value = param_value_pair_splitter(value_pair)
+                                                comment_key = naming_helper.get_huawei_comment_column_name("C", last_param, comment_key)
+                                                comment_value = naming_helper.clean_value_data(comment_value)
+
+                                                mongo_value_pair_dic[comment_key] = comment_value
+
+                                                if comment_key in param_collection:
+                                                    oracle_value_pair_dic[comment_key] = comment_value
+
+                                        # Check comment key-value
+                                        elif PARAM_VALUE_ASSIGNER in attribute.text:
+
+                                            comment_key, comment_value = param_value_pair_splitter(attribute.text)
                                             comment_key = naming_helper.get_huawei_comment_column_name("C", last_param, comment_key)
+
                                             comment_value = naming_helper.clean_value_data(comment_value)
 
                                             mongo_value_pair_dic[comment_key] = comment_value
@@ -910,55 +925,44 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
                                             if comment_key in param_collection:
                                                 oracle_value_pair_dic[comment_key] = comment_value
 
-                                    # Check comment key-value
-                                    elif PARAM_VALUE_ASSIGNER in attribute.text:
+                                        # Comment single value
+                                        else:
 
-                                        comment_key, comment_value = param_value_pair_splitter(attribute.text)
-                                        comment_key = naming_helper.get_huawei_comment_column_name("C", last_param, comment_key)
+                                            comment_key = naming_helper.get_huawei_comment_column_name("C", last_param, "")
+                                            comment_value = str(attribute.text).strip()
+                                            comment_value = naming_helper.clean_value_data(comment_value)
 
-                                        comment_value = naming_helper.clean_value_data(comment_value)
+                                            mongo_value_pair_dic[comment_key] = comment_value
+                                            if comment_key in param_collection:
+                                                oracle_value_pair_dic[comment_key] = comment_value
 
-                                        mongo_value_pair_dic[comment_key] = comment_value
+                            if KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param) not in COUNT_DATA:
+                                COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = 0
+                            COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] + 1
 
-                                        if comment_key in param_collection:
-                                            oracle_value_pair_dic[comment_key] = comment_value
+                            mongo_value_pair_dic[KEY_MO_FIELD] = mo
+                            mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
+                            mongo_value_pair_dic[FILENAME_FIELD] = filename
+                            mongo_value_pair_dic[LV_FIELD] = group_level
 
-                                    # Comment single value
-                                    else:
+                            oracle_value_pair_dic[KEY_MO_FIELD] = mo
+                            oracle_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
+                            oracle_value_pair_dic[FILENAME_FIELD] = filename
+                            oracle_value_pair_dic[LV_FIELD] = group_level
 
-                                        comment_key = naming_helper.get_huawei_comment_column_name("C", last_param, "")
-                                        comment_value = str(attribute.text).strip()
-                                        comment_value = naming_helper.clean_value_data(comment_value)
+                            mongo_result[group_param].append(mongo_value_pair_dic)
+                            oracle_result[group_param].append(oracle_value_pair_dic)
 
-                                        mongo_value_pair_dic[comment_key] = comment_value
-                                        if comment_key in param_collection:
-                                            oracle_value_pair_dic[comment_key] = comment_value
+                            collection_name = naming_helper.get_table_name(HUAWEI_TABLE_PREFIX, frequency_type, group_param)
+                            # granite_mongo.push(collection_name, mongo_result[group_param])
+                            ran_baseline_oracle.push(oracle_cur, collection_name, oracle_result[group_param])
 
-                        if KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param) not in COUNT_DATA:
-                            COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = 0
-                        COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] + 1
-
-                        mongo_value_pair_dic[KEY_MO_FIELD] = mo
-                        mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
-                        mongo_value_pair_dic[FILENAME_FIELD] = filename
-                        mongo_value_pair_dic[LV_FIELD] = group_level
-
-                        oracle_value_pair_dic[KEY_MO_FIELD] = mo
-                        oracle_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
-                        oracle_value_pair_dic[FILENAME_FIELD] = filename
-                        oracle_value_pair_dic[LV_FIELD] = group_level
-
-                        mongo_result[group_param].append(mongo_value_pair_dic)
-                        oracle_result[group_param].append(oracle_value_pair_dic)
-
-                        collection_name = naming_helper.get_table_name(HUAWEI_TABLE_PREFIX, frequency_type, group_param)
-                        # granite_mongo.push(collection_name, mongo_result[group_param])
-                        ran_baseline_oracle.push(oracle_cur, collection_name, oracle_result[group_param])
-
-                        mongo_result.clear()
-                        oracle_result.clear()
-    except Exception as e:
-        log.e(f"ERROR {str(e)}")
+                            mongo_result.clear()
+                            oracle_result.clear()
+        except Exception as e:
+            log.e(f"ERROR {str(e)}")
+    else:
+        log.i(f"Not found gNodeBFunction in file {raw_file}")
 
     oracle_con.commit()
 
