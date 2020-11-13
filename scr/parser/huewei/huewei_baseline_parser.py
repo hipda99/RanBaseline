@@ -4,7 +4,7 @@ import multiprocessing as mp
 import traceback
 from typing import Dict
 from lxml import etree
-from lxml.etree import XPathEvalError
+import subprocess
 
 import cx_Oracle
 import pymongo
@@ -505,7 +505,20 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
 
     log.i("----- Start Parser HW 4G", HUAWEI_VENDOR, frequency_type)
 
-    tree = ElementInclude.default_loader(raw_file, 'xml')
+    # Add read gzip file    
+    xml_file = None
+    gzipFile = False
+    source_file = None
+    if raw_file is not None and str(raw_file).endswith('.gz'):
+        proc = subprocess.Popen(['gzip', '-cdfq', str(raw_file)], stdout=subprocess.PIPE, bufsize=4096)
+        xml_file = proc.stdout
+        gzipFile = True
+    else:
+        source_file = str(raw_file)
+        xml_file = open(source_file, 'r')
+    
+    tree = etree.parse(xml_file)
+    # tree = ElementInclude.default_loader(raw_file, 'xml')
 
     nename = get_nename(tree)
     productversion = get_productversion(tree)
@@ -710,10 +723,14 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
 
                 mongo_result.clear()
                 oracle_result.clear()
+    
 
     oracle_con.commit()
 
     close_connection(oracle_con, oracle_cur)
+
+    if not gzipFile and xml_file is not None:
+        xml_file.close()
 
     log.i("Done :::: " + filename + " ::::::::", HUAWEI_VENDOR, frequency_type)
     log.i("----- Parser done ----", HUAWEI_VENDOR, frequency_type)
@@ -725,7 +742,20 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
 
     log.i("----- Start Parser HW 5G", HUAWEI_VENDOR, frequency_type)
 
-    tree_ = ElementInclude.default_loader(raw_file, 'xml')
+    # Add read gzip file    
+    xml_file = None
+    gzipFile = False
+    source_file = None
+    if raw_file is not None and str(raw_file).endswith('.gz'):
+        proc = subprocess.Popen(['gzip', '-cdfq', str(raw_file)], stdout=subprocess.PIPE, bufsize=4096)
+        xml_file = proc.stdout
+        gzipFile = True
+    else:
+        source_file = str(raw_file)
+        xml_file = open(source_file, 'r')
+    
+    tree_ = etree.parse(xml_file)
+    # tree = ElementInclude.default_loader(raw_file, 'xml')
     nename = get_gnodeB(tree_)
     productversion = get_productversion(tree_)
     nefunction = get_nefunction(tree_, nename)
@@ -933,6 +963,9 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     oracle_con.commit()
 
     close_connection(oracle_con, oracle_cur)
+
+    if not gzipFile and xml_file is not None:
+        xml_file.close()
 
     log.i("Done :::: " + filename + " ::::::::", HUAWEI_VENDOR, frequency_type)
     log.i("----- Parser done ----", HUAWEI_VENDOR, frequency_type)

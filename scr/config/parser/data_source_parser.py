@@ -87,10 +87,13 @@ def collect_huawei_file(raw_file):
         collect_huawei_file_by_extension(raw_file, 'txt')
     elif raw_file.FrequencyType == '3G':
         collect_huawei_file_by_extension(raw_file, 'txt')
-    elif raw_file.FrequencyType == '4G':
+    elif raw_file.FrequencyType == '4G':        
         collect_huawei_file_by_extension(raw_file, 'xml')
+        # L2600
+        collect_huawei_file_by_expression(raw_file)
+
     elif raw_file.FrequencyType == '5G':
-        collect_huawei_file_by_extension(raw_file, 'xml')
+        collect_huawei_file_by_expression(raw_file)
     # print(raw_file)
 
 
@@ -120,6 +123,15 @@ def collect_ericsson_2g_file(raw_file):
 
         for filename in glob.glob(raw_file.Path + '*.log'):
             raw_file.RawFileList.append(filename)
+
+def collect_huawei_file_by_expression(raw_file):
+    file_name_format = raw_file.FileFormat.split('.')[0]
+    if raw_file.Path != '':
+        for filename in glob.glob(raw_file.Path + '*'):
+            if re.match(raw_file.FileFormat.upper(), filename.upper()):
+                raw_file.RawFileList.append(filename)
+
+        log.i("Read file count : " + str(raw_file.RawFileList.__len__()), HUAWEI_VENDOR)
 
 
 def collect_huawei_file_by_extension(raw_file, file_extension):
