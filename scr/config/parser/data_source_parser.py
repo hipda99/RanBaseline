@@ -1,7 +1,7 @@
 import os
 import glob
 import re
-import date
+from datetime import date
 
 import yaml
 from pandas import *
