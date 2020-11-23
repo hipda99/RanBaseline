@@ -1,5 +1,6 @@
 import datetime
 import multiprocessing as mp
+from re import L
 import traceback
 import re
 
@@ -1403,6 +1404,11 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 						# Check each MO under module = nr
 						for parameter_group, valuedic in field_mapping_dic.items():
+
+							if parameter_group.upper() == 'EnDCCtrl'.upper() or parameter_group.upper() == 'EnDCPDCP'.upper() or parameter_group.upper() == 'InactiveParameter'.upper() or parameter_group.upper() == 'InterRATCovHo'.upper() or parameter_group.upper() == 'NRIntraFMeasObject'.upper() or parameter_group.upper() == 'NRPSCellChangeIntraF'.upper():
+								ttt = True 
+
+
 
 							level_type = cell_level_dic[parameter_group]
 							# Except group Sctp need to search at root, special not under module = nr
