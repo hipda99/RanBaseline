@@ -69,11 +69,11 @@ sw_column = [
 REGEX_4G_LDN_ENBCUCPFUNC = r"^(ENBCUCPFunction=([^,]*)).*$"
 REGEX_4G_LDN_CELLFDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellFDDLTE=([^,]+)).*$"
 REGEX_4G_LDN_CELLTDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellTDDLTE=([^,]+)).*$"
-REGEX_5G_LDN_NRCELLCU = r"^(GNBCUCPFunction=((\d+)-(\d+)_(\d+)),NRCellCU=([^,]+)).*$"
+REGEX_5G_LDN_NRCELLCU = r"^(GNBCUCPFunction=([^,]+),NRCellCU=([^,]+)).*$"
 REGEX_5G_LDN_NRPHYSICALCELLDU = r"^(NRRadioInfrastructure=\d+,NRPhysicalCellDU=([^,]+)).*$"
 REGEX_5G_LDN_NRCARRIER = r"^(NRRadioInfrastructure=\d+,NRCarrier=([^,]+)).*$"
-REGEX_5G_LDN_GNBDUFUNC = r"^GNBDUFunction=((\d+)-(\d+)_(\d+)).*$"
-REGEX_5G_LDN_GNBCUCPFUNC = r"^GNBCUCPFunction=((\d+)-(\d+)_(\d+)).*$"
+REGEX_5G_LDN_GNBDUFUNC = r"^GNBDUFunction=([^,]+).*$"
+REGEX_5G_LDN_GNBCUCPFUNC = r"^GNBCUCPFunction=([^,]+).*$"
 REGEX_SW_NAME_4G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,BrM=1,BrmBackupManager=1,BrmBackup=(.*)'
 REGEX_SW_NAME_3G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,SwInventory=1,SwVersion=(.*)'
 
@@ -1453,7 +1453,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										match_physicaldu = p_physicaldu.match(ldn)
 										match_nrcarrier = p_nrcarrier.match(ldn)
 										if match_cellcu:
-											cellCu = match_cellcu.group(6)
+											cellCu = match_cellcu.group(3)
 											key = match_cellcu.group(1)
 											if key in refCellCU_dic:
 												reference_name = refCellCU_dic[key].get('cellname')
