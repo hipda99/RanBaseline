@@ -1336,7 +1336,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								p1 = re.compile(REGEX_5G_LDN_GNBDUFUNC)
 								m1 = p1.match(nr_cell_du_ldn)
 								if m1:
-									gNBId = m1.group(4)
+									gNBId = m1.group(1)
 
 							refNRPhysicalCellDU = parseData(nr_cell_du, f'.//refNRPhysicalCellDU/text()', 0, ns)
 							du_cellname = parseData(nr_cell_du, f'.//userLabel/text()', 0, ns)
@@ -1493,14 +1493,14 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											match_gnbdufunc = p_gnbdufunc.match(ldn)
 											match_gnbcucpfunc = p_gnbcucpfunc.match(ldn)
 											if match_gnbdufunc:
-												gnb = match_gnbdufunc.group(4)
+												gnb = match_gnbdufunc.group(1)
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
 
 												mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
 											elif match_gnbcucpfunc:
-												gnb = match_gnbcucpfunc.group(4)
+												gnb = match_gnbcucpfunc.group(1)
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
