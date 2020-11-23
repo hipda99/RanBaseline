@@ -1482,7 +1482,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											p_gnbcucpfunc = re.compile(REGEX_5G_LDN_GNBCUCPFUNC)
 											match_gnbdufunc = p_gnbcucpfunc.match(ldn)
 											if match_gnbdufunc:
-												gnb = match_gnbdufunc.group(4)
+												gnb = match_gnbdufunc.group(1)
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
