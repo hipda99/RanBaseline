@@ -589,7 +589,9 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic):
             value_line = line.split(' ')
 
             for idx, val in enumerate(value_line):
-                mongo_value_pair_dic[columns[idx].upper()] = val
+
+                # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                # mongo_value_pair_dic[columns[idx].upper()] = val
 
                 if columns[idx].upper() in field_mapping_dic['CNA']:
                     if columns[idx].upper() not in oracle_value_pair_dic:
@@ -599,13 +601,15 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic):
                 COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, "CNA")] = 0
             COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, "CNA")] = COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, "CNA")] + 1
 
-            mongo_value_pair_dic[KEY_REFERENCE_FIELD] = mongo_value_pair_dic['CELL']
-            mongo_value_pair_dic[KEY_FILENAME_FIELD] = filename
+            # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+            # mongo_value_pair_dic[KEY_REFERENCE_FIELD] = mongo_value_pair_dic['CELL']
+            # mongo_value_pair_dic[KEY_FILENAME_FIELD] = filename
 
             oracle_value_pair_dic[KEY_REFERENCE_FIELD] = oracle_value_pair_dic['CELL']
             oracle_value_pair_dic[KEY_FILENAME_FIELD] = filename
 
-            mongo_result[CNA].append(mongo_value_pair_dic)
+            # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+            # mongo_result[CNA].append(mongo_value_pair_dic)
             oracle_result[CNA].append(oracle_value_pair_dic)
 
     # log.i('---- pushing to mongo')
@@ -1619,10 +1623,11 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                             COUNT_DATA[KEY_TABLE.format(ERICSSON_TABLE_PREFIX, frequency_type, group_param)] = 0
                         COUNT_DATA[KEY_TABLE.format(ERICSSON_TABLE_PREFIX, frequency_type, group_param)] = COUNT_DATA[KEY_TABLE.format(ERICSSON_TABLE_PREFIX, frequency_type, group_param)] + 1
 
-                        mongo_value_pair_dic[KEY_FILENAME_FIELD] = filename
-                        mongo_value_pair_dic[KEY_MO_FIELD] = mo
-                        mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
-                        mongo_value_pair_dic[LV_FIELD] = group_level
+                        # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                        # mongo_value_pair_dic[KEY_FILENAME_FIELD] = filename
+                        # mongo_value_pair_dic[KEY_MO_FIELD] = mo
+                        # mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
+                        # mongo_value_pair_dic[LV_FIELD] = group_level
 
                         oracle_value_pair_dic[KEY_FILENAME_FIELD] = filename
                         oracle_value_pair_dic[KEY_MO_FIELD] = mo
@@ -1650,11 +1655,13 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
                                 # End of MO
                             if dictData[0][0] == "=":
-                                if group_param in mongo_result:
-                                    mongo_result[group_param].append(mongo_value_pair_dic)
-                                else:
-                                    mongo_result[group_param] = []
-                                    mongo_result[group_param].append(mongo_value_pair_dic)
+
+                                # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                # if group_param in mongo_result:
+                                #     mongo_result[group_param].append(mongo_value_pair_dic)
+                                # else:
+                                #     mongo_result[group_param] = []
+                                #     mongo_result[group_param].append(mongo_value_pair_dic)
 
                                 if group_param in oracle_result:
                                     oracle_result[group_param].append(oracle_value_pair_dic)
@@ -1674,7 +1681,8 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                     obj_key = tail_name[1]
                                     key = naming_helper.rule_column_name(dictData[1] + "_" + obj_key)
 
-                                    mongo_value_pair_dic[key] = " ".join(struct_dict[3:])
+                                    # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                    # mongo_value_pair_dic[key] = " ".join(struct_dict[3:])
 
                                     if key in param_collection:
                                         oracle_value_pair_dic[key] = " ".join(struct_dict[3:])
@@ -1704,7 +1712,8 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                     obj_key = tail_name[1]
                                     key = naming_helper.rule_column_name(keyname + "_" + obj_key)
 
-                                    mongo_value_pair_dic[key] = " ".join(struct_dict[3:])
+                                    # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                    # mongo_value_pair_dic[key] = " ".join(struct_dict[3:])
 
                                     if key in param_collection:
                                         oracle_value_pair_dic[key] = " ".join(struct_dict[3:])
@@ -1739,14 +1748,17 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                     # mongo_value_pair_dic[naming_helper.rule_column_name("reservedBy_" + "EUtranCellFDD")] = tmp_dic[1]
                                                     # oracle_value_pair_dic[naming_helper.rule_column_name("reservedBy_" + "EUtranCellFDD")] = tmp_dic[1]
 
-                                                    mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
+                                                    # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                                    # mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
                                                     oracle_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
+
                                         elif 'EUtranCellTDD' in value:
                                             tmp_full_dic = value.split(",")
                                             for tmp_dic in tmp_full_dic:
                                                 if "EUtranCellTDD" in tmp_dic:
                                                     tmp_dic = tmp_dic.split("=")
-                                                    mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
+                                                    # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                                    # mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
                                                     oracle_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
 
                                     # How about group NRSectorCarrier
@@ -1756,7 +1768,8 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                             for tmp_dic in tmp_full_dic:
                                                 if "NRCellDU" in tmp_dic:
                                                     tmp_dic = tmp_dic.split("=")
-                                                    mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
+                                                    # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                                    # mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
                                                     oracle_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
 
                                         elif "NRCellCU" in value:
@@ -1764,11 +1777,13 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                             for tmp_dic in tmp_full_dic:
                                                 if "NRCellCU" in tmp_dic:
                                                     tmp_dic = tmp_dic.split("=")
-                                                    mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
+                                                    # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                                    # mongo_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
                                                     oracle_value_pair_dic[KEY_REFERENCE_FIELD] = tmp_dic[1]
                                 continue
 
-                            mongo_value_pair_dic[dictData[0].upper()] = " ".join(dictData[1:])
+                            # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                            # mongo_value_pair_dic[dictData[0].upper()] = " ".join(dictData[1:])
 
                             tagTmp = (dictData[0] + "_" + qciProfilePredefinedId).upper()
 

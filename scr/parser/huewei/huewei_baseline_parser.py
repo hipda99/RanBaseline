@@ -401,8 +401,8 @@ def parse_2g_3g(raw_file, frequency_type, field_mapping_dic, param_cell_level_di
                             else:
                                 mo = "n/a lv : " + group_level
                                 reference_field = "n/a lv : " + group_level
-
-                            mongo_value_pair_dic[key] = value
+                            # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                            # mongo_value_pair_dic[key] = value
 
                             if key in param_collection:
                                 oracle_value_pair_dic[key] = value
@@ -418,8 +418,8 @@ def parse_2g_3g(raw_file, frequency_type, field_mapping_dic, param_cell_level_di
                                         comments_value = naming_helper.clean_value_data(comments_value)
 
                                         comments_key = naming_helper.get_huawei_comment_column_name("C", key, comments_key)
-
-                                        mongo_value_pair_dic[comments_key] = comments_value
+                                        # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                        # mongo_value_pair_dic[comments_key] = comments_value
 
                                         if comments_key in param_collection:
                                             oracle_value_pair_dic[comments_key] = comments_value
@@ -428,21 +428,23 @@ def parse_2g_3g(raw_file, frequency_type, field_mapping_dic, param_cell_level_di
                             COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = 0
                         COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] + 1
 
-                        mongo_value_pair_dic[KEY_MO_FIELD] = mo
-                        mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
-                        mongo_value_pair_dic[FILENAME_FIELD] = filename
-                        mongo_value_pair_dic[LV_FIELD] = group_level
+                        # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                        # mongo_value_pair_dic[KEY_MO_FIELD] = mo
+                        # mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
+                        # mongo_value_pair_dic[FILENAME_FIELD] = filename
+                        # mongo_value_pair_dic[LV_FIELD] = group_level
 
                         oracle_value_pair_dic[KEY_MO_FIELD] = mo
                         oracle_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
                         oracle_value_pair_dic[FILENAME_FIELD] = filename
                         oracle_value_pair_dic[LV_FIELD] = group_level
 
-                        if group_param in mongo_result:
-                            mongo_result[group_param].append(mongo_value_pair_dic)
-                        else:
-                            mongo_result[group_param] = []
-                            mongo_result[group_param].append(mongo_value_pair_dic)
+                        # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                        # if group_param in mongo_result:
+                        #     mongo_result[group_param].append(mongo_value_pair_dic)
+                        # else:
+                        #     mongo_result[group_param] = []
+                        #     mongo_result[group_param].append(mongo_value_pair_dic)
 
                         if group_param in oracle_result:
                             oracle_result[group_param].append(oracle_value_pair_dic)
@@ -650,10 +652,12 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
                                 value = tmp_value
                                 key = "SECTOREQMID"
 
-                                mongo_value_pair_dic["SECTORID"] = sectoreqm_value
+                                # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                # mongo_value_pair_dic["SECTORID"] = sectoreqm_value
                                 oracle_value_pair_dic["SECTORID"] = sectoreqm_value
-
-                            mongo_value_pair_dic[key.upper()] = value
+                            
+                            # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                            # mongo_value_pair_dic[key.upper()] = value
 
                             if key.upper() in param_collection:
                                 oracle_value_pair_dic[key.upper()] = value
@@ -671,7 +675,8 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
                                     comment_key = naming_helper.get_huawei_comment_column_name("C", last_param, comment_key)
                                     comment_value = naming_helper.clean_value_data(comment_value)
 
-                                    mongo_value_pair_dic[comment_key] = comment_value
+                                    # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                    # mongo_value_pair_dic[comment_key] = comment_value
 
                                     if comment_key in param_collection:
                                         oracle_value_pair_dic[comment_key] = comment_value
@@ -684,7 +689,8 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
 
                                 comment_value = naming_helper.clean_value_data(comment_value)
 
-                                mongo_value_pair_dic[comment_key] = comment_value
+                                # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                # mongo_value_pair_dic[comment_key] = comment_value
 
                                 if comment_key in param_collection:
                                     oracle_value_pair_dic[comment_key] = comment_value
@@ -696,7 +702,8 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
                                 comment_value = str(attribute.text).strip()
                                 comment_value = naming_helper.clean_value_data(comment_value)
 
-                                mongo_value_pair_dic[comment_key] = comment_value
+                                # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                # mongo_value_pair_dic[comment_key] = comment_value
                                 if comment_key in param_collection:
                                     oracle_value_pair_dic[comment_key] = comment_value
 
@@ -704,17 +711,18 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
                     COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = 0
                 COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] + 1
 
-                mongo_value_pair_dic[KEY_MO_FIELD] = mo
-                mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
-                mongo_value_pair_dic[FILENAME_FIELD] = filename
-                mongo_value_pair_dic[LV_FIELD] = group_level
+                # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                # mongo_value_pair_dic[KEY_MO_FIELD] = mo
+                # mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
+                # mongo_value_pair_dic[FILENAME_FIELD] = filename
+                # mongo_value_pair_dic[LV_FIELD] = group_level
 
                 oracle_value_pair_dic[KEY_MO_FIELD] = mo
                 oracle_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
                 oracle_value_pair_dic[FILENAME_FIELD] = filename
                 oracle_value_pair_dic[LV_FIELD] = group_level
 
-                mongo_result[group_param].append(mongo_value_pair_dic)
+                # mongo_result[group_param].append(mongo_value_pair_dic)
                 oracle_result[group_param].append(oracle_value_pair_dic)
 
                 collection_name = naming_helper.get_table_name(HUAWEI_TABLE_PREFIX, frequency_type, group_param)
@@ -746,6 +754,7 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     xml_file = None
     gzipFile = False
     source_file = None
+    filename = None
     if raw_file is not None and str(raw_file).endswith('.gz'):
         proc = subprocess.Popen(['gzip', '-cdfq', str(raw_file)], stdout=subprocess.PIPE, bufsize=4096)
         xml_file = proc.stdout
@@ -889,7 +898,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
                                         #     mongo_value_pair_dic["SECTORID"] = sectoreqm_value
                                         #     oracle_value_pair_dic["SECTORID"] = sectoreqm_value
 
-                                        mongo_value_pair_dic[key.upper()] = value
+                                        # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                        # mongo_value_pair_dic[key.upper()] = value
 
                                         if key.upper() in param_collection:
                                             oracle_value_pair_dic[key.upper()] = value
@@ -907,7 +917,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
                                                 comment_key = naming_helper.get_huawei_comment_column_name("C", last_param, comment_key)
                                                 comment_value = naming_helper.clean_value_data(comment_value)
 
-                                                mongo_value_pair_dic[comment_key] = comment_value
+                                                # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                                # mongo_value_pair_dic[comment_key] = comment_value
 
                                                 if comment_key in param_collection:
                                                     oracle_value_pair_dic[comment_key] = comment_value
@@ -920,7 +931,8 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
 
                                             comment_value = naming_helper.clean_value_data(comment_value)
 
-                                            mongo_value_pair_dic[comment_key] = comment_value
+                                            # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                            # mongo_value_pair_dic[comment_key] = comment_value
 
                                             if comment_key in param_collection:
                                                 oracle_value_pair_dic[comment_key] = comment_value
@@ -940,17 +952,19 @@ def parse_5g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
                                 COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = 0
                             COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] = COUNT_DATA[KEY_TABLE.format(HUAWEI_TABLE_PREFIX, frequency_type, group_param)] + 1
 
-                            mongo_value_pair_dic[KEY_MO_FIELD] = mo
-                            mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
-                            mongo_value_pair_dic[FILENAME_FIELD] = filename
-                            mongo_value_pair_dic[LV_FIELD] = group_level
+                            # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                            # mongo_value_pair_dic[KEY_MO_FIELD] = mo
+                            # mongo_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
+                            # mongo_value_pair_dic[FILENAME_FIELD] = filename
+                            # mongo_value_pair_dic[LV_FIELD] = group_level
 
                             oracle_value_pair_dic[KEY_MO_FIELD] = mo
                             oracle_value_pair_dic[KEY_REFERENCE_FIELD] = reference_field
                             oracle_value_pair_dic[FILENAME_FIELD] = filename
                             oracle_value_pair_dic[LV_FIELD] = group_level
 
-                            mongo_result[group_param].append(mongo_value_pair_dic)
+                            # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                            # mongo_result[group_param].append(mongo_value_pair_dic)
                             oracle_result[group_param].append(oracle_value_pair_dic)
 
                             collection_name = naming_helper.get_table_name(HUAWEI_TABLE_PREFIX, frequency_type, group_param)

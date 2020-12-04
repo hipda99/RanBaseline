@@ -388,7 +388,8 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						tag = gsmcell.tag.replace('{http://ZTESpecificAttributes#ZTESpecificAttributes}', '')
 
 						value = gsmcell.text
-						mongo_value_pair_dic[tag.upper()] = value
+						# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+						# mongo_value_pair_dic[tag.upper()] = value
 
 						if tag.upper() in oracle_value_pair_dic:
 							oracle_value_pair_dic[tag.upper()] = value
@@ -402,20 +403,23 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					oracle_value_pair_dic['LV'] = cell_type
 					oracle_value_pair_dic['MO'] = external_gsm_cell.format(subid, external_gsmcell_id)
 
-					mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = userLabel
-					mongo_value_pair_dic['FILENAME'] = filename
-					mongo_value_pair_dic['LV'] = cell_type
-					mongo_value_pair_dic['MO'] = external_gsm_cell.format(subid, external_gsmcell_id)
+					# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+					# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = userLabel
+					# mongo_value_pair_dic['FILENAME'] = filename
+					# mongo_value_pair_dic['LV'] = cell_type
+					# mongo_value_pair_dic['MO'] = external_gsm_cell.format(subid, external_gsmcell_id)
 
 					if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
 						COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0
 					COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] + 1
 
-				if parameter_group in mongo_result:
-					mongo_result[parameter_group].append(mongo_value_pair_dic)
-				else:
-					mongo_result[parameter_group] = []
-					mongo_result[parameter_group].append(mongo_value_pair_dic)
+				
+				# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+				# if parameter_group in mongo_result:
+				# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+				# else:
+				# 	mongo_result[parameter_group] = []
+				# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
 
 				if parameter_group in oracle_result:
 					oracle_result[parameter_group].append(oracle_value_pair_dic)
@@ -440,6 +444,8 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													namespaces={
 														ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN,
 														ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
+					manage_userlabel = ""
+					valuess = None
 
 					if len(manage_att) > 0:
 						dic = dict.fromkeys(sw_column, '')
@@ -538,7 +544,8 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													'{http://ZTESpecificAttributes#ZTESpecificAttributes}',
 													'')
 												value = attribute.text
-												mongo_value_pair_dic[tag] = value
+												# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+												# mongo_value_pair_dic[tag] = value
 
 												if tag.upper() in oracle_value_pair_dic:
 													oracle_value_pair_dic[tag.upper()] = value
@@ -557,16 +564,17 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											oracle_value_pair_dic['LV'] = cell_type
 											oracle_value_pair_dic['MO'] = g2_cell_path.format(subid, manageid, bssid, btsid, gsmid)
 
-											mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
-											mongo_value_pair_dic['FILENAME'] = filename
-											mongo_value_pair_dic['LV'] = cell_type
-											mongo_value_pair_dic['MO'] = g2_cell_path.format(subid, manageid, bssid, btsid, gsmid)
+											# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+											# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
+											# mongo_value_pair_dic['FILENAME'] = filename
+											# mongo_value_pair_dic['LV'] = cell_type
+											# mongo_value_pair_dic['MO'] = g2_cell_path.format(subid, manageid, bssid, btsid, gsmid)
 
-											if parameter_group in mongo_result:
-												mongo_result[parameter_group].append(mongo_value_pair_dic)
-											else:
-												mongo_result[parameter_group] = []
-												mongo_result[parameter_group].append(mongo_value_pair_dic)
+											# if parameter_group in mongo_result:
+											# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+											# else:
+											# 	mongo_result[parameter_group] = []
+											# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
 
 											if parameter_group in oracle_result:
 												oracle_result[parameter_group].append(oracle_value_pair_dic)
@@ -590,7 +598,8 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 																		'')
 
 											value = attribute.text
-											mongo_value_pair_dic[tag.upper()] = value
+											# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+											# mongo_value_pair_dic[tag.upper()] = value
 
 											if tag.upper() in oracle_value_pair_dic:
 												oracle_value_pair_dic[tag.upper()] = value
@@ -609,16 +618,18 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										oracle_value_pair_dic['LV'] = cell_type
 										oracle_value_pair_dic['MO'] = g2_bsc_path.format(subid, manageid, bssid)
 
-										mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = manage_userlabel
-										mongo_value_pair_dic['FILENAME'] = raw_file.split(PATH_SEPARATOR)[-1]
-										mongo_value_pair_dic['LV'] = cell_type
-										mongo_value_pair_dic['MO'] = g2_bsc_path.format(subid, manageid, bssid)
+										# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
 
-										if parameter_group in mongo_result:
-											mongo_result[parameter_group].append(mongo_value_pair_dic)
-										else:
-											mongo_result[parameter_group] = []
-											mongo_result[parameter_group].append(mongo_value_pair_dic)
+										# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = manage_userlabel
+										# mongo_value_pair_dic['FILENAME'] = raw_file.split(PATH_SEPARATOR)[-1]
+										# mongo_value_pair_dic['LV'] = cell_type
+										# mongo_value_pair_dic['MO'] = g2_bsc_path.format(subid, manageid, bssid)			
+
+										# if parameter_group in mongo_result:
+										# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+										# else:
+										# 	mongo_result[parameter_group] = []
+										# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
 
 										if parameter_group in oracle_result:
 											oracle_result[parameter_group].append(oracle_value_pair_dic)
@@ -732,7 +743,8 @@ def parse_3g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							for gsmcell in attributes:
 								tag = gsmcell.tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#utranNrm}', '')
 								value = gsmcell.text
-								mongo_value_pair_dic[tag.upper()] = value
+								# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+								# mongo_value_pair_dic[tag.upper()] = value
 
 								if tag.upper() in oracle_value_pair_dic:
 									oracle_value_pair_dic[tag.upper()] = value
@@ -742,20 +754,23 @@ def parse_3g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							oracle_value_pair_dic['LV'] = cell_type
 							oracle_value_pair_dic['MO'] = external_utran_cell_fdd.format(subid, externalrncfunction_id, externalutrancellfdd_id)
 
-							mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = subnetwork_userLabel
-							mongo_value_pair_dic['FILENAME'] = filename
-							mongo_value_pair_dic['LV'] = cell_type
-							mongo_value_pair_dic['MO'] = external_utran_cell_fdd.format(subid, externalrncfunction_id, externalutrancellfdd_id)
+							# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+							# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = subnetwork_userLabel
+							# mongo_value_pair_dic['FILENAME'] = filename
+							# mongo_value_pair_dic['LV'] = cell_type
+							# mongo_value_pair_dic['MO'] = external_utran_cell_fdd.format(subid, externalrncfunction_id, externalutrancellfdd_id)
 
 							if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
 								COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0
 							COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] + 1
 
-						if parameter_group in mongo_result:
-							mongo_result[parameter_group].append(mongo_value_pair_dic)
-						else:
-							mongo_result[parameter_group] = []
-							mongo_result[parameter_group].append(mongo_value_pair_dic)
+						# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+
+						# if parameter_group in mongo_result:
+						# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+						# else:
+						# 	mongo_result[parameter_group] = []
+						# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
 
 						if parameter_group in oracle_result:
 							oracle_result[parameter_group].append(oracle_value_pair_dic)
@@ -887,7 +902,7 @@ def parse_3g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									tag = item.tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#utranNrm}', '')
 									value = item.text
 
-									mongo_value_pair_dic[tag] = value
+									# mongo_value_pair_dic[tag] = value
 
 									if tag.upper() in oracle_value_pair_dic:
 										oracle_value_pair_dic[tag.upper()] = value
@@ -912,7 +927,7 @@ def parse_3g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					for attribute in rnc_mo:
 						tag = attribute.tag.replace('{http://ZTESpecificAttributes#ZTESpecificAttributes}', '')
 						value = attribute.text
-						mongo_value_pair_dic[tag] = value
+						# mongo_value_pair_dic[tag] = value
 
 						if tag.upper() in oracle_value_pair_dic:
 							oracle_value_pair_dic[tag.upper()] = value
@@ -921,9 +936,10 @@ def parse_3g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					oracle_value_pair_dic["LV"] = cell_type
 					oracle_value_pair_dic['FILENAME'] = filename
 
-					mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
-					mongo_value_pair_dic["LV"] = cell_type
-					mongo_value_pair_dic['FILENAME'] = filename
+					# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+					# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
+					# mongo_value_pair_dic["LV"] = cell_type
+					# mongo_value_pair_dic['FILENAME'] = filename
 
 					if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
 						COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0
@@ -931,16 +947,22 @@ def parse_3g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 					if cell_type == 'RNC Level':
 						oracle_value_pair_dic['MO'] = g3_rnc_path.format(subid, manageid, rncId)
-						mongo_value_pair_dic['MO'] = g3_rnc_path.format(subid, manageid, rncId)
+
+						# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+						# mongo_value_pair_dic['MO'] = g3_rnc_path.format(subid, manageid, rncId)
 					else:
 						oracle_value_pair_dic['MO'] = g3_cell_path.format(subid, manageid, rncId, eutrancellid)
-						mongo_value_pair_dic['MO'] = g3_cell_path.format(subid, manageid, rncId, eutrancellid)
 
-					if parameter_group in mongo_result:
-						mongo_result[parameter_group].append(mongo_value_pair_dic)
-					else:
-						mongo_result[parameter_group] = []
-						mongo_result[parameter_group].append(mongo_value_pair_dic)
+						# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+						# mongo_value_pair_dic['MO'] = g3_cell_path.format(subid, manageid, rncId, eutrancellid)
+					
+					# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+
+					# if parameter_group in mongo_result:
+					# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+					# else:
+					# 	mongo_result[parameter_group] = []
+					# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
 
 					if parameter_group in oracle_result:
 						oracle_result[parameter_group].append(oracle_value_pair_dic)
@@ -1125,7 +1147,8 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										valuess = attribute.text
 										# log.i(cell_type +' || ' + valuess)
 
-									mongo_value_pair_dic[tag.upper()] = valueTmp
+									# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+									# mongo_value_pair_dic[tag.upper()] = valueTmp
 
 									if tag.upper() in oracle_value_pair_dic:
 										oracle_value_pair_dic[tag.upper()] = valueTmp
@@ -1148,7 +1171,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											tag = attribute.tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
 											value = attribute.text
 
-											mongo_value_pair_dic[tag.upper()] = value
+											# mongo_value_pair_dic[tag.upper()] = value
 
 											if tag.upper() in oracle_value_pair_dic:
 												oracle_value_pair_dic[tag.upper()] = value
@@ -1160,7 +1183,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													tag = vsdata.tag.replace('{http://ZTESpecificAttributes#ZTESpecificAttributes}', '')
 													value = vsdata.text
 
-													mongo_value_pair_dic[tag.upper()] = value
+													# mongo_value_pair_dic[tag.upper()] = value
 
 													if tag.upper() in oracle_value_pair_dic:
 														oracle_value_pair_dic[tag.upper()] = value
@@ -1168,8 +1191,9 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
 							oracle_value_pair_dic['FILENAME'] = filename
 
-							mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
-							mongo_value_pair_dic['FILENAME'] = filename
+							# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+							# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
+							# mongo_value_pair_dic['FILENAME'] = filename
 
 							if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
 								COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0
@@ -1177,16 +1201,19 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 							if cell_type == 'eNodeB Level':
 								oracle_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid)
-								mongo_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid)
+								# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+								# mongo_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid)
 							else:
 								oracle_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
-								mongo_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
+								# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+								# mongo_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
 
-							if parameter_group in mongo_result:
-								mongo_result[parameter_group].append(mongo_value_pair_dic)
-							else:
-								mongo_result[parameter_group] = []
-								mongo_result[parameter_group].append(mongo_value_pair_dic)
+							# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+							# if parameter_group in mongo_result:
+							# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+							# else:
+							# 	mongo_result[parameter_group] = []
+							# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
 
 							if parameter_group in oracle_result:
 								oracle_result[parameter_group].append(oracle_value_pair_dic)
@@ -1213,7 +1240,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									tag = naming_helper.rule_column_name(tag)
 
 									value = attribute.text
-									mongo_value_pair_dic[tag.upper()] = value
+									# mongo_value_pair_dic[tag.upper()] = value
 
 									if parameter_group == 'ECellEquipmentFunction' and tag.upper() == 'DESCRIPTION':
 										extra_value = "," + value.split(',')[0]
@@ -1224,8 +1251,8 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
 								oracle_value_pair_dic['FILENAME'] = filename
 
-								mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
-								mongo_value_pair_dic['FILENAME'] = filename
+								# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
+								# mongo_value_pair_dic['FILENAME'] = filename
 
 								if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
 									COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0
@@ -1233,16 +1260,18 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 								if cell_type == 'eNodeB Level':
 									oracle_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid) + extra_value
-									mongo_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid) + extra_value
+									# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+									# mongo_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid) + extra_value
 								else:
 									oracle_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
-									mongo_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
+									# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+									# mongo_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
 
-								if parameter_group in mongo_result:
-									mongo_result[parameter_group].append(mongo_value_pair_dic)
-								else:
-									mongo_result[parameter_group] = []
-									mongo_result[parameter_group].append(mongo_value_pair_dic)
+								# if parameter_group in mongo_result:
+								# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+								# else:
+								# 	mongo_result[parameter_group] = []
+								# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
 
 								if parameter_group in oracle_result:
 									oracle_result[parameter_group].append(oracle_value_pair_dic)
@@ -1713,7 +1742,8 @@ def insertData(parameter_group, mo_name, ldn, reference_name, level_type, freque
 		tag = attribute.tag
 		value = attribute.text
 
-		mongo_value_pair_dic[str(tag).upper()] = value
+		# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+		# mongo_value_pair_dic[str(tag).upper()] = value
 
 		if str(tag).upper() in oracle_value_pair_dic:
 			oracle_value_pair_dic[str(tag).upper()] = value
@@ -1733,16 +1763,17 @@ def insertData(parameter_group, mo_name, ldn, reference_name, level_type, freque
 		oracle_value_pair_dic['LV'] = level_type
 		oracle_value_pair_dic['MO'] = mo_name
 
-		mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = reference_name
-		mongo_value_pair_dic['FILENAME'] = filename
-		mongo_value_pair_dic['LV'] = level_type
-		mongo_value_pair_dic['MO'] = mo_name
+		# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+		# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = reference_name
+		# mongo_value_pair_dic['FILENAME'] = filename
+		# mongo_value_pair_dic['LV'] = level_type
+		# mongo_value_pair_dic['MO'] = mo_name
 
-		if parameter_group in mongo_result:
-			mongo_result[parameter_group].append(mongo_value_pair_dic)
-		else:
-			mongo_result[parameter_group] = []
-			mongo_result[parameter_group].append(mongo_value_pair_dic)
+		# if parameter_group in mongo_result:
+		# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+		# else:
+		# 	mongo_result[parameter_group] = []
+		# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
 
 		if parameter_group in oracle_result:
 			oracle_result[parameter_group].append(oracle_value_pair_dic)
