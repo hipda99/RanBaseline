@@ -1092,6 +1092,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 				for enb_moo in enb_group_collection:
 
 					enbid = enb_moo.xpath('@id')[0]
+					print(enbid)					
 
 					base_xml = etree.fromstring(etree.tostring(enb_moo))
 
@@ -1226,6 +1227,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 
 							else:
+								mo_group_collection = None
 
 								xpath = './/zs:vsData{0}'.format(parameter_group)
 								mo_group_collection = enb_mo.xpath(xpath,
