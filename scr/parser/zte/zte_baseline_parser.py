@@ -1122,6 +1122,8 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							if cell_type == 'eNodeB Level':
 								found = False
 								for v1 in mo_xml:
+									if found:
+										break
 									for atts in v1:
 										tag = atts.tag.replace(
 											'{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
@@ -1129,8 +1131,6 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											valuess = atts.text
 											found = True
 											# log.i(cell_type + ' || ' + valuess)
-											break
-										if found:
 											break
 
 							else:
