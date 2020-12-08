@@ -1092,7 +1092,6 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 				for enb_moo in enb_group_collection:
 
 					enbid = enb_moo.xpath('@id')[0]
-					print(enbid)					
 
 					base_xml = etree.fromstring(etree.tostring(enb_moo))
 					valuess = None
@@ -1108,7 +1107,6 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							mo_xml = base_xml.xpath('.//en:EUtranCellFDD',
 													namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
 																ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
-
 
 						else:
 							mo_xml = base_xml
