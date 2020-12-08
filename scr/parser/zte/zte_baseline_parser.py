@@ -1095,6 +1095,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					print(enbid)					
 
 					base_xml = etree.fromstring(etree.tostring(enb_moo))
+					valuess = None
 
 					for parameter_group, valuedic in field_mapping_dic.items():
 						# mongo_result[parameter_group] = []
@@ -1119,13 +1120,17 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 
 							if cell_type == 'eNodeB Level':
+								found = False
 								for v1 in mo_xml:
 									for atts in v1:
 										tag = atts.tag.replace(
 											'{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
 										if tag == 'userLabel':
 											valuess = atts.text
+											found = True
 											# log.i(cell_type + ' || ' + valuess)
+											break
+										if found:
 											break
 
 							else:
@@ -1222,9 +1227,6 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								else:
 									oracle_result[parameter_group] = []
 									oracle_result[parameter_group].append(oracle_value_pair_dic)
-
-
-
 
 							else:
 								mo_group_collection = None
