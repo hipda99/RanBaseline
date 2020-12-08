@@ -1001,256 +1001,198 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 	mongo_result = {}
 	oracle_result = {}
+	try:
 
-	tree = ElementInclude.default_loader(raw_file, 'xml')
+		tree = ElementInclude.default_loader(raw_file, 'xml')
 
-	subnet = tree.xpath('.//xn:SubNetwork', namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-														ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})
-	subid = subnet[1].xpath('@id')[0]
+		subnet = tree.xpath('.//xn:SubNetwork', namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
+															ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})
+		subid = subnet[1].xpath('@id')[0]
 
-	start_parser_time = datetime.datetime.now()
+		start_parser_time = datetime.datetime.now()
 
-	filename = raw_file.split(PATH_SEPARATOR)[-1]
-	eutrancellid = ""
+		filename = raw_file.split(PATH_SEPARATOR)[-1]
+		eutrancellid = ""
 
-	for e in subnet[1]:
-		submo = etree.fromstring(etree.tostring(e))
+		for e in subnet[1]:
+			submo = etree.fromstring(etree.tostring(e))
 
-		manage_group_collection = submo.xpath('.//xn:ManagedElement', namespaces={ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})
+			manage_group_collection = submo.xpath('.//xn:ManagedElement', namespaces={ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})
 
-		for manage_group in manage_group_collection:
+			for manage_group in manage_group_collection:
 
-			manageid = manage_group.xpath('@id')[0]
+				manageid = manage_group.xpath('@id')[0]
 
-			if len(manage_group_collection) > 0:
+				if len(manage_group_collection) > 0:
 
-				sw_name = ''
-				sw_reference_field = ''
-				sw_version = ''
-				sw_netypename = ''
+					sw_name = ''
+					sw_reference_field = ''
+					sw_version = ''
+					sw_netypename = ''
 
-				for attributes in manage_group:
-					dic = dict.fromkeys(sw_column, '')
+					for attributes in manage_group:
+						dic = dict.fromkeys(sw_column, '')
 
-					tag = attributes.tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.625#genericNrm}', '')
-					tag = tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
+						tag = attributes.tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.625#genericNrm}', '')
+						tag = tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
 
-					if tag == 'attributes':
+						if tag == 'attributes':
 
-						for attribute in attributes:
-							tag = attribute.tag.replace(
-								'{http://www.3gpp.org/ftp/specs/archive/32_series/32.625#genericNrm}', '')
+							for attribute in attributes:
+								tag = attribute.tag.replace(
+									'{http://www.3gpp.org/ftp/specs/archive/32_series/32.625#genericNrm}', '')
 
-							if tag == "swVersion":
-								sw_version = attribute.text
+								if tag == "swVersion":
+									sw_version = attribute.text
 
-							elif tag == "managedElementType":
-								sw_netypename = attribute.text
+								elif tag == "managedElementType":
+									sw_netypename = attribute.text
 
-								# break
+									# break
 
-							else:
-								continue
-					elif tag == 'ENBFunction':
+								else:
+									continue
+						elif tag == 'ENBFunction':
 
-						for attribute in attributes:
+							for attribute in attributes:
 
-							tag = attribute.tag.replace(
-								'{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
+								tag = attribute.tag.replace(
+									'{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
 
-							if tag == 'attributes':
-								for attributeItem in attribute:
-									tag = attributeItem.tag.replace(
-										'{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
+								if tag == 'attributes':
+									for attributeItem in attribute:
+										tag = attributeItem.tag.replace(
+											'{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
 
-									if tag == 'userLabel':
-										sw_result = {}
+										if tag == 'userLabel':
+											sw_result = {}
 
-										manage_userlabel = attributeItem.text
-										dic["NAME"] = manage_userlabel
-										dic["REFERENCE_FIELD"] = manage_userlabel
+											manage_userlabel = attributeItem.text
+											dic["NAME"] = manage_userlabel
+											dic["REFERENCE_FIELD"] = manage_userlabel
 
-										dic["SWVERSION"] = sw_version
-										dic["NETYPENAME"] = sw_netypename
+											dic["SWVERSION"] = sw_version
+											dic["NETYPENAME"] = sw_netypename
 
-										dic["FILENAME"] = filename
-										dic["NEFUNCTION"] = "eNodeB"
+											dic["FILENAME"] = filename
+											dic["NEFUNCTION"] = "eNodeB"
 
-										sw_key = "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type
+											sw_key = "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type
 
-										sw_result[sw_key] = []
-										sw_result[sw_key].append(dic)
+											sw_result[sw_key] = []
+											sw_result[sw_key].append(dic)
 
-										ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
-										oracle_con.commit()
+											ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
+											oracle_con.commit()
 
-			enb_group_collection = manage_group.xpath('.//en:ENBFunction',
-													  namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-																  ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
+				enb_group_collection = manage_group.xpath('.//en:ENBFunction',
+														namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
+																	ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
 
-			for enb_moo in enb_group_collection:
+				for enb_moo in enb_group_collection:
 
-				enbid = enb_moo.xpath('@id')[0]
+					enbid = enb_moo.xpath('@id')[0]
 
-				base_xml = etree.fromstring(etree.tostring(enb_moo))
+					base_xml = etree.fromstring(etree.tostring(enb_moo))
 
-				for parameter_group, valuedic in field_mapping_dic.items():
-					# mongo_result[parameter_group] = []
-					# oracle_result[parameter_group] = []
+					for parameter_group, valuedic in field_mapping_dic.items():
+						# mongo_result[parameter_group] = []
+						# oracle_result[parameter_group] = []
 
-					cell_type = cell_level_dic[parameter_group]
+						cell_type = cell_level_dic[parameter_group]
 
-					if cell_type == 'CELL Level':
-						# log.i('This is Cell Level')
-						mo_xml = base_xml.xpath('.//en:EUtranCellFDD',
-												namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-															ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
+						if cell_type == 'CELL Level':
+							# log.i('This is Cell Level')
+							mo_xml = base_xml.xpath('.//en:EUtranCellFDD',
+													namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
+																ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
 
-
-					else:
-						mo_xml = base_xml
-						# log.i('This is eNodeB Level')
-
-					for enb_mo in mo_xml:
-
-						mongo_value_pair_dic = {}
-						oracle_value_pair_dic = dict.fromkeys(valuedic, '')
-
-						if cell_type == 'eNodeB Level':
-							for v1 in mo_xml:
-								for atts in v1:
-									tag = atts.tag.replace(
-										'{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
-									if tag == 'userLabel':
-										valuess = atts.text
-										# log.i(cell_type + ' || ' + valuess)
-										break
 
 						else:
-							# log.i(cell_type)
-							# log.i(parameter_group)
-							# log.i('utranId:')
-							eutrancellid = enb_mo.xpath('@id')[0]
-							# log.i(eutrancellid)
+							mo_xml = base_xml
+							# log.i('This is eNodeB Level')
 
-							eutranatt = enb_mo.xpath('.//en:attributes',
-													 namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-																 ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
-
-							if len(eutranatt) > 0:
-								for attribute in eutranatt[0]:
-									tag = attribute.tag.replace(
-										'{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
-
-									valueTmp = attribute.text
-									if tag == 'userLabel':
-										valuess = attribute.text
-										# log.i(cell_type +' || ' + valuess)
-
-									# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
-									# mongo_value_pair_dic[tag.upper()] = valueTmp
-
-									if tag.upper() in oracle_value_pair_dic:
-										oracle_value_pair_dic[tag.upper()] = valueTmp
-
-										# break
-
-						if parameter_group == 'EUtranRelation':
-							eutranrelations = enb_mo.xpath('.//en:EUtranRelation', namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF, ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
+						for enb_mo in mo_xml:
 
 							mongo_value_pair_dic = {}
 							oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 
-							for eutranrelation in eutranrelations:
-
-								for attributes in eutranrelation:
-									tag = attributes.tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
-
-									if tag == 'attributes':
-										for attribute in attributes:
-											tag = attribute.tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
-											value = attribute.text
-
-											# mongo_value_pair_dic[tag.upper()] = value
-
-											if tag.upper() in oracle_value_pair_dic:
-												oracle_value_pair_dic[tag.upper()] = value
-									else:
-										for nodes in attributes:
-											for node in nodes:
-												for vsdata in node:
-
-													tag = vsdata.tag.replace('{http://ZTESpecificAttributes#ZTESpecificAttributes}', '')
-													value = vsdata.text
-
-													# mongo_value_pair_dic[tag.upper()] = value
-
-													if tag.upper() in oracle_value_pair_dic:
-														oracle_value_pair_dic[tag.upper()] = value
-
-							oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
-							oracle_value_pair_dic['FILENAME'] = filename
-
-							# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
-							# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
-							# mongo_value_pair_dic['FILENAME'] = filename
-
-							if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
-								COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0
-							COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] + 1
-
 							if cell_type == 'eNodeB Level':
-								oracle_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid)
-								# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
-								# mongo_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid)
+								for v1 in mo_xml:
+									for atts in v1:
+										tag = atts.tag.replace(
+											'{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
+										if tag == 'userLabel':
+											valuess = atts.text
+											# log.i(cell_type + ' || ' + valuess)
+											break
+
 							else:
-								oracle_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
-								# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
-								# mongo_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
+								# log.i(cell_type)
+								# log.i(parameter_group)
+								# log.i('utranId:')
+								eutrancellid = enb_mo.xpath('@id')[0]
+								# log.i(eutrancellid)
 
-							# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
-							# if parameter_group in mongo_result:
-							# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
-							# else:
-							# 	mongo_result[parameter_group] = []
-							# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+								eutranatt = enb_mo.xpath('.//en:attributes',
+														namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
+																	ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
 
-							if parameter_group in oracle_result:
-								oracle_result[parameter_group].append(oracle_value_pair_dic)
-							else:
-								oracle_result[parameter_group] = []
-								oracle_result[parameter_group].append(oracle_value_pair_dic)
+								if len(eutranatt) > 0:
+									for attribute in eutranatt[0]:
+										tag = attribute.tag.replace(
+											'{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
 
+										valueTmp = attribute.text
+										if tag == 'userLabel':
+											valuess = attribute.text
+											# log.i(cell_type +' || ' + valuess)
 
+										# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+										# mongo_value_pair_dic[tag.upper()] = valueTmp
 
+										if tag.upper() in oracle_value_pair_dic:
+											oracle_value_pair_dic[tag.upper()] = valueTmp
 
-						else:
+											# break
 
-							xpath = './/zs:vsData{0}'.format(parameter_group)
-							mo_group_collection = enb_mo.xpath(xpath,
-															   namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-																		   ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
+							if parameter_group == 'EUtranRelation':
+								eutranrelations = enb_mo.xpath('.//en:EUtranRelation', namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF, ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
 
-							extra_value = ""
-							for enb_moo in mo_group_collection:
+								mongo_value_pair_dic = {}
+								oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 
-								for attribute in enb_moo:
-									tag = attribute.tag.replace('{http://ZTESpecificAttributes#ZTESpecificAttributes}', '')
+								for eutranrelation in eutranrelations:
 
-									tag = naming_helper.rule_column_name(tag)
+									for attributes in eutranrelation:
+										tag = attributes.tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
 
-									value = attribute.text
-									# mongo_value_pair_dic[tag.upper()] = value
+										if tag == 'attributes':
+											for attribute in attributes:
+												tag = attribute.tag.replace('{http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm}', '')
+												value = attribute.text
 
-									if parameter_group == 'ECellEquipmentFunction' and tag.upper() == 'DESCRIPTION':
-										extra_value = "," + value.split(',')[0]
+												# mongo_value_pair_dic[tag.upper()] = value
 
-									if tag.upper() in oracle_value_pair_dic:
-										oracle_value_pair_dic[tag.upper()] = value
+												if tag.upper() in oracle_value_pair_dic:
+													oracle_value_pair_dic[tag.upper()] = value
+										else:
+											for nodes in attributes:
+												for node in nodes:
+													for vsdata in node:
+
+														tag = vsdata.tag.replace('{http://ZTESpecificAttributes#ZTESpecificAttributes}', '')
+														value = vsdata.text
+
+														# mongo_value_pair_dic[tag.upper()] = value
+
+														if tag.upper() in oracle_value_pair_dic:
+															oracle_value_pair_dic[tag.upper()] = value
 
 								oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
 								oracle_value_pair_dic['FILENAME'] = filename
 
+								# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
 								# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
 								# mongo_value_pair_dic['FILENAME'] = filename
 
@@ -1259,14 +1201,15 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] + 1
 
 								if cell_type == 'eNodeB Level':
-									oracle_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid) + extra_value
+									oracle_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid)
 									# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
-									# mongo_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid) + extra_value
+									# mongo_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid)
 								else:
 									oracle_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
 									# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
 									# mongo_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
 
+								# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
 								# if parameter_group in mongo_result:
 								# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
 								# else:
@@ -1279,30 +1222,94 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									oracle_result[parameter_group] = []
 									oracle_result[parameter_group].append(oracle_value_pair_dic)
 
-								mongo_value_pair_dic = {}
-								oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 
-	log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
-	for result in oracle_result:
 
-		table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, result)
-		# granite_mongo.push(table_name, mongo_result[result])
-		try:
-			ran_baseline_oracle.push(oracle_cur, table_name, oracle_result[result])
-			oracle_con.commit()
-		except Exception as e:
-			log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)
-			log.e('Exception Into Table: ' + table_name, ZTE_VENDOR, frequency_type)
-			log.e(e, ZTE_VENDOR, frequency_type)
-			traceback.print_exc()
-			log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
 
-			oracle_con.commit()
-			oracle_con, oracle_cur = open_connection()
-			continue
+							else:
 
-	log.i("Done :::: " + filename + " ::::::::", ZTE_VENDOR, frequency_type)
-	log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
+								xpath = './/zs:vsData{0}'.format(parameter_group)
+								mo_group_collection = enb_mo.xpath(xpath,
+																namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
+																			ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
+
+								extra_value = ""
+								for enb_moo in mo_group_collection:
+
+									for attribute in enb_moo:
+										tag = attribute.tag.replace('{http://ZTESpecificAttributes#ZTESpecificAttributes}', '')
+
+										tag = naming_helper.rule_column_name(tag)
+
+										value = attribute.text
+										# mongo_value_pair_dic[tag.upper()] = value
+
+										if parameter_group == 'ECellEquipmentFunction' and tag.upper() == 'DESCRIPTION':
+											extra_value = "," + value.split(',')[0]
+
+										if tag.upper() in oracle_value_pair_dic:
+											oracle_value_pair_dic[tag.upper()] = value
+
+									oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
+									oracle_value_pair_dic['FILENAME'] = filename
+
+									# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
+									# mongo_value_pair_dic['FILENAME'] = filename
+
+									if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group) not in COUNT_DATA:
+										COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0
+									COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] + 1
+
+									if cell_type == 'eNodeB Level':
+										oracle_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid) + extra_value
+										# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+										# mongo_value_pair_dic['MO'] = env_mo_path.format(subid, manageid, enbid) + extra_value
+									else:
+										oracle_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
+										# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+										# mongo_value_pair_dic['MO'] = eu_cell_path.format(subid, manageid, enbid, eutrancellid)
+
+									# if parameter_group in mongo_result:
+									# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+									# else:
+									# 	mongo_result[parameter_group] = []
+									# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
+
+									if parameter_group in oracle_result:
+										oracle_result[parameter_group].append(oracle_value_pair_dic)
+									else:
+										oracle_result[parameter_group] = []
+										oracle_result[parameter_group].append(oracle_value_pair_dic)
+
+									mongo_value_pair_dic = {}
+									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
+
+		log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
+		for result in oracle_result:
+
+			table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, result)
+			# granite_mongo.push(table_name, mongo_result[result])
+			try:
+				ran_baseline_oracle.push(oracle_cur, table_name, oracle_result[result])
+				oracle_con.commit()
+			except Exception as e:
+				log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)
+				log.e('Exception Into Table: ' + table_name, ZTE_VENDOR, frequency_type)
+				log.e(e, ZTE_VENDOR, frequency_type)
+				traceback.print_exc()
+				log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
+
+				oracle_con.commit()
+				oracle_con, oracle_cur = open_connection()
+				continue
+
+		log.i("Done :::: " + filename + " ::::::::", ZTE_VENDOR, frequency_type)
+		log.i("<<<< Time : " + str(datetime.datetime.now() - start_parser_time), ZTE_VENDOR, frequency_type)
+	except Exception as e:
+		log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)
+		log.e(e, ZTE_VENDOR, frequency_type)
+		traceback.print_exc()
+		log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
+
 
 	close_connection(oracle_con, oracle_cur)
 
