@@ -309,7 +309,7 @@ def run_sw(source):
     pool = mp.Pool(processes=MAX_RUNNING_PROCESS)
 
     for raw_file in source.RawFileList:
-        if source.FrequencyType == '3G' or source.FrequencyType == '4G' or source.FrequenceType == '5G':
+        if source.FrequencyType == '3G' or source.FrequencyType == '4G' or source.FrequencyType == '5G':
             pool.apply_async(parse_sw_3g_4g, args=(raw_file, source.FrequencyType,))
             # parse_sw_3g_4g(raw_file, source.FrequencyType)
             # continue;
