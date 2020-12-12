@@ -686,7 +686,9 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 		close_connection(oracle_con, oracle_cur)
 
-	except:
+	except Exception as e:
+		log.e(f'---- ERROR: {str(e)}')
+		traceback.print_exc()
 		pass
 
 
