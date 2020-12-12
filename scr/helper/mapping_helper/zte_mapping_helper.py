@@ -8,6 +8,9 @@ from scr.util.excel_reader import read_excel_mapping
 PARAMETER_GROUP_COLUMN_NAME = 'MO'
 PARAMETER_COLUMN_NAME = 'Parameter'
 
+# any G
+BASELINE_COLUMN_NAME = 'Baseline_SKA'
+RED_ZONE_BASELINE_COLUMN_NAME = 'Baseline_RedZone'
 # 4G
 BASELINE_4G_COLUMN_NAME = 'Baseline_SKA'
 RED_ZONE_4G_BASELINE_COLUMN_NAME = 'Baseline_RedZone'
@@ -63,6 +66,9 @@ def read_zte_mapping(file_mapping_path_name, frequency_type, frequency):
         return read_4g(file_mapping_path_name)
     elif frequency_type == '5G':
         return read_5g(file_mapping_path_name)
+    else:
+        # 2G
+        return read(file_mapping_path_name)
 
 def read_3g(file_mapping_path_name):
     df = read_excel_mapping(file_mapping_path_name, 0)
@@ -321,3 +327,65 @@ def read_5g(file_mapping_path_name):
             tmp_check_key_dic[param_group.upper()] = [param_name.upper()]
 
     return param_dic, baseline_2600_dic, baseline_redzone_2600_dic, cell_level_dic, baseline_label_dic
+
+def read(file_mapping_path_name):
+    df = read_excel_mapping(file_mapping_path_name, 0)
+
+    baseline_label_dic = {}
+    param_dic = {}
+    baseline_dic = {}
+    red_baseline_dic = {}
+    cell_level_dic = {}
+    tmp_check_key_dic = {}
+
+    for index, row in df.iterrows():
+        param_group = str(row[PARAMETER_GROUP_COLUMN_NAME])
+
+        baseline_label_value = str(row[PARAMETER_COLUMN_NAME])
+        param_name = naming_helper.rule_column_name(baseline_label_value)
+
+        cell_level = str(row[LEVEL_COLUMN_NAME])
+        param_name = naming_helper.rule_column_name(param_name)
+
+        baseline_value = str(row[BASELINE_COLUMN_NAME])
+        if baseline_value == 'nan':
+            baseline_value = ""
+
+        red_zone_value = str(row[RED_ZONE_BASELINE_COLUMN_NAME])
+        if red_zone_value == 'nan':
+            red_zone_value = ""
+
+        if baseline_label_value == "nan":
+            baseline_label_value = ""
+
+        if param_group.upper() in tmp_check_key_dic:
+            if param_name.upper() not in tmp_check_key_dic[param_group.upper()]:
+                param_dic[param_group].append(param_name)
+                baseline_dic[param_group][0][param_name] = baseline_value
+                baseline_dic[param_group][0][BASELINE_TYPE] = BASELINE
+
+                red_baseline_dic[param_group][0][param_name] = red_zone_value
+                red_baseline_dic[param_group][0][BASELINE_TYPE] = RED_ZONE
+
+                baseline_label_dic[param_group][0][param_name] = baseline_label_value
+                baseline_label_dic[param_group][0][REFERENCE_FIELD_COLUMN_NAME] = BASELINE_LABEL_TYPE
+
+                tmp_check_key_dic[param_group.upper()].append(param_name.upper())
+        else:
+            param_dic[param_group] = [param_name]
+            param_dic[param_group].append(BASELINE_TYPE)
+            param_dic[param_group].append(REFERENCE_FIELD_COLUMN_NAME)
+            cell_level_dic[param_group] = cell_level
+
+            baseline_dic[param_group] = [{param_name: baseline_value}]
+            baseline_dic[param_group][0][BASELINE_TYPE] = BASELINE
+
+            red_baseline_dic[param_group] = [{param_name: red_zone_value}]
+            red_baseline_dic[param_group][0][BASELINE_TYPE] = RED_ZONE
+
+            baseline_label_dic[param_group] = [{param_name: baseline_label_value}]
+            baseline_label_dic[param_group][0][REFERENCE_FIELD_COLUMN_NAME] = BASELINE_LABEL_TYPE
+
+            tmp_check_key_dic[param_group.upper()] = [param_name.upper()]
+
+    return param_dic, baseline_dic, red_baseline_dic, cell_level_dic, baseline_label_dic
