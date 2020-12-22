@@ -2,6 +2,7 @@ import datetime
 import multiprocessing as mp
 import re
 import traceback
+from timeit import default_timer as timer
 
 import cx_Oracle
 
@@ -1435,6 +1436,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
     qciProfilePredefinedId = ""
 
     with open(raw_file) as f:
+        t = timer()
         lines = f.readlines()
 
         if frequency_type == "4G":
@@ -1824,8 +1826,10 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
     # for group_param in mongo_result:
     #     collection_name = naming_helper.get_table_name(ERICSSON_TABLE_PREFIX, frequency_type, group_param)
     #     granite_mongo.push(collection_name, mongo_result[group_param])
-
+    elapsed_time = timer() - t
+    log.i(f"----- Finish raw.process: {str(elapsed_time)}", ERICSSON_VENDOR, frequency_type)
     log.i("----- Start oracle.push : " + str(datetime.datetime.now()), ERICSSON_VENDOR, frequency_type)
+    t = timer()
     for group_param in oracle_result:
         try:
 
@@ -1877,11 +1881,13 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
             # oracle_con.commit()
         except:
             traceback.print_exc()
-            pass
+            pass    
 
     oracle_con.commit()
     mongo_result.clear()
     oracle_result.clear()
+    elapsed_time = timer() - t
+    log.i(f"----- Finish oracle.push: {str(elapsed_time)}", ERICSSON_VENDOR, frequency_type)
     log.i("Done :::: " + filename + " ::::::::", ERICSSON_VENDOR, frequency_type)
     log.i("----- Parser done ----", ERICSSON_VENDOR, frequency_type)
 
