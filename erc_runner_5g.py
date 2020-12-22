@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import datetime
-
+import os
 import log
 from environment import ERICSSON_VENDOR
 from scr.parser import main_baseline_parser
@@ -33,3 +33,7 @@ log.i("           ", ERICSSON_VENDOR, "5G")
 log.i("           ", ERICSSON_VENDOR, "5G")
 log.i("           ", ERICSSON_VENDOR, "5G")
 log.i("           ", ERICSSON_VENDOR, "5G")
+
+log.i("Start Command Report", ERICSSON_VENDOR)
+os.system("/home/ngoss/RANBaseLine/ERC_BL_Audit_Report_5G.sh")
+log.i("Done Command Report", ERICSSON_VENDOR)

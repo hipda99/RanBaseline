@@ -2,6 +2,7 @@
 import datetime
 
 import log
+import os
 from environment import ERICSSON_VENDOR
 from scr.parser import main_baseline_parser
 from scr.util import parser_db
@@ -34,3 +35,7 @@ log.i("           ", ERICSSON_VENDOR, "2G")
 log.i("           ", ERICSSON_VENDOR, "2G")
 log.i("           ", ERICSSON_VENDOR, "2G")
 log.i("           ", ERICSSON_VENDOR, "2G")
+
+log.i("Start Command Report", ERICSSON_VENDOR)
+os.system("/home/ngoss/RANBaseLine/ERC_BL_Audit_Report_2G.sh")
+log.i("Done Command Report", ERICSSON_VENDOR)
