@@ -90,7 +90,8 @@ def collect_huawei_file(raw_file):
     elif raw_file.FrequencyType == '3G':
         collect_huawei_file_by_extension(raw_file, 'txt')
     elif raw_file.FrequencyType == '4G':        
-        collect_huawei_file_by_extension(raw_file, 'xml')
+        # Fix LTE that now is xml.gz (compress)
+        collect_huawei_file_by_extension(raw_file, 'xml.gz')
         # L2600
         collect_huawei_file_by_expression(raw_file)
 
