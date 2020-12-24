@@ -288,10 +288,11 @@ def prepare_oracle_table_software(oracle_con, oracle_cur, frequency_type):
 def run(source, field_mapping_dic, param_cell_level_dic, param_mo_dic):
     log.i(START_PARSING_STATEMENT.format(source.FrequencyType, source.Region))
 
-    
-    pool = mp.Pool(processes=MAX_RUNNING_PROCESS)
+    pool = None    
     if source.FrequencyType == '4G':
         pool = mp.Pool(processes=6)        
+    else:
+        pool = mp.Pool(processes=MAX_RUNNING_PROCESS)
 
     for raw_file in source.RawFileList:
         if source.FrequencyType == '2G':
