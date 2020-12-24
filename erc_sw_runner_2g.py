@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import datetime
-
+import os
 import log
 from environment import ERICSSON_SW_VENDOR
 from scr.parser import main_baseline_parser
@@ -33,3 +33,7 @@ log.i("           ", ERICSSON_SW_VENDOR)
 log.i("           ", ERICSSON_SW_VENDOR)
 log.i("           ", ERICSSON_SW_VENDOR)
 log.i("           ", ERICSSON_SW_VENDOR)
+
+log.i("Start Command Report", ERICSSON_SW_VENDOR)
+os.system("/home/ngoss/RANBaseLine/ERC_SW_Report_2G.sh")
+log.i("Done Command Report", ERICSSON_SW_VENDOR)
