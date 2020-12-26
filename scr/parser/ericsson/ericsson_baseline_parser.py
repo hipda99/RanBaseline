@@ -1501,7 +1501,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                     index = mo_dics[line]
 
                     if group_param not in mongo_result:
-                        # mongo_result[group_param] = []
+                        mongo_result[group_param] = []
                         oracle_result[group_param] = []
 
                     group_level = param_cell_level_dic[group_param]
@@ -1574,8 +1574,8 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                             reference_field = tmp_dic[1]
                                                             break_loop = True
                                                             break
-                                                if break_loop:
-                                                    break;
+                                                # if break_loop:
+                                                #     break;
 
                                         row += 1
                                     break
