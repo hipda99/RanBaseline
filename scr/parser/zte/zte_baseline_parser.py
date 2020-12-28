@@ -1409,6 +1409,35 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						gnb_dic = {}
 						refNrCarrier_dic = {}
 
+						# find software 
+						manageElements = neData.xpath('.//mo[@moc="ManagedElement"]', namespaces=ns)
+						for me in manageElements:							
+
+							manage_userlabel = parseData(me, f'.//userLabel/text()', 0, ns)
+							sw_netypename = parseData(me, f'.//mimType/text()', 0, ns)
+							sw_version = parseData(me, f'.//mimVersion/text()', 0, ns)
+														
+							sw_result = {}
+							if manage_userlabel is not None:
+								dic = dict.fromkeys(sw_column, '')
+
+								dic["NAME"] = manage_userlabel
+								dic["REFERENCE_FIELD"] = manage_userlabel
+
+								dic["SWVERSION"] = sw_version
+								dic["NETYPENAME"] = sw_netypename
+
+								dic["FILENAME"] = filename
+								dic["NEFUNCTION"] = "eNodeB"
+
+								sw_key = "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type
+
+								sw_result[sw_key] = []
+								sw_result[sw_key].append(dic)
+
+								ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
+								oracle_con.commit()
+
 						# Get NR DU Cell
 						nr_cell_dus = node.xpath('.//mo[@moc="NRCellDU"]', namespaces=ns)
 						for nr_cell_du in nr_cell_dus:
@@ -1459,7 +1488,6 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											'cellLocalId': refNRPhysicalCellDU_dic[ldn]['cellLocalId'],
 											'nrCarrierId': nrCarrierId
 										}
-
 
 						# Get NR CU Cell
 						nr_cell_cus = node.xpath('.//mo[@moc="NRCellCU"]', namespaces=ns)
@@ -1598,6 +1626,35 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					if len(nodes) < 1:
 						# print(f'LTE Cell not found in subNetwork={subNetwork}, managedElement={managedElement}')
 						continue
+
+					# find software 
+					manageElements = neData.xpath('.//mo[@moc="ManagedElement"]', namespaces=ns)
+					for me in manageElements:							
+
+						manage_userlabel = parseData(me, f'.//userLabel/text()', 0, ns)
+						sw_netypename = parseData(me, f'.//mimType/text()', 0, ns)
+						sw_version = parseData(me, f'.//mimVersion/text()', 0, ns)
+													
+						sw_result = {}
+						if manage_userlabel is not None:
+							dic = dict.fromkeys(sw_column, '')
+
+							dic["NAME"] = manage_userlabel
+							dic["REFERENCE_FIELD"] = manage_userlabel
+
+							dic["SWVERSION"] = sw_version
+							dic["NETYPENAME"] = sw_netypename
+
+							dic["FILENAME"] = filename
+							dic["NEFUNCTION"] = "eNodeB"
+
+							sw_key = "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type
+
+							sw_result[sw_key] = []
+							sw_result[sw_key].append(dic)
+
+							ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
+							oracle_con.commit()
 
 					for node in nodes:
 						cellfdd_ldn_dic = {}
