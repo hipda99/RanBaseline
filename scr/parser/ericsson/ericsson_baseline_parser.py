@@ -598,10 +598,11 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic):
 
                 # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
                 # mongo_value_pair_dic[columns[idx].upper()] = val
+                check = columns[idx].upper()
 
-                if columns[idx].upper() in field_mapping_dic['CNA']:
-                    if columns[idx].upper() not in oracle_value_pair_dic:
-                        oracle_value_pair_dic[columns[idx].upper()] = val
+                if check in field_mapping_dic['CNA']:
+                    if check not in oracle_value_pair_dic:
+                        oracle_value_pair_dic[check] = val
 
             if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, "CNA") not in COUNT_DATA:
                 COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, "CNA")] = 0
