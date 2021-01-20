@@ -599,7 +599,6 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic):
                 # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
                 # mongo_value_pair_dic[columns[idx].upper()] = val
                 check = columns[idx].upper()
-
                 if check in field_mapping_dic['CNA']:
                     if check not in oracle_value_pair_dic:
                         oracle_value_pair_dic[check] = val
