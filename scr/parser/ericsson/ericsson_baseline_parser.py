@@ -585,13 +585,14 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic):
             oracle_value_pair_dic = {}
 
             if line_number == 1:
-                columns = line.split(' ')
+                # columns = line.split(' ')
+                columns = line.split('\t')
                 continue
 
             if line_number == 2:
                 continue
 
-            value_line = line.split(' ')
+            value_line = line.split('\t')
 
             for idx, val in enumerate(value_line):
 
