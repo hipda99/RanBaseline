@@ -585,22 +585,23 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic):
             oracle_value_pair_dic = {}
 
             if line_number == 1:
-                columns = line.split(' ')
+                # columns = line.split(' ')
+                columns = line.split('\t')
                 continue
 
             if line_number == 2:
                 continue
 
-            value_line = line.split(' ')
+            value_line = line.split('\t')
 
             for idx, val in enumerate(value_line):
 
                 # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
                 # mongo_value_pair_dic[columns[idx].upper()] = val
-
-                if columns[idx].upper() in field_mapping_dic['CNA']:
-                    if columns[idx].upper() not in oracle_value_pair_dic:
-                        oracle_value_pair_dic[columns[idx].upper()] = val
+                check = columns[idx].upper()
+                if check in field_mapping_dic['CNA']:
+                    if check not in oracle_value_pair_dic:
+                        oracle_value_pair_dic[check] = val
 
             if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, "CNA") not in COUNT_DATA:
                 COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, "CNA")] = 0
@@ -942,11 +943,12 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                 log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
                 return
 
+            # 5G -- skip
             if '/nr/' in firstLine:
-                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                log.i("----- STOP FOUND NR : " + firstLine)
                 return
 
-            #TODO: Mixmode 5G , still Unknown
+            #Mixmode 4G+5G , --> mixedmode//NL
 
         if frequency_type == "5G":
             firstLine = lines[0]
@@ -1237,10 +1239,10 @@ def parse_sw_3g_4g(raw_file, frequency_type):
                 return
 
             if '/nr/' in firstLine:
-                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                log.i("----- STOP FOUND NR : " + firstLine)
                 return
 
-            #TODO: Mixmode 5G , still Unknown
+            #mixmode 4G/5G --> mixedmode//NL
 
         if frequency_type == "5G":
             firstLine = lines[0]
@@ -1452,12 +1454,12 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
             if 'mixedmode//WG' in firstLine:
                 log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
                 return
-
+            # File 5G only
             if '/nr/' in firstLine:
-                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                log.i("----- STOP FOUND NR : " + firstLine)
                 return
 
-        #TODO: Mixmode 5G , still Unknown
+        #mixmode 4G/5G --> mixedmode//NL
 
         if frequency_type == "5G":
             firstLine = lines[0]
