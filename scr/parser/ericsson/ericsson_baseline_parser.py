@@ -943,11 +943,12 @@ def parse_feature_3g_4g(raw_file, frequency_type, key_dic):
                 log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
                 return
 
+            # 5G -- skip
             if '/nr/' in firstLine:
-                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                log.i("----- STOP FOUND NR : " + firstLine)
                 return
 
-            #TODO: Mixmode 5G , still Unknown
+            #Mixmode 4G+5G , --> mixedmode//NL
 
         if frequency_type == "5G":
             firstLine = lines[0]
@@ -1238,10 +1239,10 @@ def parse_sw_3g_4g(raw_file, frequency_type):
                 return
 
             if '/nr/' in firstLine:
-                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                log.i("----- STOP FOUND NR : " + firstLine)
                 return
 
-            #TODO: Mixmode 5G , still Unknown
+            #mixmode 4G/5G --> mixedmode//NL
 
         if frequency_type == "5G":
             firstLine = lines[0]
@@ -1453,12 +1454,12 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
             if 'mixedmode//WG' in firstLine:
                 log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
                 return
-
+            # File 5G only
             if '/nr/' in firstLine:
-                log.i("----- STOP FOUND mixedmode//WG : " + firstLine)
+                log.i("----- STOP FOUND NR : " + firstLine)
                 return
 
-        #TODO: Mixmode 5G , still Unknown
+        #mixmode 4G/5G --> mixedmode//NL
 
         if frequency_type == "5G":
             firstLine = lines[0]
