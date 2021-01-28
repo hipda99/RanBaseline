@@ -1060,7 +1060,7 @@ def get_enodeB(tree):
                             param = remove_xml_descriptor(attribute.tag)
                             value = str(attribute.text).strip()
 
-                            if str(param).upper() == "eNodeBFunction".upper():
+                            if str(param).upper() == "eNodeBFunctionName".upper():
                                 return value
 
                         except:
