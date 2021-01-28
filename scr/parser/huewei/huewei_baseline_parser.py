@@ -521,8 +521,8 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     
     tree = etree.parse(xml_file)
     # tree = ElementInclude.default_loader(raw_file, 'xml')
-
-    nename = get_nename(tree)
+    nename = get_enodeB(tree) # update to different to enodeB
+    # nename = get_nename(tree)
     productversion = get_productversion(tree)
     nefunction = get_nefunction(tree, nename)
     swversion = get_swversion_4g(tree)
@@ -1032,6 +1032,35 @@ def get_nename(tree):
                             value = str(attribute.text).strip()
 
                             if param == "NENAME":
+                                return value
+
+                        except:
+                            # traceback.print_exc()
+                            continue
+
+    return ""
+
+def get_enodeB(tree):
+    xpath = './/spec:syndata[@FunctionType="eNodeBFunction"]'
+
+    class_node_collections = tree.xpath(xpath, namespaces=xml_namespaces)
+
+    for class_node_collection in class_node_collections:
+        for class_node in class_node_collection:
+            for group_node in class_node:
+                group_param = remove_xml_descriptor(group_node.tag).upper()
+
+                if group_param != "eNodeBFunction".upper():
+                    continue
+
+                for attribute_node in group_node:
+                    for attribute in attribute_node:
+
+                        try:
+                            param = remove_xml_descriptor(attribute.tag)
+                            value = str(attribute.text).strip()
+
+                            if str(param).upper() == "eNodeBFunction".upper():
                                 return value
 
                         except:
