@@ -69,7 +69,7 @@ sw_column = [
 REGEX_4G_LDN_ENBCUCPFUNC = r"^(ENBCUCPFunction=([^,]*)).*$"
 REGEX_4G_LDN_CELLFDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellFDDLTE=([^,]+)).*$"
 REGEX_4G_LDN_CELLTDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellTDDLTE=([^,]+)).*$"
-REGEX_4G_LDN_DUCELLFDDLTE = r"^((ENBDUFunction([^,]*)),DULTE=([^,]*),.*FDDLTE=([^,]+)).*$"
+REGEX_4G_LDN_DUCELLFDDLTE = r"^((ENBDUFunction=([^,]*)),DULTE=([^,]*),.*FDDLTE=([^,]+)).*$"
 REGEX_4G_LDN_DUCELLTDDLTE = r"^((ENBDUFunction=([^,]*)),DULTE=([^,]*),.*TDDLTE=([^,]+)).*$"
 REGEX_5G_LDN_NRCELLCU = r"^(GNBCUCPFunction=([^,]+),NRCellCU=([^,]+)).*$"
 REGEX_5G_LDN_NRPHYSICALCELLDU = r"^(NRRadioInfrastructure=\d+,NRPhysicalCellDU=([^,]+)).*$"
