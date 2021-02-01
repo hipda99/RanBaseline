@@ -1813,12 +1813,13 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)						
 										# Check DU-FDD
 										elif match_ducellfdd:
-											cellId = match_ducellfdd.group(5)
+											
+											cellId = match_ducellfdd.group(5) # 138-0
 											m = re.search('([^-]+)-.*', cellId)
 											if m:
-												cellId = m.group(1)
-											nodeBId = match_ducellfdd.group(1)
-											key_node_cell = nodeBId + "|" + cellId
+												cellId = m.group(1) # 138
+											nodeBId = match_ducellfdd.group(3) # 64686
+											key_node_cell = nodeBId + "|" + cellId # 64686|138
 											if key_node_cell in cellfdd_node_cell_dic:
 												reference_name = cellfdd_node_cell_dic[key_node_cell].get('cellname')
 												cellLocalId = cellfdd_node_cell_dic[key_node_cell].get('cellLocalId')
@@ -1828,11 +1829,18 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)				
 										# Check DU-tDD
 										elif match_ducelltdd:
+											"""
+											Group 1:	ENBDUFunction=64686,DULTE=1,CPResource=1,ECellEquipFuncTDDLTE=138-0
+											Group 2:	ENBDUFunction=64686
+											Group 3:	64686
+											Group 4:	1
+											Group 5:	138-0
+											"""
 											cellId = match_ducelltdd.group(5)
 											m = re.search('([^-]+)-.*', cellId)
 											if m:
 												cellId = m.group(1)
-											nodeBId = match_ducelltdd.group(1)
+											nodeBId = match_ducelltdd.group(3)
 											key_node_cell = nodeBId + "|" + cellId
 											if key_node_cell in celltdd_node_cell_dic:
 												reference_name = celltdd_node_cell_dic[key_node_cell].get('cellname')
