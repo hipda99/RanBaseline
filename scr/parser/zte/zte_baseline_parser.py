@@ -67,6 +67,7 @@ sw_column = [
 
 
 REGEX_4G_LDN_ENBCUCPFUNC = r"^(ENBCUCPFunction=([^,]*)).*$"
+REGEX_4G_LDN_ENBDUFUNC = r"^(ENBDUFunction=([^,]*)).*$"
 REGEX_4G_LDN_CELLFDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellFDDLTE=([^,]+)).*$"
 REGEX_4G_LDN_CELLTDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellTDDLTE=([^,]+)).*$"
 REGEX_4G_LDN_DUCELLFDDLTE = r"^((ENBDUFunction=([^,]*)),DULTE=([^,]*),.*FDDLTE=([^,]+)).*$"
@@ -1659,9 +1660,11 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						celltdd_ldn_dic = {}
 						cellfdd_node_cell_dic = {}
 						celltdd_node_cell_dic = {}
+						cellfdd_du_dic = {}
+						celltdd_du_dic = {}
 						nb_dic = {}
 
-						# Get TDD
+						# Get TDD - CU
 						cells = node.xpath('.//mo[@moc="CUEUtranCellTDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
@@ -1688,7 +1691,29 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							celltdd_node_cell_dic[key_node_cell] = data
 							node_cnt +=1
 						
-						# Get FDD
+						# Get TDD - DU
+						cells = node.xpath('.//mo[@moc="DUEUtranCellTDDLTE"]', namespaces=ns)
+						for cell in cells:
+							ldn = cell.get('ldn')
+
+							nodeBId = None
+							nodeBLdn = None
+							if ldn is not None:
+								p1 = re.compile(REGEX_4G_LDN_ENBDUFUNC)
+								m1 = p1.match(ldn)
+								if m1:
+									nodeBId = m1.group(2)
+									nodeBLdn = m1.group(1)
+
+							# moId = parseData(cell, f'.//moId/text()', 0, ns)
+							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
+							ref = parseData(cell, f'.//refECellEquipFuncTDDLTE/text()', 0, ns)
+							key = nodeBId + "|"	+ cellLocalId
+							data = celltdd_node_cell_dic[key]
+							celltdd_du_dic[ref] = data
+							# node_cnt +=1
+						
+						# Get FDD - CU
 						cells = node.xpath('.//mo[@moc="CUEUtranCellFDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
@@ -1715,6 +1740,28 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							cellfdd_node_cell_dic[key_node_cell] = data
 
 							node_cnt +=1
+
+						# Get FDD - DU
+						cells = node.xpath('.//mo[@moc="DUEUtranCellFDDLTE"]', namespaces=ns)
+						for cell in cells:
+							ldn = cell.get('ldn')
+
+							nodeBId = None
+							nodeBLdn = None
+							if ldn is not None:
+								p1 = re.compile(REGEX_4G_LDN_ENBDUFUNC)
+								m1 = p1.match(ldn)
+								if m1:
+									nodeBId = m1.group(2)
+									nodeBLdn = m1.group(1)
+
+							# moId = parseData(cell, f'.//moId/text()', 0, ns)
+							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
+							ref = parseData(cell, f'.//refECellEquipFuncFDDLTE/text()', 0, ns)
+							key = nodeBId + "|"	+ cellLocalId
+							data = cellfdd_node_cell_dic[key]
+							cellfdd_du_dic[ref] = data
+							# node_cnt +=1
 
 						# Get NB
 						nobeb_collection = node.xpath('.//mo[@moc="ENBCUCPFunction"]', namespaces=ns)
@@ -1812,20 +1859,14 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												log.e(f'Not found key={key} in celltdd_ldn_dic={str(celltdd_ldn_dic)}')
 											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)						
 										# Check DU-FDD
-										elif match_ducellfdd:
-											
-											cellId = match_ducellfdd.group(5) # 138-0
-											m = re.search('([^-]+)-.*', cellId)
-											if m:
-												cellId = m.group(1) # 138
-											nodeBId = match_ducellfdd.group(3) # 64686
-											key_node_cell = nodeBId + "|" + cellId # 64686|138
-											if key_node_cell in cellfdd_node_cell_dic:
-												reference_name = cellfdd_node_cell_dic[key_node_cell].get('cellname')
-												cellLocalId = cellfdd_node_cell_dic[key_node_cell].get('cellLocalId')
-												nbId = cellfdd_node_cell_dic[key_node_cell].get('nbId')
+										elif match_ducellfdd:											
+											key = match_ducellfdd.group(1)
+											if key in cellfdd_du_dic:
+												reference_name = cellfdd_du_dic[key].get('cellname')
+												cellLocalId = cellfdd_du_dic[key].get('cellLocalId')
+												nbId = cellfdd_du_dic[key].get('nbId')
 											else:
-												log.e(f'Not found key_node_cell={key_node_cell} in cellfdd_node_cell_dic={str(cellfdd_node_cell_dic)}')
+												log.e(f'Not found key={key} in cellfdd_node_cell_dic={str(cellfdd_du_dic)}')
 											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)				
 										# Check DU-tDD
 										elif match_ducelltdd:
@@ -1836,18 +1877,13 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											Group 4:	1
 											Group 5:	138-0
 											"""
-											cellId = match_ducelltdd.group(5)
-											m = re.search('([^-]+)-.*', cellId)
-											if m:
-												cellId = m.group(1)
-											nodeBId = match_ducelltdd.group(3)
-											key_node_cell = nodeBId + "|" + cellId
-											if key_node_cell in celltdd_node_cell_dic:
-												reference_name = celltdd_node_cell_dic[key_node_cell].get('cellname')
-												cellLocalId = celltdd_node_cell_dic[key_node_cell].get('cellLocalId')
-												nbId = celltdd_node_cell_dic[key_node_cell].get('nbId')
+											key = match_ducelltdd.group(1)
+											if key in celltdd_du_dic:
+												reference_name = celltdd_du_dic[key].get('cellname')
+												cellLocalId = celltdd_du_dic[key].get('cellLocalId')
+												nbId = celltdd_du_dic[key].get('nbId')
 											else:
-												log.e(f'Not found key_node_cell={key_node_cell} in celltdd_node_cell_dic={str(celltdd_node_cell_dic)}')
+												log.e(f'Not found key={key} in celltdd_du_dic={str(celltdd_du_dic)}')
 											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)				
 										
 									else:
