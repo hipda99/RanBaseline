@@ -1890,7 +1890,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												nbId = celltdd_du_dic[key].get('nbId')
 											else:
 												log.e(f'Not found key={key} in celltdd_du_dic={str(celltdd_du_dic)}')
-											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)				
+											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)				
 										
 									else:
 										#NB level
