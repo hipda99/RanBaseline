@@ -1704,6 +1704,9 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								if m1:
 									nodeBId = m1.group(2)
 									nodeBLdn = m1.group(1)
+									m = re.search('[^-]+-[^_]+_([^_-]+)', nodeBId)
+									if m:
+										nodeBId = m.group(1)
 
 							# moId = parseData(cell, f'.//moId/text()', 0, ns)
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
@@ -1726,6 +1729,9 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								if m1:
 									nodeBId = m1.group(2)
 									nodeBLdn = m1.group(1)
+									m = re.search('[^-]+-[^_]+_([^_-]+)', nodeBId)
+									if m:
+										nodeBId = m.group(1)
 
 							name = parseData(cell, f'.//userLabel/text()', 0, ns)
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
