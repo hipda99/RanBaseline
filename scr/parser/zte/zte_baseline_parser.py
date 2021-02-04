@@ -67,8 +67,11 @@ sw_column = [
 
 
 REGEX_4G_LDN_ENBCUCPFUNC = r"^(ENBCUCPFunction=([^,]*)).*$"
+REGEX_4G_LDN_ENBDUFUNC = r"^(ENBDUFunction=([^,]*)).*$"
 REGEX_4G_LDN_CELLFDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellFDDLTE=([^,]+)).*$"
 REGEX_4G_LDN_CELLTDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCellTDDLTE=([^,]+)).*$"
+REGEX_4G_LDN_DUCELLFDDLTE = r"^((ENBDUFunction=([^,]*)),DULTE=([^,]*),.*FDDLTE=([^,]+)).*$"
+REGEX_4G_LDN_DUCELLTDDLTE = r"^((ENBDUFunction=([^,]*)),DULTE=([^,]*),.*TDDLTE=([^,]+)).*$"
 REGEX_5G_LDN_NRCELLCU = r"^(GNBCUCPFunction=([^,]+),NRCellCU=([^,]+)).*$"
 REGEX_5G_LDN_NRPHYSICALCELLDU = r"^(NRRadioInfrastructure=\d+,NRPhysicalCellDU=([^,]+)).*$"
 REGEX_5G_LDN_NRCARRIER = r"^(NRRadioInfrastructure=\d+,NRCarrier=([^,]+)).*$"
@@ -1409,6 +1412,35 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						gnb_dic = {}
 						refNrCarrier_dic = {}
 
+						# find software 
+						manageElements = neData.xpath('.//mo[@moc="ManagedElement"]', namespaces=ns)
+						for me in manageElements:							
+
+							manage_userlabel = parseData(me, f'.//userLabel/text()', 0, ns)
+							sw_netypename = parseData(me, f'.//mimType/text()', 0, ns)
+							sw_version = parseData(me, f'.//mimVersion/text()', 0, ns)
+														
+							sw_result = {}
+							if manage_userlabel is not None:
+								dic = dict.fromkeys(sw_column, '')
+
+								dic["NAME"] = manage_userlabel
+								dic["REFERENCE_FIELD"] = manage_userlabel
+
+								dic["SWVERSION"] = sw_version
+								dic["NETYPENAME"] = sw_netypename
+
+								dic["FILENAME"] = filename
+								dic["NEFUNCTION"] = "eNodeB"
+
+								sw_key = "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type
+
+								sw_result[sw_key] = []
+								sw_result[sw_key].append(dic)
+
+								ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
+								oracle_con.commit()
+
 						# Get NR DU Cell
 						nr_cell_dus = node.xpath('.//mo[@moc="NRCellDU"]', namespaces=ns)
 						for nr_cell_du in nr_cell_dus:
@@ -1460,7 +1492,6 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											'nrCarrierId': nrCarrierId
 										}
 
-
 						# Get NR CU Cell
 						nr_cell_cus = node.xpath('.//mo[@moc="NRCellCU"]', namespaces=ns)
 						for nr_cell_cu in nr_cell_cus:
@@ -1487,11 +1518,6 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 						# Check each MO under module = nr
 						for parameter_group, valuedic in field_mapping_dic.items():
-
-							if parameter_group.upper() == 'EnDCCtrl'.upper() or parameter_group.upper() == 'EnDCPDCP'.upper() or parameter_group.upper() == 'InactiveParameter'.upper() or parameter_group.upper() == 'InterRATCovHo'.upper() or parameter_group.upper() == 'NRIntraFMeasObject'.upper() or parameter_group.upper() == 'NRPSCellChangeIntraF'.upper():
-								ttt = True 
-
-
 
 							level_type = cell_level_dic[parameter_group]
 							# Except group Sctp need to search at root, special not under module = nr
@@ -1535,6 +1561,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										match_cellcu = p_cellcu.match(ldn)
 										match_physicaldu = p_physicaldu.match(ldn)
 										match_nrcarrier = p_nrcarrier.match(ldn)
+										
 										if match_cellcu:
 											cellCu = match_cellcu.group(3)
 											key = match_cellcu.group(1)
@@ -1599,12 +1626,45 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						# print(f'LTE Cell not found in subNetwork={subNetwork}, managedElement={managedElement}')
 						continue
 
+					# find software 
+					manageElements = neData.xpath('.//mo[@moc="ManagedElement"]', namespaces=ns)
+					for me in manageElements:							
+
+						manage_userlabel = parseData(me, f'.//userLabel/text()', 0, ns)
+						sw_netypename = parseData(me, f'.//mimType/text()', 0, ns)
+						sw_version = parseData(me, f'.//mimVersion/text()', 0, ns)
+													
+						sw_result = {}
+						if manage_userlabel is not None:
+							dic = dict.fromkeys(sw_column, '')
+
+							dic["NAME"] = manage_userlabel
+							dic["REFERENCE_FIELD"] = manage_userlabel
+
+							dic["SWVERSION"] = sw_version
+							dic["NETYPENAME"] = sw_netypename
+
+							dic["FILENAME"] = filename
+							dic["NEFUNCTION"] = "eNodeB"
+
+							sw_key = "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type
+
+							sw_result[sw_key] = []
+							sw_result[sw_key].append(dic)
+
+							ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
+							oracle_con.commit()
+
 					for node in nodes:
 						cellfdd_ldn_dic = {}
 						celltdd_ldn_dic = {}
+						cellfdd_node_cell_dic = {}
+						celltdd_node_cell_dic = {}
+						cellfdd_du_dic = {}
+						celltdd_du_dic = {}
 						nb_dic = {}
 
-						# Get TDD
+						# Get TDD - CU
 						cells = node.xpath('.//mo[@moc="CUEUtranCellTDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
@@ -1627,10 +1687,36 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								'nodeBLdn': nodeBLdn
 							}
 							celltdd_ldn_dic[ldn] = data
-
+							key_node_cell = nodeBId + "|" + cellLocalId
+							celltdd_node_cell_dic[key_node_cell] = data
 							node_cnt +=1
 						
-						# Get FDD
+						# Get TDD - DU
+						cells = node.xpath('.//mo[@moc="DUEUtranCellTDDLTE"]', namespaces=ns)
+						for cell in cells:
+							ldn = cell.get('ldn')
+
+							nodeBId = None
+							nodeBLdn = None
+							if ldn is not None:
+								p1 = re.compile(REGEX_4G_LDN_ENBDUFUNC)
+								m1 = p1.match(ldn)
+								if m1:
+									nodeBId = m1.group(2)
+									nodeBLdn = m1.group(1)
+									m = re.search('[^-]+-[^_]+_([^_-]+)', nodeBId)
+									if m:
+										nodeBId = m.group(1)
+
+							# moId = parseData(cell, f'.//moId/text()', 0, ns)
+							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
+							ref = parseData(cell, f'.//refECellEquipFuncTDDLTE/text()', 0, ns)
+							key = nodeBId + "|"	+ cellLocalId
+							data = celltdd_node_cell_dic[key]
+							celltdd_du_dic[ref] = data
+							# node_cnt +=1
+						
+						# Get FDD - CU
 						cells = node.xpath('.//mo[@moc="CUEUtranCellFDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
@@ -1643,6 +1729,9 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								if m1:
 									nodeBId = m1.group(2)
 									nodeBLdn = m1.group(1)
+									m = re.search('[^-]+-[^_]+_([^_-]+)', nodeBId)
+									if m:
+										nodeBId = m.group(1)
 
 							name = parseData(cell, f'.//userLabel/text()', 0, ns)
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
@@ -1653,8 +1742,32 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								'nodeBLdn': nodeBLdn
 							}
 							cellfdd_ldn_dic[ldn] = data
+							key_node_cell = nodeBId + "|" + cellLocalId
+							cellfdd_node_cell_dic[key_node_cell] = data
 
 							node_cnt +=1
+
+						# Get FDD - DU
+						cells = node.xpath('.//mo[@moc="DUEUtranCellFDDLTE"]', namespaces=ns)
+						for cell in cells:
+							ldn = cell.get('ldn')
+
+							nodeBId = None
+							nodeBLdn = None
+							if ldn is not None:
+								p1 = re.compile(REGEX_4G_LDN_ENBDUFUNC)
+								m1 = p1.match(ldn)
+								if m1:
+									nodeBId = m1.group(2)
+									nodeBLdn = m1.group(1)
+
+							# moId = parseData(cell, f'.//moId/text()', 0, ns)
+							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
+							ref = parseData(cell, f'.//refECellEquipFuncFDDLTE/text()', 0, ns)
+							key = nodeBId + "|"	+ cellLocalId
+							data = cellfdd_node_cell_dic[key]
+							cellfdd_du_dic[ref] = data
+							# node_cnt +=1
 
 						# Get NB
 						nobeb_collection = node.xpath('.//mo[@moc="ENBCUCPFunction"]', namespaces=ns)
@@ -1706,6 +1819,9 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename)
 							else:
 								mo_group_collection = None
+								if 'CUEUtranCellTDDLTE' in parameter_group or 'ECellEquipFuncTDDLTE' in parameter_group:
+									ttt = True
+									
 								xpath = f'.//mo[@moc="{parameter_group}"]'
 								mo_group_collection = node.xpath(xpath, namespaces=ns)
 
@@ -1718,32 +1834,63 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									mongo_value_pair_dic = {}
 									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 									if level_type == 'CELL Level':
-										p_cellfdd = re.compile(REGEX_4G_LDN_CELLFDDLTE)
-										p_celltdd = re.compile(REGEX_4G_LDN_CELLTDDLTE)
-										match_cellfdd = p_cellfdd.match(ldn)
-										match_celltdd = p_celltdd.match(ldn)
-										# Check FDD
-										if match_cellfdd:
-											cellId = match_cellfdd.group(5)
-											key = match_cellfdd.group(1)
+										p_cucellfdd = re.compile(REGEX_4G_LDN_CELLFDDLTE)
+										p_cucelltdd = re.compile(REGEX_4G_LDN_CELLTDDLTE)
+										p_ducellfdd = re.compile(REGEX_4G_LDN_DUCELLFDDLTE)
+										p_ducelltdd = re.compile(REGEX_4G_LDN_DUCELLTDDLTE)
+										match_cucellfdd = p_cucellfdd.match(ldn)
+										match_cucelltdd = p_cucelltdd.match(ldn)
+										match_ducellfdd = p_ducellfdd.match(ldn)
+										match_ducelltdd = p_ducelltdd.match(ldn)
+										# Check CUFDD
+										if match_cucellfdd:
+											cellId = match_cucellfdd.group(5)
+											key = match_cucellfdd.group(1)
 											if key in cellfdd_ldn_dic:
 												reference_name = cellfdd_ldn_dic[key].get('cellname')
 												cellLocalId = cellfdd_ldn_dic[key].get('cellLocalId')
 												nbId = cellfdd_ldn_dic[key].get('nbId')
 											else:
-												log.e(f'Not found key={key} in celltdd_ldn_dic={cellfdd_ldn_dic}')
+												log.e(f'Not found key={key} in celltdd_ldn_dic={str(cellfdd_ldn_dic)}')
 											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
-										# Check TDD
-										elif match_celltdd:
-											cellId = match_celltdd.group(5)
-											key = match_celltdd.group(1)
+										# Check CUTDD
+										elif match_cucelltdd:
+											cellId = match_cucelltdd.group(5)
+											key = match_cucelltdd.group(1)
 											if key in celltdd_ldn_dic:
 												reference_name = celltdd_ldn_dic[key].get('cellname')
 												cellLocalId = celltdd_ldn_dic[key].get('cellLocalId')
 												nbId = celltdd_ldn_dic[key].get('nbId')
 											else:
-												log.e(f'Not found key={key} in celltdd_ldn_dic={celltdd_ldn_dic}')
-											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
+												log.e(f'Not found key={key} in celltdd_ldn_dic={str(celltdd_ldn_dic)}')
+											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)						
+										# Check DU-FDD
+										elif match_ducellfdd:											
+											key = match_ducellfdd.group(1)
+											if key in cellfdd_du_dic:
+												reference_name = cellfdd_du_dic[key].get('cellname')
+												cellLocalId = cellfdd_du_dic[key].get('cellLocalId')
+												nbId = cellfdd_du_dic[key].get('nbId')
+											else:
+												log.e(f'Not found key={key} in cellfdd_node_cell_dic={str(cellfdd_du_dic)}')
+											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)				
+										# Check DU-tDD
+										elif match_ducelltdd:
+											"""
+											Group 1:	ENBDUFunction=64686,DULTE=1,CPResource=1,ECellEquipFuncTDDLTE=138-0
+											Group 2:	ENBDUFunction=64686
+											Group 3:	64686
+											Group 4:	1
+											Group 5:	138-0
+											"""
+											key = match_ducelltdd.group(1)
+											if key in celltdd_du_dic:
+												reference_name = celltdd_du_dic[key].get('cellname')
+												cellLocalId = celltdd_du_dic[key].get('cellLocalId')
+												nbId = celltdd_du_dic[key].get('nbId')
+											else:
+												log.e(f'Not found key={key} in celltdd_du_dic={str(celltdd_du_dic)}')
+											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)				
 										
 									else:
 										#NB level
