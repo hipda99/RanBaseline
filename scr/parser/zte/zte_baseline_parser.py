@@ -1711,6 +1711,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							# moId = parseData(cell, f'.//moId/text()', 0, ns)
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
 							ref = parseData(cell, f'.//refECellEquipFuncTDDLTE/text()', 0, ns)
+							if ref in 'ENBDUFunction=5016,DULTE=1,CPResource=1,ECellEquipFuncTDDLTE=154-0': 
+								ttt = True
 							key = nodeBId + "|"	+ cellLocalId
 							data = celltdd_node_cell_dic[key]
 							celltdd_du_dic[ref] = data
