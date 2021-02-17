@@ -1596,7 +1596,15 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
-
+										elif parameter_group.upper() == 'NRSectorCarrier'.upper():
+											gnbDus = node.xpath(f".//mo[@moc='GNBDUFunction']", namespaces=ns)
+											for gnb in gnbDus:
+												reference_name = parseData(gnb, './/attributes/gNBDUName/text()', 0, ns)
+											gnbCus = node.xpath(f".//mo[@moc='GNBCUCPFunction']", namespaces=ns)
+											for gnb in gnbCus:
+												gNBId = parseData(gnb, './/attributes/gNBId/text()', 0, ns)
+											mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
+											
 										else:
 											p_gnbdufunc = re.compile(REGEX_5G_LDN_GNBDUFUNC)
 											p_gnbcucpfunc = re.compile(REGEX_5G_LDN_GNBCUCPFUNC)
@@ -1615,6 +1623,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
 												mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
+
 									if parameter_group.upper() == 'EnDCPDCP'.upper():
 										# Group EnDCPDCP ldn =  GNBCUCPFunction=520-04_550976,EnDCConfigCU=1,EnDCPDCP=1
 										mo_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn}'
