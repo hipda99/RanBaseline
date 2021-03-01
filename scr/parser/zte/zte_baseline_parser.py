@@ -1519,6 +1519,9 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						# Check each MO under module = nr
 						for parameter_group, valuedic in field_mapping_dic.items():
 
+							if parameter_group.upper() == 'SectorFunction'.upper():
+								ttt = True
+
 							level_type = cell_level_dic[parameter_group]
 							# Except group Sctp need to search at root, special not under module = nr
 							mo_group_collection = None
