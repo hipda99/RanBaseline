@@ -1519,9 +1519,6 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						# Check each MO under module = nr
 						for parameter_group, valuedic in field_mapping_dic.items():
 
-							if parameter_group.upper() == 'SectorFunction'.upper():
-								ttt = True
-
 							level_type = cell_level_dic[parameter_group]
 							# Except group Sctp need to search at root, special not under module = nr
 							mo_group_collection = None
@@ -1722,9 +1719,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 							# moId = parseData(cell, f'.//moId/text()', 0, ns)
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
-							ref = parseData(cell, f'.//refECellEquipFuncTDDLTE/text()', 0, ns)
-							if ref in 'ENBDUFunction=5016,DULTE=1,CPResource=1,ECellEquipFuncTDDLTE=154-0': 
-								ttt = True
+							ref = parseData(cell, f'.//refECellEquipFuncTDDLTE/text()', 0, ns)							
 							key = nodeBId + "|"	+ cellLocalId
 							data = celltdd_node_cell_dic[key]
 							celltdd_du_dic[ref] = data
@@ -1833,8 +1828,6 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename)
 							else:
 								mo_group_collection = None
-								if 'CUEUtranCellTDDLTE' in parameter_group or 'ECellEquipFuncTDDLTE' in parameter_group:
-									ttt = True
 									
 								xpath = f'.//mo[@moc="{parameter_group}"]'
 								mo_group_collection = node.xpath(xpath, namespaces=ns)
