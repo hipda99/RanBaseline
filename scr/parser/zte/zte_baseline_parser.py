@@ -1790,6 +1790,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
 							ref = parseData(cell, f'.//refECellEquipFuncFDDLTE/text()', 0, ns)
 							key = nodeBId + "|"	+ cellLocalId
+							
 							if key in cellfdd_node_cell_dic:
 								data = cellfdd_node_cell_dic[key]
 							else:
