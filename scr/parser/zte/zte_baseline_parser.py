@@ -1793,12 +1793,12 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							if key in cellfdd_node_cell_dic:
 								data = cellfdd_node_cell_dic[key]
 							else:
-								log.e(f'Key = {key} not found in cellfdd')
+								log.e(f'Key = {key} not found in cellfdd_node_cell_dic={str(cellfdd_node_cell_dic)}')
 
 							if ref in cellfdd_du_dic:								
 								cellfdd_du_dic[ref] = data
 							else:
-								log.e(f'Key = {ref} not found in cellfdd du')
+								log.e(f'Key = {ref} not found in cellfdd_du_dic={str(cellfdd_du_dic)}')
 							# node_cnt +=1
 
 						# Get NB
