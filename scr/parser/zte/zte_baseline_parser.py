@@ -275,47 +275,47 @@ def prepare_oracle_table_3g(oracle_con, oracle_cur, frequency_type, field_mappin
 	return
 
 def prepare_oracle_table(oracle_con, oracle_cur, frequency_type, field_mapping_dic, base_mapping_dic, red_mapping_dic, drop_param=True, baseline_label_dic={}):
-    for group_param in field_mapping_dic:
-        table_name = naming_helper.get_table_name(BASELINE_TABLE_PREFIX.format(ZTE_TABLE_PREFIX), frequency_type, group_param)
+	for group_param in field_mapping_dic:
+		table_name = naming_helper.get_table_name(BASELINE_TABLE_PREFIX.format(ZTE_TABLE_PREFIX), frequency_type, group_param)
 
-        columns = field_mapping_dic[group_param]
-        column_collection = columns
+		columns = field_mapping_dic[group_param]
+		column_collection = columns
 
-        if (ZTE_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
-            ran_baseline_oracle.drop(oracle_cur, table_name)
-            ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
+		if (ZTE_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+			ran_baseline_oracle.drop(oracle_cur, table_name)
+			ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
 
-            ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_dic[group_param])
+			ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_dic[group_param])
 
-            if len(red_mapping_dic) != 0:
-                ran_baseline_oracle.push(oracle_cur, table_name, red_mapping_dic[group_param])
+			if len(red_mapping_dic) != 0:
+				ran_baseline_oracle.push(oracle_cur, table_name, red_mapping_dic[group_param])
 
-            ran_baseline_oracle.push(oracle_cur, table_name, baseline_label_dic[group_param])
+			ran_baseline_oracle.push(oracle_cur, table_name, baseline_label_dic[group_param])
 
-    if drop_param:
+	if drop_param:
 
-        if (ZTE_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
-            ran_baseline_oracle.drop(oracle_cur, "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type)
-            ran_baseline_oracle.create_table(oracle_cur, "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type, sw_column)
+		if (ZTE_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+			ran_baseline_oracle.drop(oracle_cur, "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type)
+			ran_baseline_oracle.create_table(oracle_cur, "SW_" + ZTE_TABLE_PREFIX + "_" + frequency_type, sw_column)
 
-        for group_param in field_mapping_dic:
-            table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, group_param)
-            field_mapping_dic[group_param].remove(BASELINE_TYPE)
-            field_mapping_dic[group_param].append('FILENAME')
-            field_mapping_dic[group_param].append('MO')
-            columns = field_mapping_dic[group_param]
-            column_collection = columns
+		for group_param in field_mapping_dic:
+			table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, group_param)
+			field_mapping_dic[group_param].remove(BASELINE_TYPE)
+			field_mapping_dic[group_param].append('FILENAME')
+			field_mapping_dic[group_param].append('MO')
+			columns = field_mapping_dic[group_param]
+			column_collection = columns
 
-            if (ZTE_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
-                ran_baseline_oracle.drop(oracle_cur, table_name)
-                ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
+			if (ZTE_TABLE_PREFIX + "_" + frequency_type) not in CREATED_TABLE:
+				ran_baseline_oracle.drop(oracle_cur, table_name)
+				ran_baseline_oracle.create_table(oracle_cur, table_name, column_collection)
 
-    CREATED_TABLE[ZTE_TABLE_PREFIX + "_" + frequency_type] = []
-    log.i("Prepare_oracle_table End : CREATED_TABLE : " + str(CREATED_TABLE))
+	CREATED_TABLE[ZTE_TABLE_PREFIX + "_" + frequency_type] = []
+	log.i("Prepare_oracle_table End : CREATED_TABLE : " + str(CREATED_TABLE))
 
-    oracle_con.commit()
+	oracle_con.commit()
 
-    return
+	return
 
 
 def run(source, field_mapping_dic, cell_level_dic):
@@ -1724,6 +1724,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
 							ref = parseData(cell, f'.//refECellEquipFuncTDDLTE/text()', 0, ns)							
 							key = nodeBId + "|"	+ cellLocalId
+
 							if key in celltdd_node_cell_dic:
 								data = celltdd_node_cell_dic[key]
 							else:
@@ -1790,6 +1791,9 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
 							ref = parseData(cell, f'.//refECellEquipFuncFDDLTE/text()', 0, ns)
 							key = nodeBId + "|"	+ cellLocalId
+
+							if key not in cellfdd_node_cell_dic:
+								print(key)
 							
 							if key in cellfdd_node_cell_dic:
 								data = cellfdd_node_cell_dic[key]
