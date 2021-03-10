@@ -1918,6 +1918,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename)
 		except Exception as e:
 			log.e(f'---- ERROR: {str(e)}')
+			traceback.print_exc(file=sys.stderr)
 
 	log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
 	for result in oracle_result:
