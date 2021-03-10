@@ -1727,13 +1727,13 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 							if key in celltdd_node_cell_dic:
 								data = celltdd_node_cell_dic[key]
-							else:
-								log.e(f'Key = {key} not found in celltdd_node_cell_dic={str(celltdd_node_cell_dic)}')
+							# else:
+							# 	log.e(f'Key = {key} not found in celltdd_node_cell_dic={str(celltdd_node_cell_dic)}')
 
 							if ref in celltdd_du_dic:								
 								celltdd_du_dic[ref] = data
-							else:
-								log.e(f'Key = {ref} not found in celltdd_du_dic={str(celltdd_du_dic)}')
+							# else:
+							# 	log.e(f'Key = {ref} not found in celltdd_du_dic={str(celltdd_du_dic)}')
 
 							# data = celltdd_node_cell_dic[key]
 							# celltdd_du_dic[ref] = data
@@ -1791,19 +1791,16 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
 							ref = parseData(cell, f'.//refECellEquipFuncFDDLTE/text()', 0, ns)
 							key = nodeBId + "|"	+ cellLocalId
-
-							if key not in cellfdd_node_cell_dic:
-								print(key)
 							
 							if key in cellfdd_node_cell_dic:
 								data = cellfdd_node_cell_dic[key]
-							else:
-								log.e(f'Key = {key} not found in cellfdd_node_cell_dic={str(cellfdd_node_cell_dic)}')
+							# else:
+							# 	log.e(f'Key = {key} not found in cellfdd_node_cell_dic={str(cellfdd_node_cell_dic)}')
 
 							if ref in cellfdd_du_dic:								
 								cellfdd_du_dic[ref] = data
-							else:
-								log.e(f'Key = {ref} not found in cellfdd_du_dic={str(cellfdd_du_dic)}')
+							# else:
+							# 	log.e(f'Key = {ref} not found in cellfdd_du_dic={str(cellfdd_du_dic)}')
 							# node_cnt +=1
 
 						# Get NB
