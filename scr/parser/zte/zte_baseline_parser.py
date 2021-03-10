@@ -1571,6 +1571,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												cellLocalId = cellCu
 												if reference_name in cell_dic:
 													gNBId = cell_dic[reference_name].get('gNBId')
+											else:
+												log.e(f'Not found key={key} in refCellCU_dic={str(refCellCU_dic)}')
 
 										elif match_physicaldu:
 											physicalCellDu = match_physicaldu.group(1)
@@ -1722,8 +1724,18 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
 							ref = parseData(cell, f'.//refECellEquipFuncTDDLTE/text()', 0, ns)							
 							key = nodeBId + "|"	+ cellLocalId
-							data = celltdd_node_cell_dic[key]
-							celltdd_du_dic[ref] = data
+							if key in celltdd_node_cell_dic:
+								data = celltdd_node_cell_dic[key]
+							else:
+								log.e(f'Key = {key} not found in celltdd_node_cell_dic={str(celltdd_node_cell_dic)}')
+
+							if ref in celltdd_du_dic:								
+								celltdd_du_dic[ref] = data
+							else:
+								log.e(f'Key = {ref} not found in celltdd_du_dic={str(celltdd_du_dic)}')
+
+							# data = celltdd_node_cell_dic[key]
+							# celltdd_du_dic[ref] = data
 							# node_cnt +=1
 						
 						# Get FDD - CU
@@ -1770,13 +1782,23 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								if m1:
 									nodeBId = m1.group(2)
 									nodeBLdn = m1.group(1)
+									m = re.search('[^-]+-[^_]+_([^_-]+)', nodeBId)
+									if m:
+										nodeBId = m.group(1)
 
 							# moId = parseData(cell, f'.//moId/text()', 0, ns)
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
 							ref = parseData(cell, f'.//refECellEquipFuncFDDLTE/text()', 0, ns)
 							key = nodeBId + "|"	+ cellLocalId
-							data = cellfdd_node_cell_dic[key]
-							cellfdd_du_dic[ref] = data
+							if key in cellfdd_node_cell_dic:
+								data = cellfdd_node_cell_dic[key]
+							else:
+								log.e(f'Key = {key} not found in cellfdd')
+
+							if ref in cellfdd_du_dic:								
+								cellfdd_du_dic[ref] = data
+							else:
+								log.e(f'Key = {ref} not found in cellfdd du')
 							# node_cnt +=1
 
 						# Get NB
