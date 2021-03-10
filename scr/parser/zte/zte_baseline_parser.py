@@ -3,6 +3,7 @@ import multiprocessing as mp
 from re import L
 import traceback
 import re
+import sys
 
 import cx_Oracle
 from lxml import ElementInclude
