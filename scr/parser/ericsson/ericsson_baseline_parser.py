@@ -602,7 +602,7 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic):
                 
                 if check in field_mapping_dic['CNA']:
                     if check not in oracle_value_pair_dic:
-                        oracle_value_pair_dic[check] = val
+                        oracle_value_pair_dic[check] = str(val).replace('\n', '').replace('\t', '')
 
             if KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, "CNA") not in COUNT_DATA:
                 COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, "CNA")] = 0
