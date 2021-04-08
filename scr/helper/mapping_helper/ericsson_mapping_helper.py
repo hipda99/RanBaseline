@@ -6,12 +6,14 @@ PARAMETER_GROUP_COLUMN_NAME = 'Parameter Group'
 PARAMETER_COLUMN_NAME = 'Parameter Name'
 BASELINE_COLUMN_NAME = 'Expected Value'
 EXPECTED_VALUE_COLUMN_NAME = 'Expected Value'
+EXPECTED_700_VALUE_COLUMN_NAME = 'Expected Value(700)'
 EXPECTED_900_VALUE_COLUMN_NAME = 'Expected Value(900)'
 EXPECTED_1800_VALUE_COLUMN_NAME = 'Expected Value(1800)'
 EXPECTED_2100_VALUE_COLUMN_NAME = 'Expected Value(2100)'
 
 # Add 2600 and Anchor (for 4G)
 EXPECTED_2600_VALUE_COLUMN_NAME = 'Expected Value(2600)'
+EXPECTED_700_ANCHOR_VALUE_COLUMN_NAME = 'Expected Value(700_Anchor)'
 EXPECTED_900_ANCHOR_VALUE_COLUMN_NAME = 'Expected Value(900_Anchor)'
 EXPECTED_1800_ANCHOR_VALUE_COLUMN_NAME = 'Expected Value(1800_Anchor)'
 EXPECTED_2100_ANCHOR_VALUE_COLUMN_NAME = 'Expected Value(2100_Anchor)'
@@ -30,10 +32,12 @@ REFERENCE_FIELD_COLUMN_NAME = 'REFERENCE_FIELD'
 FILENAME_FIELD_COLUMN_NAME = 'FILENAME'
 
 BASELINE_TYPE = 'BASELINE_TYPE'
+BASELINE_700_TYPE = 'baseline_700'
 BASELINE_900_TYPE = 'baseline_900'
 BASELINE_1800_TYPE = 'baseline_1800'
 BASELINE_2100_TYPE = 'baseline_2100'
 BASELINE_2600_TYPE = 'baseline_2600'
+BASELINE_700_ANCHOR_TYPE = 'baseline_700_anchor'
 BASELINE_900_ANCHOR_TYPE = 'baseline_900_anchor'
 BASELINE_1800_ANCHOR_TYPE = 'baseline_1800_anchor'
 BASELINE_2100_ANCHOR_TYPE = 'baseline_2100_anchor'
@@ -139,6 +143,7 @@ def read_5g(file_mapping_path_name):
 
     param_dic = {}
     baseline_label_dic = {}
+    baseline_700_dic = {}
     baseline_2600_dic = {}
 
     tmp_check_key_dic = {}
@@ -153,8 +158,12 @@ def read_5g(file_mapping_path_name):
         baseline_label_value = str(row[PARAMETER_COLUMN_NAME])
         param_name = naming_helper.rule_column_name(baseline_label_value)
 
+        baseline_700_value = str(row[EXPECTED_700_VALUE_COLUMN_NAME])
         baseline_2600_value = str(row[EXPECTED_2600_VALUE_COLUMN_NAME])
         
+
+        if baseline_700_value == "nan":
+            baseline_700_value = ""
 
         if baseline_2600_value == "nan":
             baseline_2600_value = ""
@@ -169,6 +178,10 @@ def read_5g(file_mapping_path_name):
         if param_group.upper() in tmp_check_key_dic:
             if param_name.upper() not in tmp_check_key_dic[param_group.upper()]:
                 param_dic[param_group].append(param_name)
+
+                baseline_700_dic[param_group][0][param_name] = baseline_700_value
+                baseline_700_dic[param_group][0][BASELINE_TYPE] = BASELINE_700_TYPE
+                baseline_700_dic[param_group][0][LV_COLUMN] = cell_level
 
                 baseline_2600_dic[param_group][0][param_name] = baseline_2600_value
                 baseline_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_2600_TYPE
@@ -191,6 +204,10 @@ def read_5g(file_mapping_path_name):
             if param_name == "MO":
                 param_cell_mo[param_group] = baseline_2600_value
             
+            baseline_700_dic[param_group] = [{param_name: baseline_700_value}]
+            baseline_700_dic[param_group][0][BASELINE_TYPE] = BASELINE_700_TYPE
+            baseline_700_dic[param_group][0][LV_COLUMN] = cell_level
+
             baseline_2600_dic[param_group] = [{param_name: baseline_2600_value}]
             baseline_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_2600_TYPE
             baseline_2600_dic[param_group][0][LV_COLUMN] = cell_level
@@ -201,17 +218,19 @@ def read_5g(file_mapping_path_name):
 
             tmp_check_key_dic[param_group.upper()] = [param_name.upper()]
 
-    return param_dic, baseline_2600_dic, param_cell_level, param_cell_mo, baseline_label_dic
+    return param_dic, baseline_700_dic, baseline_2600_dic, param_cell_level, param_cell_mo, baseline_label_dic
 
 def read_4g(file_mapping_path_name):
     df = read_excel_mapping(file_mapping_path_name, 0)
 
     param_dic = {}
     baseline_label_dic = {}
+    baseline_700_dic = {}
     baseline_900_dic = {}
     baseline_1800_dic = {}
     baseline_2100_dic = {}
     baseline_2600_dic = {}
+    baseline_700_anchor_dic = {}
     baseline_900_anchor_dic = {}
     baseline_1800_anchor_dic = {}
     baseline_2100_anchor_dic = {}
@@ -229,10 +248,14 @@ def read_4g(file_mapping_path_name):
         baseline_label_value = str(row[PARAMETER_COLUMN_NAME])
         param_name = naming_helper.rule_column_name(baseline_label_value)
 
+        baseline_700_value = str(row[EXPECTED_700_VALUE_COLUMN_NAME])
         baseline_900_value = str(row[EXPECTED_900_VALUE_COLUMN_NAME])
         baseline_1800_value = str(row[EXPECTED_1800_VALUE_COLUMN_NAME])
         baseline_2100_value = str(row[EXPECTED_2100_VALUE_COLUMN_NAME])        
         baseline_2600_value = str(row[EXPECTED_2600_VALUE_COLUMN_NAME])
+
+        if baseline_700_value == "nan":
+            baseline_700_value = ""
 
         if baseline_900_value == "nan":
             baseline_900_value = ""
@@ -247,11 +270,14 @@ def read_4g(file_mapping_path_name):
             baseline_2600_value = ""
 
         # Anchor
+        baseline_700_anchor_value = str(row[EXPECTED_700_ANCHOR_VALUE_COLUMN_NAME])
         baseline_900_anchor_value = str(row[EXPECTED_900_ANCHOR_VALUE_COLUMN_NAME])
         baseline_1800_anchor_value = str(row[EXPECTED_1800_ANCHOR_VALUE_COLUMN_NAME])
         baseline_2100_anchor_value = str(row[EXPECTED_2100_ANCHOR_VALUE_COLUMN_NAME])
         baseline_2600_anchor_value = str(row[EXPECTED_2600_ANCHOR_VALUE_COLUMN_NAME])
         
+        if baseline_700_anchor_value == "nan":
+            baseline_700_anchor_value = ""
         if baseline_900_anchor_value == "nan":
             baseline_900_anchor_value = ""
         if baseline_1800_anchor_value == "nan":
@@ -272,6 +298,10 @@ def read_4g(file_mapping_path_name):
             if param_name.upper() not in tmp_check_key_dic[param_group.upper()]:
                 param_dic[param_group].append(param_name)
 
+                baseline_700_dic[param_group][0][param_name] = baseline_700_value
+                baseline_700_dic[param_group][0][BASELINE_TYPE] = BASELINE_700_TYPE
+                baseline_700_dic[param_group][0][LV_COLUMN] = cell_level
+
                 baseline_900_dic[param_group][0][param_name] = baseline_900_value
                 baseline_900_dic[param_group][0][BASELINE_TYPE] = BASELINE_900_TYPE
                 baseline_900_dic[param_group][0][LV_COLUMN] = cell_level
@@ -289,6 +319,9 @@ def read_4g(file_mapping_path_name):
                 baseline_2600_dic[param_group][0][LV_COLUMN] = cell_level
 
                 # Anchor
+                baseline_700_anchor_dic[param_group][0][param_name] = baseline_700_anchor_value
+                baseline_700_anchor_dic[param_group][0][BASELINE_TYPE] = BASELINE_700_ANCHOR_TYPE
+                baseline_700_anchor_dic[param_group][0][LV_COLUMN] = cell_level
                 baseline_900_anchor_dic[param_group][0][param_name] = baseline_900_anchor_value
                 baseline_900_anchor_dic[param_group][0][BASELINE_TYPE] = BASELINE_900_ANCHOR_TYPE
                 baseline_900_anchor_dic[param_group][0][LV_COLUMN] = cell_level
@@ -319,6 +352,10 @@ def read_4g(file_mapping_path_name):
             if param_name == "MO":
                 param_cell_mo[param_group] = baseline_900_value
 
+            baseline_700_dic[param_group] = [{param_name: baseline_700_value}]
+            baseline_700_dic[param_group][0][BASELINE_TYPE] = BASELINE_700_TYPE
+            baseline_700_dic[param_group][0][LV_COLUMN] = cell_level
+
             baseline_900_dic[param_group] = [{param_name: baseline_900_value}]
             baseline_900_dic[param_group][0][BASELINE_TYPE] = BASELINE_900_TYPE
             baseline_900_dic[param_group][0][LV_COLUMN] = cell_level
@@ -335,6 +372,9 @@ def read_4g(file_mapping_path_name):
             baseline_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_2600_TYPE
             baseline_2600_dic[param_group][0][LV_COLUMN] = cell_level
 
+            baseline_700_anchor_dic[param_group] = [{param_name: baseline_700_anchor_value}]
+            baseline_700_anchor_dic[param_group][0][BASELINE_TYPE] = BASELINE_700_ANCHOR_TYPE
+            baseline_700_anchor_dic[param_group][0][LV_COLUMN] = cell_level
             baseline_900_anchor_dic[param_group] = [{param_name: baseline_900_anchor_value}]
             baseline_900_anchor_dic[param_group][0][BASELINE_TYPE] = BASELINE_900_ANCHOR_TYPE
             baseline_900_anchor_dic[param_group][0][LV_COLUMN] = cell_level
@@ -354,7 +394,7 @@ def read_4g(file_mapping_path_name):
 
             tmp_check_key_dic[param_group.upper()] = [param_name.upper()]
 
-    return param_dic, baseline_900_dic, baseline_1800_dic, baseline_2100_dic, baseline_2600_dic, baseline_900_anchor_dic, baseline_1800_anchor_dic, baseline_2100_anchor_dic, baseline_2600_anchor_dic, param_cell_level, param_cell_mo, baseline_label_dic
+    return param_dic, baseline_700_dic, baseline_900_dic, baseline_1800_dic, baseline_2100_dic, baseline_2600_dic, baseline_900_anchor_dic, baseline_1800_anchor_dic, baseline_2100_anchor_dic, baseline_2600_anchor_dic, param_cell_level, param_cell_mo, baseline_label_dic
 
 
 def read_3g(file_mapping_path_name):

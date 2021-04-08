@@ -26,6 +26,9 @@ REFERENCE_FIELD_COLUMN_NAME = 'REFERENCE_FIELD'
 # Excel Column name
 BASELINE_4G_2600_COLUMN = 'Baseline_2600'
 BASELINE_4G_REDZONE_2600_COLUMN = 'Baseline_Redzone_2600'
+BASELINE_4G_700_COLUMN = 'Baseline_700'
+BASELINE_4G_REDZONE_700_COLUMN = 'Baseline_Redzone_700'
+BASELINE_4G_L700_ANCHOR_COLUMN = 'Baseline_700_Anchor'
 BASELINE_4G_L900_ANCHOR_COLUMN = 'Baseline_900_Anchor'
 BASELINE_4G_L1800_ANCHOR_COLUMN = 'Baseline_1800_Anchor'
 BASELINE_4G_L2100_ANCHOR_COLUMN = 'Baseline_2100_Anchor'
@@ -34,7 +37,10 @@ BASELINE_4G_L2600_ANCHOR_COLUMN = 'Baseline_2600_Anchor'
 # Database column label
 L2600_BASELINE = 'baseline_2600'
 REDZONE_L2600_BASELINE = 'baseline_redzone_2600'
+L700_BASELINE = 'baseline_700'
+REDZONE_L700_BASELINE = 'baseline_redzone_700'
 # Add anchor for LTE (all band)
+L700_ANCHOR = 'baseline_700_anchor'
 L900_ANCHOR = 'baseline_900_anchor'
 L1800_ANCHOR = 'baseline_1800_anchor'
 L2100_ANCHOR = 'baseline_2100_anchor'
@@ -55,6 +61,8 @@ BASELINE_3G_2100_TYPE = 'baseline_2100'
 # Excel Column name
 BASELINE_5G_2600_TYPE = 'baseline_2600'
 BASELINE_5G_REDZONE_2600_TYPE = 'baseline_redzone_2600'
+BASELINE_5G_700_TYPE = 'baseline_700'
+BASELINE_5G_REDZONE_700_TYPE = 'baseline_redzone_700'
 
 BASELINE_LABEL_TYPE = 'label'
 
@@ -152,8 +160,11 @@ def read_4g(file_mapping_path_name):
     param_dic = {}
     baseline_dic = {}
     red_baseline_dic = {}
+    baseline_700_dic = {}
+    baseline_redzone_700_dic = {}
     baseline_2600_dic = {}
     baseline_redzone_2600_dic = {}
+    baseline_l700_anchor_dic = {}
     baseline_l900_anchor_dic = {}
     baseline_l1800_anchor_dic = {}
     baseline_l2100_anchor_dic = {}
@@ -190,6 +201,19 @@ def read_4g(file_mapping_path_name):
         if redzone_l2600_value == 'nan':
             redzone_l2600_value = ""
 
+
+        l700_value = str(row[BASELINE_4G_700_COLUMN])
+        if l700_value == 'nan':
+            l700_value = ""
+
+        redzone_l700_value = str(row[BASELINE_4G_REDZONE_700_COLUMN])
+        if redzone_l700_value == 'nan':
+            redzone_l700_value = ""
+
+        l700_anchor_value = str(row[BASELINE_4G_L700_ANCHOR_COLUMN])
+        if l700_anchor_value == 'nan':
+            l700_anchor_value = ""
+
         l900_anchor_value = str(row[BASELINE_4G_L900_ANCHOR_COLUMN])
         if l900_anchor_value == 'nan':
             l900_anchor_value = ""
@@ -224,6 +248,12 @@ def read_4g(file_mapping_path_name):
                 baseline_2600_dic[param_group][0][BASELINE_TYPE] = L2600_BASELINE
                 baseline_redzone_2600_dic[param_group][0][param_name] = redzone_l2600_value
                 baseline_redzone_2600_dic[param_group][0][BASELINE_TYPE] = REDZONE_L2600_BASELINE
+                baseline_700_dic[param_group][0][param_name] = l700_value
+                baseline_700_dic[param_group][0][BASELINE_TYPE] = L700_BASELINE
+                baseline_redzone_700_dic[param_group][0][param_name] = redzone_l700_value
+                baseline_redzone_700_dic[param_group][0][BASELINE_TYPE] = REDZONE_L700_BASELINE
+                baseline_l700_anchor_dic[param_group][0][param_name] = l700_anchor_value
+                baseline_l700_anchor_dic[param_group][0][BASELINE_TYPE] = L700_ANCHOR
                 baseline_l900_anchor_dic[param_group][0][param_name] = l900_anchor_value
                 baseline_l900_anchor_dic[param_group][0][BASELINE_TYPE] = L900_ANCHOR
                 baseline_l1800_anchor_dic[param_group][0][param_name] = l1800_anchor_value
@@ -254,6 +284,12 @@ def read_4g(file_mapping_path_name):
             baseline_2600_dic[param_group][0][BASELINE_TYPE] = L2600_BASELINE
             baseline_redzone_2600_dic[param_group] = [{param_name: redzone_l2600_value}]
             baseline_redzone_2600_dic[param_group][0][BASELINE_TYPE] = REDZONE_L2600_BASELINE
+            baseline_700_dic[param_group] = [{param_name: l700_value}]
+            baseline_700_dic[param_group][0][BASELINE_TYPE] = L700_BASELINE
+            baseline_redzone_700_dic[param_group] = [{param_name: redzone_l700_value}]
+            baseline_redzone_700_dic[param_group][0][BASELINE_TYPE] = REDZONE_L700_BASELINE
+            baseline_l700_anchor_dic[param_group] = [{param_name: l700_anchor_value}]
+            baseline_l700_anchor_dic[param_group][0][BASELINE_TYPE] = L700_ANCHOR
             baseline_l900_anchor_dic[param_group] = [{param_name: l900_anchor_value}]
             baseline_l900_anchor_dic[param_group][0][BASELINE_TYPE] = L900_ANCHOR
             baseline_l1800_anchor_dic[param_group] = [{param_name: l1800_anchor_value}]
@@ -265,7 +301,7 @@ def read_4g(file_mapping_path_name):
 
             tmp_check_key_dic[param_group.upper()] = [param_name.upper()]
 
-    return param_dic, baseline_dic, red_baseline_dic, baseline_2600_dic, baseline_redzone_2600_dic, baseline_l900_anchor_dic, baseline_l1800_anchor_dic, baseline_l2100_anchor_dic, baseline_l2600_anchor_dic, cell_level_dic, baseline_label_dic
+    return param_dic, baseline_dic, red_baseline_dic, baseline_700_dic, baseline_redzone_700_dic, baseline_2600_dic, baseline_redzone_2600_dic, baseline_l700_anchor_dic, baseline_l900_anchor_dic, baseline_l1800_anchor_dic, baseline_l2100_anchor_dic, baseline_l2600_anchor_dic, cell_level_dic, baseline_label_dic
 
 def read_5g(file_mapping_path_name):
     df = read_excel_mapping(file_mapping_path_name, 0)
@@ -274,6 +310,8 @@ def read_5g(file_mapping_path_name):
     baseline_label_dic = {}
     baseline_2600_dic = {}
     baseline_redzone_2600_dic = {}
+    baseline_700_dic = {}
+    baseline_redzone_700_dic = {}
     cell_level_dic = {}
     tmp_check_key_dic = {}
 
@@ -293,6 +331,14 @@ def read_5g(file_mapping_path_name):
         if baseline_value_redzone_2600 == 'nan':
             baseline_value_redzone_2600 = ""
 
+        baseline_value_700 = str(row[BASELINE_5G_700_TYPE])
+        if baseline_value_700 == 'nan':
+            baseline_value_700 = ""
+
+        baseline_value_redzone_700 = str(row[BASELINE_5G_REDZONE_700_TYPE])
+        if baseline_value_redzone_700 == 'nan':
+            baseline_value_redzone_700 = ""
+
         param_name = param_name.upper()
 
         if param_group.upper() in tmp_check_key_dic:
@@ -304,6 +350,12 @@ def read_5g(file_mapping_path_name):
 
                 baseline_redzone_2600_dic[param_group][0][param_name] = baseline_value_redzone_2600
                 baseline_redzone_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_5G_REDZONE_2600_TYPE
+
+                baseline_700_dic[param_group][0][param_name] = baseline_value_700
+                baseline_700_dic[param_group][0][BASELINE_TYPE] = BASELINE_5G_700_TYPE
+
+                baseline_redzone_700_dic[param_group][0][param_name] = baseline_value_redzone_700
+                baseline_redzone_700_dic[param_group][0][BASELINE_TYPE] = BASELINE_5G_REDZONE_700_TYPE
 
                 baseline_label_dic[param_group][0][param_name] = baseline_label_value
                 baseline_label_dic[param_group][0][REFERENCE_FIELD_COLUMN_NAME] = BASELINE_LABEL_TYPE
@@ -321,12 +373,18 @@ def read_5g(file_mapping_path_name):
             baseline_redzone_2600_dic[param_group] = [{param_name: baseline_value_redzone_2600}]
             baseline_redzone_2600_dic[param_group][0][BASELINE_TYPE] = BASELINE_5G_REDZONE_2600_TYPE
 
+            baseline_700_dic[param_group] = [{param_name: baseline_value_700}]
+            baseline_700_dic[param_group][0][BASELINE_TYPE] = BASELINE_5G_700_TYPE
+
+            baseline_redzone_700_dic[param_group] = [{param_name: baseline_value_redzone_700}]
+            baseline_redzone_700_dic[param_group][0][BASELINE_TYPE] = BASELINE_5G_REDZONE_700_TYPE
+
             baseline_label_dic[param_group] = [{param_name: baseline_label_value}]
             baseline_label_dic[param_group][0][REFERENCE_FIELD_COLUMN_NAME] = BASELINE_LABEL_TYPE
 
             tmp_check_key_dic[param_group.upper()] = [param_name.upper()]
 
-    return param_dic, baseline_2600_dic, baseline_redzone_2600_dic, cell_level_dic, baseline_label_dic
+    return param_dic, baseline_700_dic, baseline_redzone_700_dic, baseline_2600_dic, baseline_redzone_2600_dic, cell_level_dic, baseline_label_dic
 
 def read(file_mapping_path_name):
     df = read_excel_mapping(file_mapping_path_name, 0)

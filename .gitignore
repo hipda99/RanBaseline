@@ -9,3 +9,4 @@ setup/
 logs/
 
 .vscode/
+.venv/*
