@@ -22,7 +22,7 @@ def read_mapping_yaml():
     return doc
 
 
-def read_data_source(vendor):
+def read_data_source(vendor, region: str = None):
 
     if 'Ericsson' in vendor:
         vendor = ERICSSON_VENDOR
@@ -57,6 +57,10 @@ def read_data_source(vendor):
         
         try:
             if raw_file.FrequencyType in yaml_value[vendor]['network']:
+
+                if region is not None:
+                    if str(raw_file.Region).lower() != region.lower():
+                        continue                        
                 
                 raw_file.FileMappingPath = CONFIGURATION_PATH + yaml_value[vendor]['network'][raw_file.FrequencyType]['mapping']
             if 'feature' in yaml_value[vendor] and raw_file.FrequencyType in yaml_value[vendor]['feature']:

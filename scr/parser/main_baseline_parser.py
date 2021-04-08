@@ -108,13 +108,13 @@ def run_baseline(vendor, frequency_type=""):
     log.i(FINISH_PARSER.format(vendor), vendor)
 
 
-def run(vendor, frequency_type=""):
+def run(vendor, frequency_type="", region: str = None):
     log.i(START_PARSER.format(vendor), vendor)
     log.i("frequency_type : " + frequency_type, vendor)
 
     oracle_con, oracle_cur = open_connection()
 
-    source_collection = data_source_parser.read_data_source(vendor)
+    source_collection = data_source_parser.read_data_source(vendor, region)
 
     for source in source_collection:
 
