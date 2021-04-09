@@ -37,5 +37,5 @@ log.i("           ", ERICSSON_VENDOR, "4G")
 
 
 log.i("Start Command Report", ERICSSON_VENDOR)
-os.system("/home/ngoss/RANBaseLine/ERC_BL_Audit_Report_4G_sth.sh")
+os.system("/home/ngoss/RANBaseLine/ERC_BL_Audit_Report_4G_sth.sh DB-dev.ini")
 log.i("Done Command Report", ERICSSON_VENDOR)
