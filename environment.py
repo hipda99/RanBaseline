@@ -12,7 +12,7 @@ if host_name == "adisits-MBP" or host_name == 'adisits-MacBook-Pro.local':
     environment = 'north'
 elif host_name == 'HELLKITCHEN' or host_name == 'HellEngine':
     environment = 'hell'
-elif host_name == "MT8NGOSS-INVP12":
+elif host_name == "MT8NGOSS-INVP12" or host_name == 'MT8NGOSS-INVP11':
     environment = 'prod'
 else:
     environment = 'dev'
