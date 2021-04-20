@@ -27,7 +27,7 @@ def read_data_source(vendor):
 
     yaml_value = read_mapping_yaml()
 
-    xls = ExcelFile(RAW_FILE_PATH_COLLECTION, engine = 'openpyxl')
+    xls = ExcelFile(RAW_FILE_PATH_COLLECTION)
 
     data_frame = xls.parse(xls.sheet_names[DEFAULT_MAPPING_SHEET_NAME])
 
