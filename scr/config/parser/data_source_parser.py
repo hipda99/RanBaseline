@@ -36,7 +36,7 @@ def read_data_source(vendor, region: str = None):
 
     yaml_value = read_mapping_yaml()
 
-    xls = ExcelFile(RAW_FILE_PATH_COLLECTION)
+    xls = ExcelFile(RAW_FILE_PATH_COLLECTION, engine = 'openpyxl')
 
     data_frame = xls.parse(xls.sheet_names[DEFAULT_MAPPING_SHEET_NAME])
 
