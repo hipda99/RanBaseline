@@ -15,7 +15,7 @@ log.i("Start Script : " + ERICSSON_VENDOR, ERICSSON_VENDOR, "4G-CEW")
 
 parser_db.update_status(ERICSSON_VENDOR, '4G-CEW', parser_db.STATUS_OPEN)
 
-main_baseline_parser.run(ERICSSON_VENDOR, "4G-CEW", "CEW", skip_setup_table=True)
+main_baseline_parser.run(ERICSSON_VENDOR, "4G", "CEW", skip_setup_table=True)
 
 TIME_END_SCRIPT = datetime.datetime.now()
 log.i("Time : " + str(TIME_END_SCRIPT - TIME_START_SCRIPT), ERICSSON_VENDOR, "4G-CEW")
