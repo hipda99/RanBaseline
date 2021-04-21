@@ -27,7 +27,7 @@ def open_connection():
     return connection, cur
 
 
-def run_baseline(vendor, frequency_type="", drop_table: bool = False):
+def run_baseline(vendor, frequency_type="", drop_table: bool = False, region: str = None):
     log.i(START_PARSER.format(vendor), vendor)
     log.i("frequency_type : " + frequency_type, vendor)
 
@@ -75,7 +75,7 @@ def run_baseline(vendor, frequency_type="", drop_table: bool = False):
 
                 elif vendor == ERICSSON_VENDOR:
 
-                    log.i("FrequencyType : " + source.FrequencyType)
+                    log.i("FrequencyType : " + source.FrequencyType, region=region)
 
                     if source.FrequencyType == "4G":
 
@@ -105,12 +105,12 @@ def run_baseline(vendor, frequency_type="", drop_table: bool = False):
                 # log.e('#################################### Error ', vendor)
 
     close_connection(oracle_con, oracle_cur)
-    log.i(FINISH_PARSER.format(vendor), vendor)
+    log.i(FINISH_PARSER.format(vendor), vendor, region=region)
 
 
 def run(vendor, frequency_type="", region: str = None, skip_setup_table: bool = False):
-    log.i(START_PARSER.format(vendor), vendor)
-    log.i("frequency_type : " + frequency_type, vendor)
+    log.i(START_PARSER.format(vendor), vendor, region=region)
+    log.i("frequency_type : " + frequency_type, vendor, region=region)
 
     oracle_con, oracle_cur = open_connection()
 
@@ -172,7 +172,7 @@ def run(vendor, frequency_type="", region: str = None, skip_setup_table: bool = 
                     huewei_baseline_parser.run(source, field_mapping_dic, param_cell_level_dic)
                 elif vendor == ERICSSON_VENDOR:
 
-                    log.i("FrequencyType : " + source.FrequencyType)
+                    log.i("FrequencyType : " + source.FrequencyType, region=region)
 
                     if source.FrequencyType == "4G":
 
@@ -213,7 +213,7 @@ def run(vendor, frequency_type="", region: str = None, skip_setup_table: bool = 
                 # log.e('#################################### Error ', vendor)
 
     close_connection(oracle_con, oracle_cur)
-    log.i(FINISH_PARSER.format(vendor), vendor)
+    log.i(FINISH_PARSER.format(vendor), vendor, region=region)
 
 # if __name__ == '__main__':
 #     if os.environ['SECURE'] == '1c39b674-35cb-4eb5-b66e-7eae69d90604':
