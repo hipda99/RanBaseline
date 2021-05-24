@@ -1518,7 +1518,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							gNBId = value['gNBId']
 
 							# gnbCuFunction = neData.xpath(f".//mo[@moc='GNBCUCPFunction'][attributes/gNBId/text()='{gNBId}']/following-sibling::mo[1]", namespaces=ns)
-							gnbDuFunction = node.xpath(f".//mo['GNBDUFunction']",namespaces=ns)
+							gnbDuFunction = node.xpath(f".//mo[@moc='GNBDUFunction']",namespaces=ns)
 							for gnb in gnbDuFunction:
 								# gnbName = gnb.xpath('.//attributes/gNBDUName/text()', namespaces=ns)[0]
 								gnbName = parseData(gnb, './/attributes/gNBDUName/text()', 0, ns)
