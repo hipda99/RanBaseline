@@ -1688,7 +1688,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						cells = node.xpath('.//mo[@moc="CUEUtranCellTDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
-
+							data = None
 							nodeBId = None
 							nodeBLdn = None
 							if ldn is not None:
@@ -1715,7 +1715,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						cells = node.xpath('.//mo[@moc="DUEUtranCellTDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
-
+							data = None
 							nodeBId = None
 							nodeBLdn = None
 							if ldn is not None:
@@ -1738,8 +1738,11 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							# else:
 							# 	log.e(f'Key = {key} not found in celltdd_node_cell_dic={str(celltdd_node_cell_dic)}')
 
-							if ref in celltdd_du_dic:								
+							if data is not None:
 								celltdd_du_dic[ref] = data
+
+							# if ref in celltdd_du_dic:								
+							# 	celltdd_du_dic[ref] = data
 							# else:
 							# 	log.e(f'Key = {ref} not found in celltdd_du_dic={str(celltdd_du_dic)}')
 
@@ -1751,7 +1754,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						cells = node.xpath('.//mo[@moc="CUEUtranCellFDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
-
+							data = None
 							nodeBId = None
 							nodeBLdn = None
 							if ldn is not None:
@@ -1781,9 +1784,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						# Get FDD - DU
 						cells = node.xpath('.//mo[@moc="DUEUtranCellFDDLTE"]', namespaces=ns)
 						for cell in cells:
-							data = None
 							ldn = cell.get('ldn')
-
+							data = None
 							nodeBId = None
 							nodeBLdn = None
 							if ldn is not None:
