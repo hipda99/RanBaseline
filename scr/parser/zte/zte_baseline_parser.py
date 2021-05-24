@@ -1585,7 +1585,12 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											else:
 												log.e(f'Not found key={key} in refCellCU_dic={str(refCellCU_dic)}')
 										elif match_celldu:
-											gNBId = match_celldu.group(2)
+											p1 = re.compile(r"^GNBDUFunction=((\d+)-(\d+)_(\d+)).*$")
+											m1 = p1.match(ldn)
+											if m1:
+												gNBId = m1.group(4)
+											else:
+												gNBId = match_celldu.group(2)
 											reference_name = parseData(nr_cell_du, f'.//userLabel/text()', 0, ns)
 											cellLocalId = parseData(nr_cell_du, f'.//cellLocalId/text()', 0, ns)
 
@@ -1611,11 +1616,16 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											match_gnbdufunc = p_gnbcucpfunc.match(ldn)
 											if match_gnbdufunc:
 												gnb = match_gnbdufunc.group(1)
+												p1 = re.compile(r"^GNBDUFunction=((\d+)-(\d+)_(\d+)).*$")
+												m1 = p1.match(ldn)
+												if m1:
+													gnb = m1.group(4)
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
-										elif ldn is None or not ldn:
-											# Group that doesn't has ldn but in GNB level.
+												
+										elif ldn is None or not ldn or ('X2SCPolicy'.upper() == parameter_group.upper() or 'InactiveParameter' == parameter_group.upper()):
+											# Group that doesn't has ldn but in GNB level, or ldn unable to match to GNB.
 										# parameter_group.upper() == 'NRSectorCarrier'.upper() or parameter_group.upper() == 'SectorFunction'.upper() or parameter_group.upper() == 'GNBCUUPFunction'.upper() or parameter_group.upper() == "ENDCPDCPStatusCfg".upper() or parameter_group.upper() == 'X2SCPolicy'.upper() or parameter_group.upper() == 'CarrierESPolicy'.upper():
 											gnbDus = node.xpath(f".//mo[@moc='GNBDUFunction']", namespaces=ns)
 											for gnb in gnbDus:
@@ -1647,6 +1657,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									if parameter_group.upper() == 'EnDCPDCP'.upper():
 										# Group EnDCPDCP ldn =  GNBCUCPFunction=520-04_550976,EnDCConfigCU=1,EnDCPDCP=1
 										mo_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn}'
+										reference_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn}'
 									insertData(parameter_group,mo_name,ldn,reference_name,level_type,frequency_type,
 												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename)
 				elif frequency_type == '4G':
