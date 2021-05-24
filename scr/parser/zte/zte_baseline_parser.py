@@ -1781,6 +1781,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						# Get FDD - DU
 						cells = node.xpath('.//mo[@moc="DUEUtranCellFDDLTE"]', namespaces=ns)
 						for cell in cells:
+							data = None
 							ldn = cell.get('ldn')
 
 							nodeBId = None
@@ -1804,9 +1805,11 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								data = cellfdd_node_cell_dic[key]
 							# else:
 							# 	log.e(f'Key = {key} not found in cellfdd_node_cell_dic={str(cellfdd_node_cell_dic)}')
-
-							if ref in cellfdd_du_dic:								
+							if data is not None:
 								cellfdd_du_dic[ref] = data
+
+							# if ref in cellfdd_du_dic:								
+							# 	cellfdd_du_dic[ref] = data
 							# else:
 							# 	log.e(f'Key = {ref} not found in cellfdd_du_dic={str(cellfdd_du_dic)}')
 							# node_cnt +=1
