@@ -74,6 +74,7 @@ REGEX_4G_LDN_CELLTDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCe
 REGEX_4G_LDN_DUCELLFDDLTE = r"^((ENBDUFunction=([^,]*)),DULTE=([^,]*),.*FDDLTE=([^,]+)).*$"
 REGEX_4G_LDN_DUCELLTDDLTE = r"^((ENBDUFunction=([^,]*)),DULTE=([^,]*),.*TDDLTE=([^,]+)).*$"
 REGEX_5G_LDN_NRCELLCU = r"^(GNBCUCPFunction=([^,]+),NRCellCU=([^,]+)).*$"
+REGEX_5G_LDN_NRCELLDU = r"^(GNBDUFunction=([^,]+),NRCellDU=([^,]+)).*$"
 REGEX_5G_LDN_NRPHYSICALCELLDU = r"^(NRRadioInfrastructure=\d+,NRPhysicalCellDU=([^,]+)).*$"
 REGEX_5G_LDN_NRCARRIER = r"^(NRRadioInfrastructure=\d+,NRCarrier=([^,]+)).*$"
 REGEX_5G_LDN_GNBDUFUNC = r"^GNBDUFunction=([^,]+).*$"
@@ -1565,9 +1566,11 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 									if level_type == 'CELL Level':
 										p_cellcu = re.compile(REGEX_5G_LDN_NRCELLCU)
+										p_celldu = re.compile(REGEX_5G_LDN_NRCELLDU)
 										p_physicaldu = re.compile(REGEX_5G_LDN_NRPHYSICALCELLDU)
 										p_nrcarrier = re.compile(REGEX_5G_LDN_NRCARRIER)
 										match_cellcu = p_cellcu.match(ldn)
+										match_celldu = p_celldu.match(ldn)
 										match_physicaldu = p_physicaldu.match(ldn)
 										match_nrcarrier = p_nrcarrier.match(ldn)
 										
@@ -1581,6 +1584,10 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													gNBId = cell_dic[reference_name].get('gNBId')
 											else:
 												log.e(f'Not found key={key} in refCellCU_dic={str(refCellCU_dic)}')
+										elif match_celldu:
+											gNBId = match_celldu.group(2)
+											reference_name = parseData(nr_cell_du, f'.//userLabel/text()', 0, ns)
+											cellLocalId = parseData(nr_cell_du, f'.//cellLocalId/text()', 0, ns)
 
 										elif match_physicaldu:
 											physicalCellDu = match_physicaldu.group(1)
