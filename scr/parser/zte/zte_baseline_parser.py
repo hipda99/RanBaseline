@@ -1607,7 +1607,9 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
-										elif parameter_group.upper() == 'NRSectorCarrier'.upper() or parameter_group.upper() == 'SectorFunction'.upper() or parameter_group.upper() == 'GNBCUUPFunction'.upper() or parameter_group.upper() == "ENDCPDCPStatusCfg".upper() or parameter_group.upper() == 'X2SCPOLICY'.upper() or parameter_group.upper() == 'CarrierESPolicy'.upper():
+										elif ldn is None or not ldn:
+											# Group that doesn't has ldn but in GNB level.
+										# parameter_group.upper() == 'NRSectorCarrier'.upper() or parameter_group.upper() == 'SectorFunction'.upper() or parameter_group.upper() == 'GNBCUUPFunction'.upper() or parameter_group.upper() == "ENDCPDCPStatusCfg".upper() or parameter_group.upper() == 'X2SCPolicy'.upper() or parameter_group.upper() == 'CarrierESPolicy'.upper():
 											gnbDus = node.xpath(f".//mo[@moc='GNBDUFunction']", namespaces=ns)
 											for gnb in gnbDus:
 												reference_name = parseData(gnb, './/attributes/gNBDUName/text()', 0, ns)
