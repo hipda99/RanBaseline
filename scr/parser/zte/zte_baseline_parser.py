@@ -1658,7 +1658,6 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									if parameter_group.upper() == 'EnDCPDCP'.upper():
 										# Group EnDCPDCP ldn =  GNBCUCPFunction=520-04_550976,EnDCConfigCU=1,EnDCPDCP=1
 										mo_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn}'
-										reference_name = gnb_path.format(subNetwork, managedElement, gNBId) + f',{ldn}'
 									insertData(parameter_group,mo_name,ldn,reference_name,level_type,frequency_type,
 												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename)
 				elif frequency_type == '4G':
