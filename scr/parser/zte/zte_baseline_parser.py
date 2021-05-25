@@ -74,6 +74,7 @@ REGEX_4G_LDN_CELLTDDLTE = r"^((ENBCUCPFunction=([^,]*)),CULTE=([^,]*),CUEUtranCe
 REGEX_4G_LDN_DUCELLFDDLTE = r"^((ENBDUFunction=([^,]*)),DULTE=([^,]*),.*FDDLTE=([^,]+)).*$"
 REGEX_4G_LDN_DUCELLTDDLTE = r"^((ENBDUFunction=([^,]*)),DULTE=([^,]*),.*TDDLTE=([^,]+)).*$"
 REGEX_5G_LDN_NRCELLCU = r"^(GNBCUCPFunction=([^,]+),NRCellCU=([^,]+)).*$"
+REGEX_5G_LDN_NRCELLDU = r"^(GNBDUFunction=([^,]+),NRCellDU=([^,]+)).*$"
 REGEX_5G_LDN_NRPHYSICALCELLDU = r"^(NRRadioInfrastructure=\d+,NRPhysicalCellDU=([^,]+)).*$"
 REGEX_5G_LDN_NRCARRIER = r"^(NRRadioInfrastructure=\d+,NRCarrier=([^,]+)).*$"
 REGEX_5G_LDN_GNBDUFUNC = r"^GNBDUFunction=([^,]+).*$"
@@ -1516,8 +1517,9 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						for key, value in refNRPhysicalCellDU_dic.items():
 							gNBId = value['gNBId']
 
-							gnbCuFunction = neData.xpath(f".//mo[@moc='GNBCUCPFunction'][attributes/gNBId/text()='{gNBId}']/following-sibling::mo[1]", namespaces=ns)
-							for gnb in gnbCuFunction:
+							# gnbCuFunction = neData.xpath(f".//mo[@moc='GNBCUCPFunction'][attributes/gNBId/text()='{gNBId}']/following-sibling::mo[1]", namespaces=ns)
+							gnbDuFunction = node.xpath(f".//mo[@moc='GNBDUFunction']",namespaces=ns)
+							for gnb in gnbDuFunction:
 								# gnbName = gnb.xpath('.//attributes/gNBDUName/text()', namespaces=ns)[0]
 								gnbName = parseData(gnb, './/attributes/gNBDUName/text()', 0, ns)
 								gnb_dic[gNBId] = {
@@ -1565,9 +1567,11 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 									if level_type == 'CELL Level':
 										p_cellcu = re.compile(REGEX_5G_LDN_NRCELLCU)
+										p_celldu = re.compile(REGEX_5G_LDN_NRCELLDU)
 										p_physicaldu = re.compile(REGEX_5G_LDN_NRPHYSICALCELLDU)
 										p_nrcarrier = re.compile(REGEX_5G_LDN_NRCARRIER)
 										match_cellcu = p_cellcu.match(ldn)
+										match_celldu = p_celldu.match(ldn)
 										match_physicaldu = p_physicaldu.match(ldn)
 										match_nrcarrier = p_nrcarrier.match(ldn)
 										
@@ -1581,6 +1585,15 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													gNBId = cell_dic[reference_name].get('gNBId')
 											else:
 												log.e(f'Not found key={key} in refCellCU_dic={str(refCellCU_dic)}')
+										elif match_celldu:
+											p1 = re.compile(r"^GNBDUFunction=((\d+)-(\d+)_(\d+)).*$")
+											m1 = p1.match(ldn)
+											if m1:
+												gNBId = m1.group(4)
+											else:
+												gNBId = match_celldu.group(2)
+											reference_name = parseData(nr_cell_du, f'.//userLabel/text()', 0, ns)
+											cellLocalId = parseData(nr_cell_du, f'.//cellLocalId/text()', 0, ns)
 
 										elif match_physicaldu:
 											physicalCellDu = match_physicaldu.group(1)
@@ -1604,10 +1617,17 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											match_gnbdufunc = p_gnbcucpfunc.match(ldn)
 											if match_gnbdufunc:
 												gnb = match_gnbdufunc.group(1)
+												p1 = re.compile(r"^GNBDUFunction=((\d+)-(\d+)_(\d+)).*$")
+												m1 = p1.match(ldn)
+												if m1:
+													gnb = m1.group(4)
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
-										elif parameter_group.upper() == 'NRSectorCarrier'.upper() or parameter_group.upper() == 'SectorFunction'.upper():
+												
+										elif ldn is None or not ldn or ('X2SCPolicy'.upper() == parameter_group.upper() or 'InactiveParameter'.upper() == parameter_group.upper()
+										or 'CarrierESPolicy'.upper() == parameter_group.upper() or parameter_group.upper() == 'NRSectorCarrier'.upper()):
+											# Group that doesn't has ldn but in GNB level, or ldn unable to match to GNB.										
 											gnbDus = node.xpath(f".//mo[@moc='GNBDUFunction']", namespaces=ns)
 											for gnb in gnbDus:
 												reference_name = parseData(gnb, './/attributes/gNBDUName/text()', 0, ns)
@@ -1615,7 +1635,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											for gnb in gnbCus:
 												gNBId = parseData(gnb, './/attributes/gNBId/text()', 0, ns)
 											mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
-											
+
 										else:
 											p_gnbdufunc = re.compile(REGEX_5G_LDN_GNBDUFUNC)
 											p_gnbcucpfunc = re.compile(REGEX_5G_LDN_GNBCUCPFUNC)
@@ -1688,7 +1708,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						cells = node.xpath('.//mo[@moc="CUEUtranCellTDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
-
+							data = None
 							nodeBId = None
 							nodeBLdn = None
 							if ldn is not None:
@@ -1715,7 +1735,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						cells = node.xpath('.//mo[@moc="DUEUtranCellTDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
-
+							data = None
 							nodeBId = None
 							nodeBLdn = None
 							if ldn is not None:
@@ -1738,8 +1758,11 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							# else:
 							# 	log.e(f'Key = {key} not found in celltdd_node_cell_dic={str(celltdd_node_cell_dic)}')
 
-							if ref in celltdd_du_dic:								
+							if data is not None:
 								celltdd_du_dic[ref] = data
+
+							# if ref in celltdd_du_dic:								
+							# 	celltdd_du_dic[ref] = data
 							# else:
 							# 	log.e(f'Key = {ref} not found in celltdd_du_dic={str(celltdd_du_dic)}')
 
@@ -1751,7 +1774,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						cells = node.xpath('.//mo[@moc="CUEUtranCellFDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
-
+							data = None
 							nodeBId = None
 							nodeBLdn = None
 							if ldn is not None:
@@ -1782,7 +1805,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						cells = node.xpath('.//mo[@moc="DUEUtranCellFDDLTE"]', namespaces=ns)
 						for cell in cells:
 							ldn = cell.get('ldn')
-
+							data = None
 							nodeBId = None
 							nodeBLdn = None
 							if ldn is not None:
@@ -1804,9 +1827,11 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								data = cellfdd_node_cell_dic[key]
 							# else:
 							# 	log.e(f'Key = {key} not found in cellfdd_node_cell_dic={str(cellfdd_node_cell_dic)}')
-
-							if ref in cellfdd_du_dic:								
+							if data is not None:
 								cellfdd_du_dic[ref] = data
+
+							# if ref in cellfdd_du_dic:								
+							# 	cellfdd_du_dic[ref] = data
 							# else:
 							# 	log.e(f'Key = {ref} not found in cellfdd_du_dic={str(cellfdd_du_dic)}')
 							# node_cnt +=1
