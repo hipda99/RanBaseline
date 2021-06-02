@@ -1773,7 +1773,9 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                     if key in param_collection:
                                                         oracle_value_pair_dic[key] = " ".join(struct_dict[3:])
 
-                                                    row = row + 1                                    
+                                                    row = row + 1      
+                                    else:
+                                        ttt = True                              
                                         
                                 continue
 
