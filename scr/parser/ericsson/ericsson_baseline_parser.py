@@ -1741,6 +1741,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                             oracle_value_pair_dic[key] = " ".join(struct_dict[3:])
 
                                                         row = row + 1
+                                            continue
 
                                         elif array_size_number > 1:
                                             row = row + 1
@@ -1774,10 +1775,8 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                         oracle_value_pair_dic[key] = " ".join(struct_dict[3:])
 
                                                     row = row + 1      
-                                    else:
-                                        ttt = True                              
-                                        
-                                continue
+                                            continue
+                                 
 
                             elif (dictData[0] == ">>>" and 'Struct[' in dictData[1]):
                                 size_number = int(dictData[3])
