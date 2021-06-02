@@ -1749,15 +1749,12 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
 
                                             if (dictData[0] == ">>>" and 'Struct[' in dictData[1]):
                                                 size_number = int(dictData[3])
-
-                                                previous_row = row - 1
-
                                                 row = row + 1
                                                 for i in range(size_number):
                                                     struct_dict = lines[index + row].split()
                                                     tail_name = struct_dict[1].split('.')
                                                     obj_key = tail_name[1]
-                                                    key = naming_helper.rule_column_name(keyname + i + "_" + obj_key)
+                                                    key = naming_helper.rule_column_name(keyname + str(i) + "_" + obj_key)
 
                                                     # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
                                                     # mongo_value_pair_dic[key] = " ".join(struct_dict[3:])
