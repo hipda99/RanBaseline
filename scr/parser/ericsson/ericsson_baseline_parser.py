@@ -296,7 +296,7 @@ def run(source, field_mapping_dic, param_cell_level_dic, param_mo_dic):
 
     pool = None    
     if source.FrequencyType == '4G':
-        pool = mp.Pool(processes=8)        
+        pool = mp.Pool(processes=1)        
     else:
         pool = mp.Pool(processes=MAX_RUNNING_PROCESS)
 
