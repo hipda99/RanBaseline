@@ -1710,7 +1710,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                             #TODO: This is correct way to parse data with [] array
                             if group_param == 'RATFreqPrio'.upper():
                                 # Data is contain [] array
-                                if len(dictData) > 1 and dictData[0].upper() in param_collection and '[' in lines[index + row] and ']' in lines[index + row]:
+                                if len(dictData) > 0 and dictData[0].upper() in param_collection and '[' in lines[index + row] and ']' in lines[index + row]:
                                     array_size_number = dictData[0].split('[')
                                     array_size_number = array_size_number[1].split(']')
                                     array_size_number = int(array_size_number[0])                                    
