@@ -1735,7 +1735,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                         struct_dict = lines[index + row].split()
                                                         tail_name = struct_dict[1].split('.')
                                                         obj_key = tail_name[1]
-                                                        key = naming_helper.rule_column_name(keyname + i + "_" + obj_key)
+                                                        key = naming_helper.rule_column_name(keyname + "_" + obj_key)
 
                                                         if key in param_collection:
                                                             oracle_value_pair_dic[key] = " ".join(struct_dict[3:])
@@ -1755,18 +1755,9 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                                 row = row + 1
                                                 for i in range(size_number):
                                                     struct_dict = lines[index + row].split()
-                                                    # keyname = lines[index + previous_row].split()
-                                                    # if len(keyname) > 0:
-                                                    #     key_match = re.match("(\w+)\[\d+\].*",keyname[0])                                    
-                                                    #     if key_match:
-                                                    #         keyname = str(key_match.group(1)).strip()
-                                                    #     else:
-                                                    #         keyname = keyname[0]
-                                                    # else:
-                                                    #     keyname = dictData[1]
                                                     tail_name = struct_dict[1].split('.')
                                                     obj_key = tail_name[1]
-                                                    key = naming_helper.rule_column_name(keyname + "_" + obj_key)
+                                                    key = naming_helper.rule_column_name(keyname + i + "_" + obj_key)
 
                                                     # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
                                                     # mongo_value_pair_dic[key] = " ".join(struct_dict[3:])
