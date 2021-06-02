@@ -1719,7 +1719,7 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                     else:
                                         keyname = dictData[0]
                                     
-                                    if keyname.upper() in param_collection and '[' in data_ and ']' in data_:
+                                    if '[' in data_ and ']' in data_:
                                         array_size_number = dictData[0].split('[')
                                         array_size_number = array_size_number[1].split(']')
                                         array_size_number = int(array_size_number[0])                                    
