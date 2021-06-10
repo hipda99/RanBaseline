@@ -1658,8 +1658,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
 												mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
-											elif p_gnbcuupfunc:
-												gnb = p_gnbcuupfunc.group(1)
+											elif match_gnbcucpfunc:
+												gnb = match_gnbcucpfunc.group(1)
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
