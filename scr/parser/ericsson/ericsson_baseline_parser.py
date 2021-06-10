@@ -1707,8 +1707,66 @@ def parse(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic, par
                                     row = row + 1
 
                                 continue
+                            #TODO: This is correct way to parse data with [] array
+                            if group_param == 'RATFreqPrio'.upper():
+                                # Data is contain [] array
+                                if len(dictData) > 0:
+                                    data_ = lines[index + row]
+                                    # Check array with []
+                                    key_match = re.match("(\w+)\[\d+\].*",data_)                                    
+                                    if key_match:
+                                        keyname = str(key_match.group(1)).strip()
+                                    else:
+                                        keyname = dictData[0]
+                                    
+                                    if '[' in data_ and ']' in data_:
+                                        array_size_number = dictData[0].split('[')
+                                        array_size_number = array_size_number[1].split(']')
+                                        array_size_number = int(array_size_number[0])                                    
+                                        if array_size_number > 0 and array_size_number <= 1:
 
-                            if (dictData[0] == ">>>" and 'Struct[' in dictData[1]):
+                                            row = row + 1
+                                            dictData = lines[index + row].split()
+                                            if (dictData[0] == ">>>" and 'Struct[' in dictData[1]):
+                                                size_number = int(dictData[3])
+                                                row = row + 1
+                                                for j in range(size_number):
+                                                    struct_dict = lines[index + row].split()
+                                                    tail_name = struct_dict[1].split('.')
+                                                    obj_key = tail_name[1]
+                                                    key = naming_helper.rule_column_name(keyname + "_" + obj_key)
+
+                                                    if key in param_collection:
+                                                        oracle_value_pair_dic[key] = " ".join(struct_dict[3:])
+
+                                                    row = row + 1
+                                            continue
+
+                                        elif array_size_number > 1:
+                                            row = row + 1
+                                            for i in range(array_size_number):
+                                                dictData = lines[index + row].split()
+
+                                                if (dictData[0] == ">>>" and 'Struct[' in dictData[1]):
+                                                    size_number = int(dictData[3])
+                                                    row = row + 1
+                                                    for j in range(size_number):
+                                                        struct_dict = lines[index + row].split()
+                                                        tail_name = struct_dict[1].split('.')
+                                                        obj_key = tail_name[1]
+                                                        key = naming_helper.rule_column_name(keyname + str(i + 1) + "_" + obj_key) # Start with 1
+
+                                                        # 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
+                                                        # mongo_value_pair_dic[key] = " ".join(struct_dict[3:])
+
+                                                        if key in param_collection:
+                                                            oracle_value_pair_dic[key] = " ".join(struct_dict[3:])
+
+                                                        row = row + 1
+                                            continue
+                                 
+
+                            elif (dictData[0] == ">>>" and 'Struct[' in dictData[1]):
                                 size_number = int(dictData[3])
 
                                 previous_row = row - 1
