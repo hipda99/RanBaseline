@@ -336,8 +336,9 @@ def run(source, field_mapping_dic, cell_level_dic):
 
 	log.i(PARSING_TABLE_STATEMENT, ZTE_VENDOR)
 
-	# pool = mp.Pool(processes=MAX_RUNNING_PROCESS)	
-	pool = mp.Pool(processes=1)	
+	pool = mp.Pool(processes=MAX_RUNNING_PROCESS)	
+	# Debug
+	# pool = mp.Pool(processes=1)	
 
 	for raw_file in source.RawFileList:
 
