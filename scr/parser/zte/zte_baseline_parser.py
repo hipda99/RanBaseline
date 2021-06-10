@@ -79,6 +79,7 @@ REGEX_5G_LDN_NRPHYSICALCELLDU = r"^(NRRadioInfrastructure=\d+,NRPhysicalCellDU=(
 REGEX_5G_LDN_NRCARRIER = r"^(NRRadioInfrastructure=\d+,NRCarrier=([^,]+)).*$"
 REGEX_5G_LDN_GNBDUFUNC = r"^GNBDUFunction=([^,]+).*$"
 REGEX_5G_LDN_GNBCUCPFUNC = r"^GNBCUCPFunction=([^,]+).*$"
+REGEX_5G_LDN_GNBCUUPFUNC = r"^GNBCUUPFunction=([^,]+).*$"
 REGEX_SW_NAME_4G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,BrM=1,BrmBackupManager=1,BrmBackup=(.*)'
 REGEX_SW_NAME_3G_2 = '^MO.*,MeContext=(.*),SystemFunctions=1,SwInventory=1,SwVersion=(.*)'
 
@@ -1639,6 +1640,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										else:
 											p_gnbdufunc = re.compile(REGEX_5G_LDN_GNBDUFUNC)
 											p_gnbcucpfunc = re.compile(REGEX_5G_LDN_GNBCUCPFUNC)
+											p_gnbcuupfunc = re.compile(REGEX_5G_LDN_GNBCUUPFUNC)
 											match_gnbdufunc = p_gnbdufunc.match(ldn)
 											match_gnbcucpfunc = p_gnbcucpfunc.match(ldn)
 											if match_gnbdufunc:
@@ -1650,6 +1652,12 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
 											elif match_gnbcucpfunc:
 												gnb = match_gnbcucpfunc.group(1)
+												if gnb in gnb_dic:
+													reference_name = gnb_dic[gnb].get('gnb')
+													gNBId = gnb_dic[gnb].get('gNBId')
+												mo_name = gnb_path.format(subNetwork, managedElement, gNBId)
+											elif p_gnbcuupfunc:
+												gnb = p_gnbcuupfunc.group(1)
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
