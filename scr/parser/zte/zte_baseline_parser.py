@@ -1303,7 +1303,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								# mo_group_collection = enb_mo.xpath(xpath,
 								# 								namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
 								# 											ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
-								xpath = f"//*[local-name() = 'vsData{parameter_group}'"
+								xpath = f"//*[local-name() = 'vsData{parameter_group}']"
 								mo_group_collection = enb_mo.xpath(xpath)
 
 								extra_value = ""
