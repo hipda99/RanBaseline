@@ -1057,7 +1057,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 	"""
 		- 2021-06-16 - found that the previous namespace is not work any more
 	"""
-	new_ns = { 'en': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm', 'xn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.625#genericNrm', None: 'http://www.3gpp.org/ftp/specs/archive/32_series/32.615#configData', 'un': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#utranNrm', 'gn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#gsmNrm', 'zs': 'http://ZTESpecificAttributes#ZTESpecificAttributes', 'xsi': 'http://www.w3.org/2001/XMLSchema-instance' }	
+	new_ns = { 'en': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm', 'xn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.625#genericNrm', '': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.615#configData', 'un': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#utranNrm', 'gn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#gsmNrm', 'zs': 'http://ZTESpecificAttributes#ZTESpecificAttributes', 'xsi': 'http://www.w3.org/2001/XMLSchema-instance' }	
 
 	log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)
 
