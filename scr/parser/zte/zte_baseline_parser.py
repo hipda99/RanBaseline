@@ -1169,7 +1169,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						cell_type = cell_level_dic[parameter_group]
 
 						if cell_type == 'CELL Level':
-							log.i('This is Cell Level')
+							# log.i('This is Cell Level')
 							mo_xml = base_xml.xpath('.//en:EUtranCellFDD',
 													namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
 																ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})							
