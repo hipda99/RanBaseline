@@ -1073,7 +1073,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 		# subnet = tree.xpath('.//xn:SubNetwork', namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
 		# 													ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})
-		new_ns = tree.nsmap
+		# new_ns = tree.nsmap
 		subnet = tree.xpath('.//xn:SubNetwork', namespaces=new_ns)
 		subid = subnet[1].xpath('@id')[0]
 
