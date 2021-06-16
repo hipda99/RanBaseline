@@ -1206,10 +1206,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								try:
 									eutrancellid = enb_mo.xpath('@id')[0]
 								except Exception as e:
-									log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)						
-									log.e(e, ZTE_VENDOR, frequency_type)
-									traceback.print_exc()
-									log.e('#################################### Error ', ZTE_VENDOR, frequency_type)								
+									log.e(f'Error {str(e)}: ', ZTE_VENDOR, frequency_type)					
 								# log.i(eutrancellid)
 
 								eutranatt = enb_mo.xpath('.//en:attributes',
