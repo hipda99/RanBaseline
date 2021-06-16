@@ -1057,8 +1057,6 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 	"""
 		- 2021-06-16 - found that the previous namespace is not work any more
 	"""
-	new_ns = { 'en': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm', 'xn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.625#genericNrm', '': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.615#configData', 'un': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#utranNrm', 'gn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#gsmNrm', 'zs': 'http://ZTESpecificAttributes#ZTESpecificAttributes', 'xsi': 'http://www.w3.org/2001/XMLSchema-instance' }	
-
 	log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)
 
 	oracle_con, oracle_cur = open_connection()	
@@ -1071,10 +1069,8 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 		tree = ElementInclude.default_loader(raw_file, 'xml')
 
-		# subnet = tree.xpath('.//xn:SubNetwork', namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-		# 													ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})
-		# new_ns = tree.nsmap
-		subnet = tree.xpath('.//xn:SubNetwork', namespaces=new_ns)
+		subnet = tree.xpath('.//xn:SubNetwork', namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
+															ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})		
 		subid = subnet[1].xpath('@id')[0]
 
 		start_parser_time = datetime.datetime.now()
@@ -1087,8 +1083,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 			
 
-			# manage_group_collection = submo.xpath('.//xn:ManagedElement', namespaces={ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})
-			manage_group_collection = submo.xpath('.//xn:ManagedElement', namespaces=new_ns)
+			manage_group_collection = submo.xpath('.//xn:ManagedElement', namespaces={ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})			
 
 			for manage_group in manage_group_collection:
 
@@ -1156,11 +1151,9 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 											ran_baseline_oracle.push(oracle_cur, sw_key, sw_result[sw_key])
 											oracle_con.commit()
 
-				# enb_group_collection = manage_group.xpath('.//en:ENBFunction',
-				# 										namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-				# 													ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
 				enb_group_collection = manage_group.xpath('.//en:ENBFunction',
-														namespaces=new_ns)
+														namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
+																	ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})				
 
 				for enb_moo in enb_group_collection:
 
@@ -1176,13 +1169,10 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						cell_type = cell_level_dic[parameter_group]
 
 						if cell_type == 'CELL Level':
-							# log.i('This is Cell Level')
-							# mo_xml = base_xml.xpath('.//en:EUtranCellFDD',
-							# 						namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-							# 									ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
+							log.i('This is Cell Level')
 							mo_xml = base_xml.xpath('.//en:EUtranCellFDD',
-													namespaces=new_ns)
-
+													namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
+																ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})							
 						else:
 							mo_xml = base_xml
 							# log.i('This is eNodeB Level')
@@ -1213,11 +1203,9 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								eutrancellid = enb_mo.xpath('@id')[0]
 								# log.i(eutrancellid)
 
-								# eutranatt = enb_mo.xpath('.//en:attributes',
-								# 						namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-								# 									ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
 								eutranatt = enb_mo.xpath('.//en:attributes',
-														namespaces=new_ns)
+														namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
+																	ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})								
 
 								if len(eutranatt) > 0:
 									for attribute in eutranatt[0]:
@@ -1315,8 +1303,8 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								# mo_group_collection = enb_mo.xpath(xpath,
 								# 								namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
 								# 											ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
-								mo_group_collection = enb_mo.xpath(xpath,
-																namespaces=new_ns)
+								xpath = f"//*[local-name() = 'vsData{parameter_group}'"
+								mo_group_collection = enb_mo.xpath(xpath)
 
 								extra_value = ""
 								for enb_moo in mo_group_collection:
