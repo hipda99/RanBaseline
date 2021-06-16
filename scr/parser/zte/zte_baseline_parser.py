@@ -942,8 +942,13 @@ def parse_3g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					if parameter_group == 'nan' or enb_mo.xpath('@id') == False or len(enb_mo.xpath('@id')) == 0:
 						print(enb_mo)
 						continue
-
-					eutrancellid = enb_mo.xpath('@id')[0]
+					try:
+						eutrancellid = enb_mo.xpath('@id')[0]
+					except Exception as e:
+						log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)						
+						log.e(e, ZTE_VENDOR, frequency_type)
+						traceback.print_exc()
+						log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
 
 					eutranatt = enb_mo.xpath('.//un:attributes',
 											 namespaces={
@@ -1081,8 +1086,6 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 		for e in subnet[1]:
 			submo = etree.fromstring(etree.tostring(e))
 
-			
-
 			manage_group_collection = submo.xpath('.//xn:ManagedElement', namespaces={ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})			
 
 			for manage_group in manage_group_collection:
@@ -1200,7 +1203,13 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								# log.i(cell_type)
 								# log.i(parameter_group)
 								# log.i('utranId:')
-								eutrancellid = enb_mo.xpath('@id')[0]
+								try:
+									eutrancellid = enb_mo.xpath('@id')[0]
+								except Exception as e:
+									log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)						
+									log.e(e, ZTE_VENDOR, frequency_type)
+									traceback.print_exc()
+									log.e('#################################### Error ', ZTE_VENDOR, frequency_type)								
 								# log.i(eutrancellid)
 
 								eutranatt = enb_mo.xpath('.//en:attributes',
