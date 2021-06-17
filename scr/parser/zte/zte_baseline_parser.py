@@ -940,14 +940,11 @@ def parse_3g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 				else:
 
 					if parameter_group == 'nan' or enb_mo.xpath('@id') == False or len(enb_mo.xpath('@id')) == 0:
-						print(enb_mo)
 						continue
 					try:
 						eutrancellid = enb_mo.xpath('@id')[0]
 					except Exception as e:
 						log.e(f'Error {str(e)}: ', ZTE_VENDOR, frequency_type)
-
-					if not eutrancellid:
 						continue
 
 					eutranatt = enb_mo.xpath('.//un:attributes',
@@ -1203,12 +1200,12 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								# log.i(cell_type)
 								# log.i(parameter_group)
 								# log.i('utranId:')
+								if parameter_group == 'nan' or enb_mo.xpath('@id') == False or len(enb_mo.xpath('@id')) == 0:
+									continue
 								try:
 									eutrancellid = enb_mo.xpath('@id')[0]
 								except Exception as e:
 									log.e(f'Error {str(e)}: ', ZTE_VENDOR, frequency_type)
-								# log.i(eutrancellid)
-								if not eutrancellid:
 									continue
 
 								eutranatt = enb_mo.xpath('.//en:attributes',
@@ -1265,6 +1262,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 														if tag.upper() in oracle_value_pair_dic:
 															oracle_value_pair_dic[tag.upper()] = value
+										eutranrelation.clear()
 
 								oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
 								oracle_value_pair_dic['FILENAME'] = filename
@@ -1315,9 +1313,9 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								mo_group_collection = enb_mo.xpath(xpath)
 
 								extra_value = ""
-								for enb_moo in mo_group_collection:
+								for enb_moo_ in mo_group_collection:
 
-									for attribute in enb_moo:
+									for attribute in enb_moo_:
 										tag = attribute.tag.replace('{http://ZTESpecificAttributes#ZTESpecificAttributes}', '')
 
 										tag = naming_helper.rule_column_name(tag)
@@ -1364,6 +1362,10 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 									mongo_value_pair_dic = {}
 									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
+									enb_moo_.clear()
+							enb_mo.clear()
+					enb_moo.clear()
+				manage_group.clear()
 
 		log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
 		for result in oracle_result:
