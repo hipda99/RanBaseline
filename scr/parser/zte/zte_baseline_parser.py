@@ -1165,6 +1165,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					for parameter_group, valuedic in field_mapping_dic.items():
 						# mongo_result[parameter_group] = []
 						# oracle_result[parameter_group] = []
+						log.i(f'parameter_group = {parameter_group}')
 
 						cell_type = cell_level_dic[parameter_group]
 
