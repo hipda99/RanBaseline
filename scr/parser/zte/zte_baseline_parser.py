@@ -183,8 +183,8 @@ def prepare_oracle_table_4g(oracle_con, oracle_cur, frequency_type, field_mappin
 
 			try:
 				ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_dic[group_param])
-				ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])								
-				ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_700_dic[group_param])								
+				ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_2600_dic[group_param])
+				ran_baseline_oracle.push(oracle_cur, table_name, base_mapping_700_dic[group_param])
 
 				if len(red_mapping_dic) != 0:
 					ran_baseline_oracle.push(oracle_cur, table_name, red_mapping_dic[group_param])
@@ -336,9 +336,9 @@ def run(source, field_mapping_dic, cell_level_dic):
 
 	log.i(PARSING_TABLE_STATEMENT, ZTE_VENDOR)
 
-	pool = mp.Pool(processes=MAX_RUNNING_PROCESS)	
+	pool = mp.Pool(processes=MAX_RUNNING_PROCESS)
 	# Debug
-	# pool = mp.Pool(processes=1)	
+	# pool = mp.Pool(processes=1)
 
 	for raw_file in source.RawFileList:
 
@@ -472,7 +472,7 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = 0
 					COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] = COUNT_DATA[KEY_TABLE.format(ZTE_TABLE_PREFIX, frequency_type, parameter_group)] + 1
 
-				
+
 				# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
 				# if parameter_group in mongo_result:
 				# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
@@ -682,7 +682,7 @@ def parse_2g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										# mongo_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = manage_userlabel
 										# mongo_value_pair_dic['FILENAME'] = raw_file.split(PATH_SEPARATOR)[-1]
 										# mongo_value_pair_dic['LV'] = cell_type
-										# mongo_value_pair_dic['MO'] = g2_bsc_path.format(subid, manageid, bssid)			
+										# mongo_value_pair_dic['MO'] = g2_bsc_path.format(subid, manageid, bssid)
 
 										# if parameter_group in mongo_result:
 										# 	mongo_result[parameter_group].append(mongo_value_pair_dic)
@@ -945,10 +945,10 @@ def parse_3g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					try:
 						eutrancellid = enb_mo.xpath('@id')[0]
 					except Exception as e:
-						log.e('#################################### Error occur (001): ', ZTE_VENDOR, frequency_type)						
-						log.e(e, ZTE_VENDOR, frequency_type)
-						traceback.print_exc()
-						log.e('#################################### Error ', ZTE_VENDOR, frequency_type)
+						log.e(f'Error {str(e)}: ', ZTE_VENDOR, frequency_type)
+
+					if not eutrancellid:
+						continue
 
 					eutranatt = enb_mo.xpath('.//un:attributes',
 											 namespaces={
@@ -1021,7 +1021,7 @@ def parse_3g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 						# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
 						# mongo_value_pair_dic['MO'] = g3_cell_path.format(subid, manageid, rncId, eutrancellid)
-					
+
 					# 2020-12-04 - Since Developer not push to Mongo, comment below line to reserve memory
 
 					# if parameter_group in mongo_result:
@@ -1064,7 +1064,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 	"""
 	log.i(PARSING_FILE_STATEMENT.format(raw_file), ZTE_VENDOR, frequency_type)
 
-	oracle_con, oracle_cur = open_connection()	
+	oracle_con, oracle_cur = open_connection()
 
 	log.i("----- Start Parser : " + str(datetime.datetime.now()), ZTE_VENDOR, frequency_type)
 
@@ -1075,7 +1075,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 		tree = ElementInclude.default_loader(raw_file, 'xml')
 
 		subnet = tree.xpath('.//xn:SubNetwork', namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-															ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})		
+															ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})
 		subid = subnet[1].xpath('@id')[0]
 
 		start_parser_time = datetime.datetime.now()
@@ -1086,7 +1086,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 		for e in subnet[1]:
 			submo = etree.fromstring(etree.tostring(e))
 
-			manage_group_collection = submo.xpath('.//xn:ManagedElement', namespaces={ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})			
+			manage_group_collection = submo.xpath('.//xn:ManagedElement', namespaces={ZTE_XML_DESCRIPTOR_REF_XN: ZTE_XML_DESCRIPTOR_XN})
 
 			for manage_group in manage_group_collection:
 
@@ -1156,7 +1156,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 				enb_group_collection = manage_group.xpath('.//en:ENBFunction',
 														namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-																	ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})				
+																	ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
 
 				for enb_moo in enb_group_collection:
 
@@ -1175,7 +1175,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							# log.i('This is Cell Level')
 							mo_xml = base_xml.xpath('.//en:EUtranCellFDD',
 													namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-																ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})							
+																ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
 						else:
 							mo_xml = base_xml
 							# log.i('This is eNodeB Level')
@@ -1206,12 +1206,14 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								try:
 									eutrancellid = enb_mo.xpath('@id')[0]
 								except Exception as e:
-									log.e(f'Error {str(e)}: ', ZTE_VENDOR, frequency_type)					
+									log.e(f'Error {str(e)}: ', ZTE_VENDOR, frequency_type)
 								# log.i(eutrancellid)
+								if not eutrancellid:
+									continue
 
 								eutranatt = enb_mo.xpath('.//en:attributes',
 														namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-																	ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})								
+																	ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN})
 
 								if len(eutranatt) > 0:
 									for attribute in eutranatt[0]:
@@ -1442,14 +1444,14 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						gnb_dic = {}
 						refNrCarrier_dic = {}
 
-						# find software 
+						# find software
 						manageElements = neData.xpath('.//mo[@moc="ManagedElement"]', namespaces=ns)
-						for me in manageElements:							
+						for me in manageElements:
 
 							manage_userlabel = parseData(me, f'.//userLabel/text()', 0, ns)
 							sw_netypename = parseData(me, f'.//mimType/text()', 0, ns)
 							sw_version = parseData(me, f'.//mimVersion/text()', 0, ns)
-														
+
 							sw_result = {}
 							if manage_userlabel is not None:
 								dic = dict.fromkeys(sw_column, '')
@@ -1594,7 +1596,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 										match_celldu = p_celldu.match(ldn)
 										match_physicaldu = p_physicaldu.match(ldn)
 										match_nrcarrier = p_nrcarrier.match(ldn)
-										
+
 										if match_cellcu:
 											cellCu = match_cellcu.group(3)
 											key = match_cellcu.group(1)
@@ -1644,10 +1646,10 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												if gnb in gnb_dic:
 													reference_name = gnb_dic[gnb].get('gnb')
 													gNBId = gnb_dic[gnb].get('gNBId')
-												
+
 										elif ldn is None or not ldn or ('X2SCPolicy'.upper() == parameter_group.upper() or 'InactiveParameter'.upper() == parameter_group.upper()
 										or 'CarrierESPolicy'.upper() == parameter_group.upper() or parameter_group.upper() == 'NRSectorCarrier'.upper()):
-											# Group that doesn't has ldn but in GNB level, or ldn unable to match to GNB.										
+											# Group that doesn't has ldn but in GNB level, or ldn unable to match to GNB.
 											gnbDus = node.xpath(f".//mo[@moc='GNBDUFunction']", namespaces=ns)
 											for gnb in gnbDus:
 												reference_name = parseData(gnb, './/attributes/gNBDUName/text()', 0, ns)
@@ -1694,14 +1696,14 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						# print(f'LTE Cell not found in subNetwork={subNetwork}, managedElement={managedElement}')
 						continue
 
-					# find software 
+					# find software
 					manageElements = neData.xpath('.//mo[@moc="ManagedElement"]', namespaces=ns)
-					for me in manageElements:							
+					for me in manageElements:
 
 						manage_userlabel = parseData(me, f'.//userLabel/text()', 0, ns)
 						sw_netypename = parseData(me, f'.//mimType/text()', 0, ns)
 						sw_version = parseData(me, f'.//mimVersion/text()', 0, ns)
-													
+
 						sw_result = {}
 						if manage_userlabel is not None:
 							dic = dict.fromkeys(sw_column, '')
@@ -1758,7 +1760,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							key_node_cell = nodeBId + "|" + cellLocalId
 							celltdd_node_cell_dic[key_node_cell] = data
 							node_cnt +=1
-						
+
 						# Get TDD - DU
 						cells = node.xpath('.//mo[@moc="DUEUtranCellTDDLTE"]', namespaces=ns)
 						for cell in cells:
@@ -1778,7 +1780,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 							# moId = parseData(cell, f'.//moId/text()', 0, ns)
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
-							ref = parseData(cell, f'.//refECellEquipFuncTDDLTE/text()', 0, ns)							
+							ref = parseData(cell, f'.//refECellEquipFuncTDDLTE/text()', 0, ns)
 							key = nodeBId + "|"	+ cellLocalId
 
 							if key in celltdd_node_cell_dic:
@@ -1789,7 +1791,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							if data is not None:
 								celltdd_du_dic[ref] = data
 
-							# if ref in celltdd_du_dic:								
+							# if ref in celltdd_du_dic:
 							# 	celltdd_du_dic[ref] = data
 							# else:
 							# 	log.e(f'Key = {ref} not found in celltdd_du_dic={str(celltdd_du_dic)}')
@@ -1797,7 +1799,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							# data = celltdd_node_cell_dic[key]
 							# celltdd_du_dic[ref] = data
 							# node_cnt +=1
-						
+
 						# Get FDD - CU
 						cells = node.xpath('.//mo[@moc="CUEUtranCellFDDLTE"]', namespaces=ns)
 						for cell in cells:
@@ -1850,7 +1852,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							cellLocalId = parseData(cell, f'.//cellLocalId/text()', 0, ns)
 							ref = parseData(cell, f'.//refECellEquipFuncFDDLTE/text()', 0, ns)
 							key = nodeBId + "|"	+ cellLocalId
-							
+
 							if key in cellfdd_node_cell_dic:
 								data = cellfdd_node_cell_dic[key]
 							# else:
@@ -1858,7 +1860,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							if data is not None:
 								cellfdd_du_dic[ref] = data
 
-							# if ref in cellfdd_du_dic:								
+							# if ref in cellfdd_du_dic:
 							# 	cellfdd_du_dic[ref] = data
 							# else:
 							# 	log.e(f'Key = {ref} not found in cellfdd_du_dic={str(cellfdd_du_dic)}')
@@ -1914,7 +1916,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												mo,ns,mongo_value_pair_dic,mongo_result,oracle_value_pair_dic,oracle_result,filename)
 							else:
 								mo_group_collection = None
-									
+
 								xpath = f'.//mo[@moc="{parameter_group}"]'
 								mo_group_collection = node.xpath(xpath, namespaces=ns)
 
@@ -1956,9 +1958,9 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												nbId = celltdd_ldn_dic[key].get('nbId')
 											else:
 												log.e(f'Not found key={key} in celltdd_ldn_dic={str(celltdd_ldn_dic)}')
-											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)						
+											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
 										# Check DU-FDD
-										elif match_ducellfdd:											
+										elif match_ducellfdd:
 											key = match_ducellfdd.group(1)
 											if key in cellfdd_du_dic:
 												reference_name = cellfdd_du_dic[key].get('cellname')
@@ -1966,7 +1968,7 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												nbId = cellfdd_du_dic[key].get('nbId')
 											else:
 												log.e(f'Not found key={key} in cellfdd_node_cell_dic={str(cellfdd_du_dic)}')
-											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)				
+											mo_name = eu_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
 										# Check DU-tDD
 										elif match_ducelltdd:
 											"""
@@ -1983,8 +1985,8 @@ def parse_itbbu(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 												nbId = celltdd_du_dic[key].get('nbId')
 											else:
 												log.e(f'Not found key={key} in celltdd_du_dic={str(celltdd_du_dic)}')
-											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)				
-										
+											mo_name = tdd_cell_path.format(subNetwork, managedElement, nbId, cellLocalId)
+
 									else:
 										#NB level
 										p_nb = re.compile(REGEX_4G_LDN_ENBCUCPFUNC)
