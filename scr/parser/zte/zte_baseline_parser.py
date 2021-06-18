@@ -1174,14 +1174,14 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							res, err = sp.communicate()
 							if sp.returncode == 0:
 								for data in res.strip().splitlines():
-									log.i(data)
-									d = int(data)
+									d = int(data.decode("utf-8"))
 									if d == 0:
 										log.i(f'{parameter_group} not found')
 										continue
 
 						except Exception as e:
 							log.e(f'ERROR - {str(e)}')
+							continue
 
 						cell_type = cell_level_dic[parameter_group]
 
