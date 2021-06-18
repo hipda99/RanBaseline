@@ -1285,7 +1285,6 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 														if tag.upper() in oracle_value_pair_dic:
 															oracle_value_pair_dic[tag.upper()] = value
-										eutranrelation.clear()
 
 								oracle_value_pair_dic[REFERENCE_FIELD_COLUMN_NAME] = valuess
 								oracle_value_pair_dic['FILENAME'] = filename
