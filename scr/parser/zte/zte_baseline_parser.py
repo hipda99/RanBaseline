@@ -1364,8 +1364,6 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									mongo_value_pair_dic = {}
 									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 									enb_moo_.clear()
-							enb_mo.clear()
-					enb_moo.clear()
 					log.i(f'Size = {len(oracle_result)}')
 
 		log.i(f'---- Start pushing to oracle, size = {len(oracle_result)} : ', ZTE_VENDOR, frequency_type)
