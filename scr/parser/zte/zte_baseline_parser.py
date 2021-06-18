@@ -9,6 +9,7 @@ import cx_Oracle
 from lxml import ElementInclude
 from lxml import etree
 from lxml.etree import XPathEvalError
+from subprocess import PIPE, Popen, CalledProcessError
 
 import log
 from environment import *
@@ -1166,6 +1167,21 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						# mongo_result[parameter_group] = []
 						# oracle_result[parameter_group] = []
 						log.i(f'enbid = {enbid}, parameter_group = {parameter_group}')
+						# Preserve to search data if search not found
+						try:
+							sp = None						
+							sp = Popen(f'grep {parameter_group} {raw_file} | head -1 | wc -l',shell=True, stdout=PIPE, stderr=PIPE)
+							res, err = sp.communicate()
+							if sp.returncode == 0:
+								for data in res.strip().splitlines():
+									log.i(data)
+									d = int(data)
+									if d == 0:
+										log.i(f'{parameter_group} not found')
+										continue
+
+						except Exception as e:
+							log.e(f'ERROR - {str(e)}')
 
 						cell_type = cell_level_dic[parameter_group]
 
@@ -1363,8 +1379,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 
 									mongo_value_pair_dic = {}
 									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
-									enb_moo_.clear()
-				manage_group.clear()
+
 				log.i(f'Size = {len(oracle_result)}')
 
 
