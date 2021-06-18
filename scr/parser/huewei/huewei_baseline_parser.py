@@ -9,6 +9,7 @@ import subprocess
 import cx_Oracle
 import pymongo
 from lxml import ElementInclude
+import gzip
 
 import log
 from environment import *
@@ -74,6 +75,19 @@ sw_4g_column = [
 
 KEY_TABLE = "{0}_{1}_{2}"
 
+def read_xml_gzip_file(file: str, encoding: str = None):
+	xml_file = None
+	gzip_file = False
+	if file.endswith('.gz'):
+		xml_file = gzip.open(file, 'rb')
+		gzip_file = True		
+	else:
+		if encoding:
+			xml_file = open(file, encoding=encoding, errors='ignore')
+		else:
+			xml_file = open(file, 'r')
+	
+	return xml_file, gzip_file
 
 def close_connection(connection, cur):
     cur.close()
@@ -512,16 +526,19 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, param_cell_level_dic):
     # Add read gzip file    
     xml_file = None
     gzipFile = False
-    source_file = None
-    if raw_file is not None and str(raw_file).endswith('.gz'):
-        proc = subprocess.Popen(['gzip', '-cdfq', str(raw_file)], stdout=subprocess.PIPE, bufsize=4096)
-        xml_file = proc.stdout
-        gzipFile = True
-    else:
-        source_file = str(raw_file)
-        xml_file = open(source_file, 'r')
+    # source_file = None
+    # if raw_file is not None and str(raw_file).endswith('.gz'):
+    #     proc = subprocess.Popen(['gzip', '-cdfq', str(raw_file)], stdout=subprocess.PIPE, bufsize=4096)
+    #     xml_file = proc.stdout
+    #     gzipFile = True
+    # else:
+    #     source_file = str(raw_file)
+    #     xml_file = open(source_file, 'r')
+    parser = etree.XMLParser(recover=True, encoding='ISO-8859-1')
+    xml_file, gzipFile = read_xml_gzip_file(str(raw_file), encoding='ISO-8859-1')
+    # tree = strip_ns_prefix(etree.parse(xml_file, parser=parser))
     
-    tree = etree.parse(xml_file)
+    tree = etree.parse(xml_file, parser=parser)
     # tree = ElementInclude.default_loader(raw_file, 'xml')
     nename = get_enodeB(tree) # update to different to enodeB
     # nename = get_nename(tree)

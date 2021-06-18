@@ -1368,7 +1368,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					enb_moo.clear()
 				manage_group.clear()
 
-		log.i('---- Start pushing to oracle : ', ZTE_VENDOR, frequency_type)
+		log.i(f'---- Start pushing to oracle, size = {len(oracle_result)} : ', ZTE_VENDOR, frequency_type)
 		for result in oracle_result:
 
 			table_name = naming_helper.get_table_name(ZTE_TABLE_PREFIX, frequency_type, result)
