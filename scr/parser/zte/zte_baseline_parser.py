@@ -1167,7 +1167,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						# mongo_result[parameter_group] = []
 						# oracle_result[parameter_group] = []
 						log.i(f'enbid = {enbid}, parameter_group = {parameter_group}')
-						# Preserve to search data if search not found
+						# 2021-06-18 Preserve to search data if search not found
 						try:
 							sp = None						
 							sp = Popen(f'grep {parameter_group} {raw_file} | head -1 | wc -l',shell=True, stdout=PIPE, stderr=PIPE)
@@ -1178,6 +1178,8 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									if d == 0:
 										log.i(f'{parameter_group} not found')
 										continue
+									else:
+										break
 
 						except Exception as e:
 							log.e(f'ERROR - {str(e)}')
