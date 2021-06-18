@@ -1168,6 +1168,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 						# oracle_result[parameter_group] = []
 						log.i(f'enbid = {enbid}, parameter_group = {parameter_group}')
 						# 2021-06-18 Preserve to search data if search not found
+						found = False
 						try:
 							sp = None						
 							sp = Popen(f'grep {parameter_group} {raw_file} | head -1 | wc -l',shell=True, stdout=PIPE, stderr=PIPE)
@@ -1175,14 +1176,17 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							if sp.returncode == 0:
 								for data in res.strip().splitlines():
 									d = int(data.decode("utf-8"))
-									if d == 0:
-										log.i(f'{parameter_group} not found')
+									if d == 0:										
 										continue
 									else:
+										found = True
 										break
 
 						except Exception as e:
 							log.e(f'ERROR - {str(e)}')
+							continue
+						if not found:
+							log.i(f'{parameter_group} not found, skip')
 							continue
 
 						cell_type = cell_level_dic[parameter_group]
