@@ -1338,7 +1338,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								
 								xpath = f".//*[local-name() = 'vsData{parameter_group}']"
 								mo_group_collection = enb_mo.xpath(xpath)
-								log.i(f'Size for mo collection of {parameter_group} = {len(mo_group_collection)}')
+								# log.i(f'Size for mo collection of {parameter_group} = {len(mo_group_collection)}')
 								if valuess in ['SKA7207T_2NB01', 'PTN6733T_2NB01', 'PTN6732T_2NB01', 'SKA8656P_9NB01'] and parameter_group == 'LoadManagement':
 									log.i(f'values = {valuess} Size for mo collection of {parameter_group} = {len(mo_group_collection)}')
 
