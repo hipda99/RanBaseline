@@ -1166,7 +1166,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					for parameter_group, valuedic in field_mapping_dic.items():
 						# mongo_result[parameter_group] = []
 						# oracle_result[parameter_group] = []
-						# log.i(f'enbid = {enbid}, parameter_group = {parameter_group}')
+						log.i(f'enbid = {enbid}, parameter_group = {parameter_group}')
 						# 2021-06-18 Preserve to search data if search not found
 						# found = False
 						# try:
@@ -1334,13 +1334,10 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								# # 											ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN })
 								# mo_group_collection = enb_mo.xpath(xpath,
 								# 								namespaces=ns)
-
 								
 								xpath = f".//*[local-name() = 'vsData{parameter_group}']"
 								mo_group_collection = enb_mo.xpath(xpath)
-								# log.i(f'Size for mo collection of {parameter_group} = {len(mo_group_collection)}')
-								if valuess in ['SKA7207T_2NB01', 'PTN6733T_2NB01', 'PTN6732T_2NB01', 'SKA8656P_9NB01'] and parameter_group == 'LoadManagement':
-									log.i(f'values = {valuess} Size for mo collection of {parameter_group} = {len(mo_group_collection)}')
+								# log.i(f'Size for mo collection of {parameter_group} = {len(mo_group_collection)}')								
 
 								extra_value = ""
 								for enb_moo_ in mo_group_collection:
