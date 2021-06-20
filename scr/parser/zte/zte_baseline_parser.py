@@ -1322,20 +1322,20 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 							else:
 								mo_group_collection = None
 
-								xpath = './/zs:vsData{0}'.format(parameter_group)
-								if parameter_group == 'ECellEquipmentFunction':
-									test = f'vsData{parameter_group}'
-									print(base_xml.nsmap)
-									for node in enb_mo.xpath(f".//*/*/*[local-name() = '{test}']"):									
-										print(node)
-								ns = {'en': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm', 'xn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.625#genericNrm', 'un': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#utranNrm', 'gn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#gsmNrm', 'zs': 'http://ZTESpecificAttributes#ZTESpecificAttributes', 'xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
+								# xpath = './/zs:vsData{0}'.format(parameter_group)
+								# if parameter_group == 'ECellEquipmentFunction':
+								# 	test = f'vsData{parameter_group}'
+								# 	print(base_xml.nsmap)
+								# 	for node in enb_mo.xpath(f".//*/*/*[local-name() = '{test}']"):									
+								# 		print(node)
+								# ns = {'en': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm', 'xn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.625#genericNrm', 'un': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#utranNrm', 'gn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#gsmNrm', 'zs': 'http://ZTESpecificAttributes#ZTESpecificAttributes', 'xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
+								# # mo_group_collection = enb_mo.xpath(xpath,
+								# # 								namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
+								# # 											ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN })
 								# mo_group_collection = enb_mo.xpath(xpath,
-								# 								namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
-								# 											ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN })
-								mo_group_collection = enb_mo.xpath(xpath,
-																namespaces=ns)
-								# xpath = f"//*[local-name() = 'vsData{parameter_group}']"
-								# mo_group_collection = enb_mo.xpath(xpath)
+								# 								namespaces=ns)
+								xpath = f".//*[local-name() = 'vsData{parameter_group}']"
+								mo_group_collection = enb_mo.xpath(xpath)
 								log.i(f'Size for mo collection of {parameter_group} = {len(mo_group_collection)}')
 
 								extra_value = ""
