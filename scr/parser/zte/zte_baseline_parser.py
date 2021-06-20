@@ -1166,7 +1166,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 					for parameter_group, valuedic in field_mapping_dic.items():
 						# mongo_result[parameter_group] = []
 						# oracle_result[parameter_group] = []
-						log.i(f'enbid = {enbid}, parameter_group = {parameter_group}')
+						# log.i(f'enbid = {enbid}, parameter_group = {parameter_group}')
 						# 2021-06-18 Preserve to search data if search not found
 						# found = False
 						# try:
@@ -1393,7 +1393,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 									mongo_value_pair_dic = {}
 									oracle_value_pair_dic = dict.fromkeys(valuedic, '')
 
-				log.i(f'Size = {len(oracle_result)}')
+				# log.i(f'Size = {len(oracle_result)}')
 
 
 		log.i(f'---- Start pushing to oracle, size = {len(oracle_result)} : ', ZTE_VENDOR, frequency_type)
