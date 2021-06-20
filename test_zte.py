@@ -55,7 +55,7 @@ try:
                     # # 								namespaces={ZTE_XML_DESCRIPTOR: ZTE_XML_DESCRIPTOR_REF,
                     # # 											ZTE_XML_DESCRIPTOR_REF_EN: ZTE_XML_DESCRIPTOR_EN })
                     # mo_group_collection = enb_mo.xpath(xpath,namespaces=ns)
-                    xpath = f".//*[local-name() = 'vsDataECellEquipmentFunction']"
+                    xpath = f".//*[local-name() = 'vsDataLoadManagement']"
                     nodeB = ''
                     found = False
                     mo_group_collection = enb_mo.xpath(xpath)
