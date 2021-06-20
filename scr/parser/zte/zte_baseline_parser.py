@@ -1326,8 +1326,7 @@ def parse_4g(raw_file, frequency_type, field_mapping_dic, cell_level_dic):
 								if parameter_group == 'ECellEquipmentFunction':
 									test = f'vsData{parameter_group}'
 									print(base_xml.nsmap)
-									# for node in enb_mo.xpath(f".//*[local-name() = '{test}']"):
-									for node in enb_mo.xpath(f"./*:{test}"):
+									for node in enb_mo.xpath(f"./*/*/*[local-name() = '{test}']"):									
 										print(node)
 								ns = {'en': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#eutranNrm', 'xn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.625#genericNrm', 'un': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#utranNrm', 'gn': 'http://www.3gpp.org/ftp/specs/archive/32_series/32.765#gsmNrm', 'zs': 'http://ZTESpecificAttributes#ZTESpecificAttributes', 'xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
 								# mo_group_collection = enb_mo.xpath(xpath,
